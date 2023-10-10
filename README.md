@@ -19,7 +19,7 @@ Currently, two institutions are the main drivers of this project, namely Bayer A
   * Bojana Basaragin
   * Darija Medvecki
 
-We welcome contribution to this project by anyone interested in participating. This is an open source project under AGPL license. In order to prevent any legal issues, we ask potential contributors to sign and send to verif.ai.project@gmail.com [Individual Contributor Agreement]([Legal/Individual Contributor Agreement Verifai_fillable.pdf](https://github.com/nikolamilosevic86/verif.ai/blob/main/Legal/Individual%20Contributor%20Agreement%20Verifai_fillable.pdf)) before sending the first pull request.
+We welcome contribution to this project by anyone interested in participating. This is an open source project under AGPL license. In order to prevent any legal issues, we ask potential contributors to sign and send to verif.ai.project@gmail.com [Legal/Individual Contributor Agreement Verifai_fillable.pdf](https://github.com/nikolamilosevic86/verif.ai/blob/main/Legal/Individual%20Contributor%20Agreement%20Verifai_fillable.pdf) before sending the first pull request.
 
 ## Citations
 
