@@ -12,6 +12,14 @@
     animation: App-logo-spin infinite 20s linear;
   }
 } */
+.QuestionClass{
+  width: 60%;
+  height: 30px;
+  size:200;
+  font-size:18px;
+}
+.QuestionLabel{
+}
 
 .App-header {
   background-color: #282c34;
