@@ -22,7 +22,9 @@
 .QuestionLabel{
   text-align: left;
 }
-
+.Pendulumgif{
+  height: 250px;
+}
 .AskButton {
   backface-visibility: hidden;
   background: #332cf2;
