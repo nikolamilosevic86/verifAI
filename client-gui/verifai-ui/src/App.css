@@ -104,6 +104,16 @@
   color: white;
 }
 
+.Pendulumgif{
+  align-self: center;
+  position: relative;
+  left: 18%;
+}
+
+.Pendulum{
+  position: relative;
+}
+
 .App-link {
   color: #61dafb;
 }
