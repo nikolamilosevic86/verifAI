@@ -1,17 +1,10 @@
-import logo from './verifai-logo.png'
 import './App.css';
+import MainScreen from './MainScreen';
 
 function App() {
-  return (
-    <div className="App">
-      <img className="App-logo" src={logo} alt="Logo"/>
-      <div className="InputQuestion">
-      <label className='QuestionLabel' for="question">Input your question in natural language</label><br/>
-      <input id="question" name="question" className="QuestionClass" placeholder="e.g. What genes are promising targets for prostate cancer?"></input><button className='AskButton' role="button">Ask</button>
 
-      <div className='Pendulum'><img className='Pendulumgif' src="pendulum.gif"></img></div>
-      </div>
-    </div>
+  return (
+    <MainScreen/>
   );
 }
 
