@@ -13,11 +13,13 @@ Verif.ai is an AI system designed to verify and document the correctness of AI-g
 Currently, two institutions are the main drivers of this project, namely Bayer A.G and Institute for Artificial Intelligence Research and Development of Serbia. Current contrbiutors are by institutions
 * Bayer A.G.
   * Nikola Milosevic
+  * Lorenzo Cassano
 * Institute for Artificial Intelligence Research and Development of Serbia:
   * Adela Ljajic
   * Milos Kosprdic
   * Bojana Basaragin
   * Darija Medvecki
+  * Angela Pupovac
 
 We welcome contribution to this project by anyone interested in participating. This is an open source project under AGPL license. In order to prevent any legal issues, before sending the first pull request, we ask potential contributors to sign [Individual Contributor Agreement](https://github.com/nikolamilosevic86/verif.ai/blob/main/Legal/Individual%20Contributor%20Agreement%20Verifai_fillable.pdf) and send to us via email (verif.ai.project@gmail.com).
 
