@@ -1,7 +1,8 @@
-
+from concurrent.futures import ThreadPoolExecutor
 from nltk.tokenize import word_tokenize
+from datetime import datetime
 from qdrant_client.http import models
-
+from utils import parse_date
 
 class QueryProcessor:
     def __init__(self, index_lexical:str = "medline-faiss-hnsw-lexical-pmid", index_name_semantic ="medline-faiss-hnsw",
@@ -42,19 +43,33 @@ class QueryProcessor:
     
     
     
-    def lexical_query(self, query_str: str, limit: int = 10) -> set:
+    def lexical_query(self, query_str: str, pubdate_filter_lte: str, pubdate_filter_gte:str, limit: int = 10) -> set:
         if self.lexical_client == None:
             raise ValueError("No Lexical client defined")
         
         query = {
-                "size": limit,
-                "query": {
-                    "multi_match": {
-                        "query": query_str,
-                        "fields": ["full_text"]
-                    }
+            "size": limit,
+            "query": {
+                "bool": {
+                    "must": [
+                        {
+                            "multi_match": {
+                                "query": query_str,
+                                "fields": ["full_text"]
+                            }
+                        },
+                        {
+                            "range": {
+                                "pubdate": {
+                                    "gte": pubdate_filter_gte,
+                                    "lte": pubdate_filter_lte
+                                }
+                            }
+                        }
+                    ]
                 }
             }
+        }
         
         results = self.lexical_client.search(index=self.index_lexical_name, body=query) 
         
@@ -99,12 +114,20 @@ class QueryProcessor:
         return retrived_documents
     
 
-    def hybrid_query(self, query_lexical:str, query_semantic: str, lex_parameter: float = 0.5, 
-                     semantic_parameter: float = 0.5, limit: int = 10) -> set:
+    def hybrid_query(self, query_lexical:str, query_semantic: str,pubdate_filter_lte:str, pubdate_filter_gte:str,
+                    lex_parameter: float = 0.5, semantic_parameter: float = 0.5, limit: int = 10) -> set:
         if (lex_parameter + semantic_parameter) > 1:
             raise ValueError("Uncorrect parameters for Hybrid Queries")
-        lexical_results = self.lexical_query(query_lexical, limit = limit) 
-        semantic_results = self.semantic_query(query_semantic, limit)
+
+        with ThreadPoolExecutor() as executor:
+            thread_lexical = executor.submit(self.lexical_query,  query_lexical,pubdate_filter_lte, pubdate_filter_gte, limit)
+            thread_semantic = executor.submit(self.semantic_query, query_semantic, limit)
+        
+        lexical_results = thread_lexical.result()
+        semantic_results = thread_semantic.result()
+
+        #lexical_results = self.lexical_query(query_lexical, limit = limit) 
+        #semantic_results = self.semantic_query(query_semantic, limit)
         max_score = 0
         retrived_documents = {}
         
@@ -127,33 +150,42 @@ class QueryProcessor:
 
 
     def execute_query(self, query_str: str, query_type: str ='lexical',lex_parameter: float = 0.5, semantic_parameter: float = 0.5,
-                      limit:int = 10, stopwords_preprocessing: bool = True) -> list:
+                      limit:int = 10, pubdate_filter_lte :str = "2100-01-01",
+                      pubdate_filter_gte :str = "1900-01-01",stopwords_preprocessing: bool = True) -> list:
         
         text_query = self.preprocess_query(query_str) if stopwords_preprocessing else query_str
         
         if query_type == 'lexical':
-            results = self.lexical_query(text_query, limit=limit) 
+            results = self.lexical_query(text_query, pubdate_filter_lte, pubdate_filter_gte, limit=limit) 
         
         elif query_type == 'semantic':
             results = self.semantic_query(query_str, limit=limit)
 
         elif query_type == 'hybrid':
 
-            results = self.hybrid_query(text_query, query_str, lex_parameter, semantic_parameter, limit=limit)
+            results = self.hybrid_query(text_query, query_str, pubdate_filter_lte, pubdate_filter_gte,
+                                        lex_parameter, semantic_parameter, limit=limit)
         else:
             raise ValueError("Invalid query type specified. Choose 'lexical', 'semantic', or 'hybrid'.")
         
         
         
         document_retrived = sorted(results.items(), key=lambda x: x[1], reverse=True)
-        document_retrived = document_retrived[:limit+1] # in the hybrid search we can return more documents
-      
-        document_retrived = self.process_results(document_retrived)
+        
 
-        return document_retrived
+        date_lte = parse_date(pubdate_filter_lte)
+        date_gte = parse_date(pubdate_filter_gte)
+        
+        document_retrived = self.process_results(document_retrived, date_lte, date_gte)
+        
+        # should be cases using the date, where the systems does not find anything
+        if document_retrived == []:
+            raise Exception(f"No document retrived for {query_str} using {query_type} search")
+
+        return document_retrived[:limit]
     
 
-    def process_results(self, results: list) -> list:
+    def process_results(self, results: list, date_lte: datetime, date_gte: datetime) -> list:
         
         retrieved_documents = []
         for element in results:
@@ -169,12 +201,16 @@ class QueryProcessor:
 
             results = self.lexical_client.search(index=self.index_lexical_name, body=query) 
             full_text = results['hits']['hits'][0]["_source"]['full_text']
-            #full_text = results['hits']['hits'][0]["_source"]['journal']
+            date_string = results['hits']['hits'][0]["_source"]['pubdate']
             
-            retrieved_documents.append({
-                "pmid": pmid,
-                "text": full_text
-                # if needed to add other field
-            })
+            date = parse_date(date_string)
+           
+            if date_gte <= date and date <= date_lte:
+                retrieved_documents.append({
+                    "pmid": pmid,
+                    "text": full_text,
+                    "pubdate": date
+                    # if needed to add other field
+                })
         
         return retrieved_documents

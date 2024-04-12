@@ -8,13 +8,15 @@ from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
 import torch
 from sentence_transformers import SentenceTransformer
+from transformers import TextStreamer
 import nltk
 from nltk.corpus import stopwords
 import transformers
 from query_parser import QueryProcessor
-from utils import convert_documents, generate_answer
+from utils import convert_documents, generate_answer_stream
 from peft import PeftModel
 import time 
+from fastapi.responses import StreamingResponse
 
 nltk.download('punkt')
 nltk.download('stopwords')
@@ -53,11 +55,12 @@ base_model = transformers.AutoModelForCausalLM.from_pretrained(base_model_id,
 
 tokenizer = transformers.AutoTokenizer.from_pretrained(base_model_id)
 
-model_minstral = PeftModel.from_pretrained(base_model, peft_model_id).to(device)
+model_mistral = PeftModel.from_pretrained(base_model, peft_model_id).to(device)
 
-#print(model_minstral.config) # check the model server side
+text_streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
-model_minstral.eval() # setting the model in evaluation mode
+
+model_mistral.eval() # setting the model in evaluation mode
 
 model = SentenceTransformer(model_card).to(device)
 
@@ -96,8 +99,8 @@ class Query(BaseModel):
     stop_word : bool = True
     # rescore ?
     # To set 
-    #filter_years: str = ""
-    #filter_author: str = ""
+    filter_date_lte: str = "2100-01-01" # date before this one
+    filter_date_gte: str = "1900-01-01" # date after this one
     # Mistral parameters
     temperature: str = "0.35"
     output_len: str = "300"
@@ -162,21 +165,27 @@ def search(query: Query):
 
 
 @app.post("/query")
-def answer_generation(query: Query):
+async def answer_generation(query: Query):
     try:
         start = time.time()
         documents = query_parser.execute_query(query.query, query.search_type, lex_parameter=query.lex_par, 
-                                               semantic_parameter=query.semantic_par,stopwords_preprocessing=query.stop_word)
+                                               semantic_parameter=query.semantic_par, limit=10,
+                                               pubdate_filter_lte=query.filter_date_lte, 
+                                               pubdate_filter_gte=query.filter_date_gte,stopwords_preprocessing=query.stop_word)
         documents_string = convert_documents(documents)
         print("Finished IR = ", time.time() - start)
         mistral_input = f"{query.query}\nPapers:\n" + documents_string
-        #print(mistral_input)
-        #print("")
-        #print("")
-        answer = generate_answer(mistral_input, tokenizer, model_minstral, device)
-        print("Finished mistral = ", time.time() - start)
-        #print(answer)
-        return answer
+        print(mistral_input)
+        print("")
+        print("")
+        #outputs = generate_answer(mistral_input, text_streamer, tokenizer, model_mistral, device)
+         
+
+        # Return a StreamingResponse with the streamed data
+        return StreamingResponse(generate_answer_stream(mistral_input, text_streamer, tokenizer, model_mistral, device),
+                             media_type="text/event-stream")
+     
+           
     except Exception as e:
         # Handle a specific type of exception
         raise HTTPException(status_code=400, detail="{}".format(str(e)))
