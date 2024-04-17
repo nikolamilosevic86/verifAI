@@ -5,7 +5,9 @@
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+  align-self: flex-start; /* Align to the start of the flex container */
 }
+
 
 /* @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -24,9 +26,12 @@
 }
 .Pendulumgif{
   height: 250px;
+  order: 3;
 }
+
 .AskButton {
   backface-visibility: hidden;
+  
   background: #332cf2;
   height: 40px;
   border: 0;
@@ -125,4 +130,189 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+
+.ModalContent {
+  width: 80%; /* Reduced width percentage */
+  max-width: 400px; /* Reduced maximum width */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* Slightly reduced padding */
+  margin-top: 5px; /* Space between the input field and this box */
+  background: #fff;
+ 
+  
+
+  position: absolute;
+  bottom: 50;
+  left: -40%; /* Positions the modal to the left of the button */
+  
+  z-index: 10;
+}
+
+.ModalContent h2 {
+  color: #333;
+  font-size: 20px;
+}
+
+.ModalContent label {
+  font-size: 16px;
+  color: #666;
+  display: block;
+  margin: 20px 0;
+}
+
+.ModalContent select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  margin-top: 5px;
+}
+/* Styling for the range input (slider) */
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+}
+
+/* Styling for the slider thumb for Webkit (Chrome, Safari, etc.) */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #009688;
+  cursor: pointer;
+}
+
+/* Styling for the slider thumb for Mozilla (Firefox) */
+input[type=range]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #009688;
+  cursor: pointer;
+}
+
+/* Styling for the scrollbar (Webkit) */
+::-webkit-scrollbar {
+  width: 5px; /* scrollbar width */
+}
+
+::-webkit-scrollbar-track {
+  background: #ddd; /* scrollbar track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1c8a7f; /* scrollbar thumb color */
+}
+
+/* Styling for the scrollbar (Firefox) */
+* {
+  scrollbar-width: thin; /* or 'auto' or 'none' */
+  scrollbar-color: #009688 #ddd; /* thumb and track color */
+}
+
+
+
+.temperature-labels {
+  display: flex;
+  position: relative; /* Added to position buttons absolutely relative to this container */
+  width: 100%; /* Ensure it spans the full width of the range input */
+}
+
+/* Style for the buttons */
+.temperature-labels button {
+  position: relative; /* Absolutely position each button */
+  background: none;
+  border: 10px;
+  color: #009688;
+  cursor: pointer;
+  user-select: none; /* Prevent text selection */
+  transition: color 0.3s; /* Smooth transition for color changes */
+ 
+}
+
+/* Position each button */
+.temperature-labels button.start {
+  left: 0; /* Align to the left */
+}
+
+.temperature-labels button.middle {
+  left: 28%; /* Align to the center */
+  transform: translateX(-28%); /* Center the button */
+}
+
+.temperature-labels button.end {
+  left: 55%; /* Align to the right */
+  transform: translateX(-55%);
+}
+
+p {
+  color: #333;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 10px;
+}
+
+
+.error {
+  color: red;
+  margin-top: 5px;
+}
+
+.date-picker-group {
+  display: inline-block;
+  margin-right: 20px; /* Adds some space between the two date groups */
+}
+
+/* Optional: Align the text of the label with the input */
+.date-picker-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+.search-area {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#settings-btn {
+  background: #009688;
+  border: 2px solid #000; /* Example border - you can change color and width */
+  cursor: pointer;
+  font-size: 24px; /* Adjust the size as necessary */
+  margin-right: 10px; /* Adjust space between the button and the input box */
+  border-radius: 50%; /* This makes the border a circle */
+  width: 40px; /* Set a fixed width */
+  height: 40px; /* Set a fixed height */
+  display: flex;
+  align-items: center; /* This will center the icon vertically */
+  justify-content: center; /* This will center the icon horizontally */
+ 
+}
+
+/* Optional: add some visual feedback on hover */
+#settings-btn:hover {
+  color: #464646; /* Change color on hover */
+}
+
+.search-config {
+  display: none;
+  position: relative; /* Or 'fixed' depending on your needs */
+  /* Rest of the styles */
+}
+
+.tabbed {
+  margin-left: 55px; /* This adds space to the left of an element */
 }
