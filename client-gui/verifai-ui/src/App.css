@@ -316,3 +316,28 @@ p {
 .tabbed {
   margin-left: 55px; /* This adds space to the left of an element */
 }
+
+.output-section {
+  background-color: #f1f1f1;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 20px;
+  max-width: 770px;
+
+}
+
+.output-tokens {
+  white-space: pre-line; /* Ensures that line breaks are respected */
+  
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+h2 {
+  margin-left: 50px; /* Adjust the value as needed to move the text to the left */
+  max-width: 770px;
+  /* Other styles... */
+}
