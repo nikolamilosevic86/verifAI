@@ -341,3 +341,20 @@ h2 {
   max-width: 770px;
   /* Other styles... */
 }
+
+.spinner {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px; 
+  width: 15px;
+  height: 15px;
+  border: 3px solid rgba(0, 0, 0, .3);
+  border-radius: 50%;
+  border-top: 3px solid blue;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

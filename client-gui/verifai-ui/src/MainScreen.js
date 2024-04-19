@@ -18,8 +18,11 @@ class MainScreen extends Component {
             endDate: "2030-01-01",
             search_type: "hybrid",
             submitted: false,
+            loading: false,
             output: ""  // Holds HTML content safely
         };
+        
+        
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setOutput = this.setOutput.bind(this);  // Binding setOutput for proper 'this' context
@@ -34,7 +37,10 @@ class MainScreen extends Component {
         this.modalRef = React.createRef(); // Create a ref for the modal
         this.setWrapperRef = this.setWrapperRef.bind(this);             
         this.handleClickOutside = this.handleClickOutside.bind(this);
+
+        
     }
+    
     
     
     handleModalToggle = () => {
@@ -123,9 +129,12 @@ class MainScreen extends Component {
         const regex11 = /^\(\d+\)\$/;
         
         const processResult = async (result) => {
-            if (result.done) return;
+            if (result.done) {
+                this.setState({loading:false});
+                return;
+            }
             let token = decoder.decode(result.value, {stream: true});
-            console.log(token, regex.test(token), token.trim() !== token);
+            
             var no_space_token = token.trim()
             if (regex.test(no_space_token) || regex1.test(no_space_token) || regex2.test(no_space_token) || regex3.test(no_space_token)
                 || regex5.test(no_space_token) || regex6.test(no_space_token) || regex7.test(no_space_token) || 
@@ -140,6 +149,7 @@ class MainScreen extends Component {
         };
     
         reader.read().then(processResult);
+        
     }
 
     handleChange(event) {
@@ -150,7 +160,8 @@ class MainScreen extends Component {
     handleSubmit(event) {
         
         event.preventDefault();
-        this.setState({ submitted: true });
+        this.setState({ submitted: true, loading:true });
+        console.log("Loading", this.state.loading)
         this.clearOutput();
         this.sendMessage();
 
@@ -160,7 +171,9 @@ class MainScreen extends Component {
                       endDate: "2030-01-01",
                       search_type: "hybrid",
                       lex_parameter:0.5,
-                      sem_parameter:0.5})
+                      sem_parameter:0.5,
+                      });
+
     }
 
     
@@ -192,6 +205,7 @@ class MainScreen extends Component {
     render() {
         return (
             <div className="App">
+                
                 <img className="App-logo" src={logo} alt="Logo" />
                 <div className="InputQuestion">
                 <div className='tabbed'><label htmlFor="question">
@@ -311,19 +325,27 @@ class MainScreen extends Component {
                         value={this.state.value}
                         onChange={this.handleChange}
                     />
+                    
                     <button className='AskButton' role="button" onClick={this.handleSubmit}>Ask</button>
                     </div>
                     
 
                     
                     {this.state.submitted && (
-                        <div>
-                        <h2>{this.state.value}</h2> {}
+                    <div>
+                        
+                        <h2>{this.state.value} {this.state.loading && (<div className="spinner" />)}</h2>
+                        
+                       
+                              
+                       
+                        
+                        
                         <div className="output-section">     
-                            <div className="output-tokens" dangerouslySetInnerHTML={{__html: this.state.output}} />
+                            <div className="output-tokens" dangerouslySetInnerHTML={{ __html: this.state.output }} />
                         </div>
-                        </div>
-                    )}
+                    </div>
+                )}
 
                     
 
