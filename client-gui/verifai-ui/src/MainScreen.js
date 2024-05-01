@@ -1,77 +1,359 @@
-import logo from './verifai-logo.png'
-import './App.css';
 import React, { Component } from 'react';
+import NumericInput from 'react-numeric-input';
+import logo from './verifai-logo.png';
+import './App.css';
+
 
 class MainScreen extends Component {
     constructor(props) {
         super(props);
-        this.state = { value: "",value_nr:"" ,items:[]};
+        this.state = {
+            modalOpen: false,
+            value: "",
+            temperature: 0,
+            lex_parameter:0.5,
+            sem_parameter:0.5,
+            numDocuments: 10,
+            startDate: "1940-01-01",
+            endDate: "2030-01-01",
+            search_type: "hybrid",
+            submitted: false,
+            loading: false,
+            output: ""  // Holds HTML content safely
+        };
+        
+        
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.setOutput = this.setOutput.bind(this);  // Binding setOutput for proper 'this' context
+        this.handleTemperatureChange = this.handleTemperatureChange.bind(this);
+        this.handleNumDocumentsChange = this.handleNumDocumentsChange.bind(this);
+        this.handleSearchTypeChange = this.handleSearchTypeChange.bind(this);
+        this.handleStartDateChange = this.handleStartDateChange.bind(this);
+        this.handleEndDateChange = this.handleEndDateChange.bind(this);
+
+        this.handleLexParamChange = this.handleLexParamChange.bind(this);
+        
+        this.modalRef = React.createRef(); // Create a ref for the modal
+        this.setWrapperRef = this.setWrapperRef.bind(this);             
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+
+        
+    }
+    
+    
+    
+    handleModalToggle = () => {
+        this.setState(prevState => ({
+          modalOpen: !prevState.modalOpen
+        }));
+      };
+
+    
+    handleLexParamChange = (event) => {
+        const newValue = parseFloat(event.target.value);  // Ensure the value is treated as a number
+        this.setState({
+            lex_parameter: newValue,
+            sem_parameter: 1 - newValue  // Automatically calculate the complementary value
+        });
+    };
+
+    handleStartDateChange = (event) => {
+        this.setState({ startDate: event.target.value });
+      };
+    
+      handleEndDateChange = (event) => {
+        this.setState({ endDate: event.target.value });
+      };
+
+    handleSearchTypeChange(event) {
+        this.setState({ search_type: event.target.value });
+    }
+
+    handleTemperatureChange(event) {
+        this.setState({ temperature: event.target.value });
+    }
+
+    handleNumDocumentsChange = (event) => {
+        const numDocuments = event.target.value;
+        
+        this.setState({numDocuments: numDocuments,});
       }
-      handleChange(event) { this.setState({ value: event.target.value }); }
+
+    
+    clearOutput(){
+        this.setState({ output: "" });
+        
+    }
+
+    
+    sendMessage = async () => {
+        const { value,
+              temperature, 
+              numDocuments,
+              startDate,
+              endDate,
+              search_type,
+              lex_parameter,
+              sem_parameter
+             } = this.state;  // Using value from the state for the message
+        const response = await fetch('http://3.74.47.54:5001/query/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: value,
+                                   search_type: search_type,
+                                   limit : numDocuments,
+                                   filter_date_lte: endDate,
+                                   filter_date_gte: startDate,
+                                   temperature: temperature,
+                                   lex_par:lex_parameter,
+                                   semantic_par:sem_parameter,
+                                })
+        });
+    
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+        const regex = /^\(\[\d+\]\)$/;
+        const regex1 = /^\(\[\d+\]\)\.$/;
+        const regex2 = /^\(\[\d+\]\)\;$/;
+        const regex3 = /^\(\[\d+\]\)\,$/;
+        const regex5 = /^\[\d+\]\.$/;
+        const regex6 = /^\[\d+\]$/;
+        const regex7 = /^\[\d+\]\,$/;
+        const regex8 = /^\[\d+\]\;$/;
+        const regex9 = /^\d+\)\.$/;
+        const regex10 = /^\(\d+\)\.$/;
+        const regex11 = /^\(\d+\)\$/;
+        
+        const processResult = async (result) => {
+            if (result.done) {
+                this.setState({loading:false});
+                return;
+            }
+            let token = decoder.decode(result.value, {stream: true});
+            
+            var no_space_token = token.trim()
+            if (regex.test(no_space_token) || regex1.test(no_space_token) || regex2.test(no_space_token) || regex3.test(no_space_token)
+                || regex5.test(no_space_token) || regex6.test(no_space_token) || regex7.test(no_space_token) || 
+                regex8.test(no_space_token) || regex9.test(no_space_token) || regex10.test(no_space_token) ||
+                regex11.test(no_space_token)) {
+                no_space_token = no_space_token.replace(/[\[\]()\.,;]/g, '');
+                var new_token = `<a href="${baseUrl + no_space_token}" target="_blank">${token}</a>`;
+                token = new_token;
+            }
+            this.setOutput(token);
+            await reader.read().then(processResult);
+        };
+    
+        reader.read().then(processResult);
+        
+    }
+
+    handleChange(event) {
+        this.setState({ submitted: false });
+        this.setState({ value: event.target.value });
+    }
 
     handleSubmit(event) {
-        this.setState({ value_nr: event.target.value});
-        const request = require('superagent');
-        var searchterm = document.getElementById('question').value;
-            var gpu_api = "http://127.0.0.1:5001"
-            const req = request.post(gpu_api + '/search_index').set({Accept: 'application/json' });
-            req.send({"query":searchterm});
-            req.end((end,res)=>{
-                if (res==undefined || end !== null){
-                          if (end.status == 404){
-                            alert("Request failed. Please refresh page and try again")
-                          }else{
-                         // window.location.href='https://linguist.auth.eu-central-1.amazoncognito.com/login?client_id=1opjprr5da5hmchq24ri8jnjhi&response_type=token&scope=aws.cognito.signin.user.admin+email+openid&redirect_uri=https://linguist.skgt.int.bayer.com/auth.html';
-                          }
-                        }
-                        console.log(res.body);
-                        var annotations = res.body;
-                        this.setState({items:annotations});
-                    });
-                
+        
+        event.preventDefault();
+        this.setState({ submitted: true, loading:true });
+        console.log("Loading", this.state.loading)
+        this.clearOutput();
+        this.sendMessage();
+
+        this.setState({temperature: 0,
+                      numDocuments: 10,
+                      startDate: "1940-01-01",
+                      endDate: "2030-01-01",
+                      search_type: "hybrid",
+                      lex_parameter:0.5,
+                      sem_parameter:0.5,
+                      });
+
+    }
+
     
-        this.forceUpdate();
-       // window.location = "/results?search_term=" + this.state.value + "";
-       // event.preventDefault();
-      }
 
-      handleKeyDown(e) {
-        if (e.key === 'Enter') {
-          this.handleSubmit(e);
+    setOutput(newOutput) {
+        this.setState(prevState => ({
+            output: prevState.output + newOutput
+        }));
+    }
+
+    setWrapperRef(node) {
+        this.wrapperRef = node;
+      }
+      
+    handleClickOutside(event) {
+    if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
+        this.setState({ modalOpen: false });
         }
+    }
+    
+    componentDidMount() {
+        document.addEventListener('mousedown', this.handleClickOutside);
       }
+      
+    componentWillUnmount() {
+    document.removeEventListener('mousedown', this.handleClickOutside);
+    }
 
-render() {
-    var items = this.state.items;
-  return (
-   
-    <div className="App">
-      <img className="App-logo" src={logo} alt="Logo"/>
-      <div className="InputQuestion">
-      <label className='QuestionLabel' for="question">Input your question in natural language</label><br/>
-      <input id="question" name="question" className="QuestionClass" placeholder="e.g. What genes are promising targets for prostate cancer?"
-      value={this.state.value} onChange={this.handleChange}
-      onKeyDown={this.handleKeyDown}></input>
-      <button className='AskButton' role="button" onClick={this.handleSubmit}>Ask</button>
-      <div className="SearchQuery">
-          <b>Search query: </b>{this.state.value}
-        </div>
-      <div className='Pendulum'><img className='Pendulumgif' src="pendulum.gif"></img></div>
-      <ul>
-            {items.map(item => (
+    render() {
+        return (
+            <div className="App">
                 
-                <div className='result_item'>
-                    <div className='res_title'>{item.title} -- <a href={"https://pubmed.ncbi.nlm.nih.gov/"+item.pmid} target='_blank'>PMID:{item.pmid}</a></div>
+                <img className="App-logo" src={logo} alt="Logo" />
+                <div className="InputQuestion">
+                <div className='tabbed'><label htmlFor="question">
+               
+                Input your question in natural language:</label><br/>
                 </div>
-            ))}
-            </ul>
-      </div>
-    </div>
-  );
-}
-}
+                    <div className = "search-area">
+                    
+                    <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings">&#9881;</button>
+                    {this.state.modalOpen && (
+                    <div className="ModalContent" ref={this.setWrapperRef}>
+                    <h2>Search Configuration</h2>
+                    <label>Type of Search: 
+                        <select value={this.state.search_type} onChange={this.handleSearchTypeChange}>
+                            <option value="hybrid">Hybrid</option>
+                            <option value="lexical">Lexical</option>
+                            <option value="semantic">Semantic</option>
+                        </select>
+                    </label>
+
+                     
+                    {this.state.search_type === 'hybrid' && (
+                    <div className="temperature-labels">
+                        <label>
+                            Lexical Weights:{this.state.lex_parameter.toFixed(3)}, Semantic Weights:{(1-this.state.lex_parameter).toFixed(3)}
+                            <input 
+                                type="range" 
+                                min="0" 
+                                max="1" 
+                                value={this.state.lex_parameter}
+                                step="0.01"
+                                onChange={this.handleLexParamChange}
+                            />
+                            <button className="temperature-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
+
+                            <button className="temperature-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
+
+                            <button className="temperature-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
+
+
+                        </label>
+                    </div>
+                    )}
+                    
+
+    
+                        
+                    <label>Number of Documents:
+                    <select
+                        value={this.state.numDocuments}
+                        onChange={this.handleNumDocumentsChange}
+                        title="Please select the number of documents"
+                    >
+                        <option value="10">Normal - 10 documents</option>
+                        <option value="5">Small - 5 documents</option>
+                        <option value="15">Large - 15 documents</option>
+                        <option value="20">Extra Large - 20 documents</option>
+                    </select>
+                    </label>
+                    <div class="date-picker-group">
+                    <label htmlFor="start">From:</label>
+                    <input
+                        type="date"
+                        id="start"
+                        name="trip-start"
+                        value={this.state.startDate}
+                        onChange={this.handleStartDateChange}
+                        min="1940-01-01"
+                        max={this.state.endDate}
+                    />
+                    </div>
+
+                    <div class="date-picker-group">
+                    <label htmlFor="end">To:</label>
+                    <input
+                        type="date"
+                        id="end"
+                        name="trip-end"
+                        value={this.state.endDate}
+                        onChange={this.handleEndDateChange}
+                        min={this.state.startDate}
+                        max="2030-01-01"
+                    />
+                    </div>
+                    
+
+                <div className="temperature-labels">
+                    <label>Temperature: {this.state.temperature}:
+                    <p>The higher the temperature, the less accurate answers will be.</p>
+                <input
+                    type="range"
+                    value={this.state.temperature}
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    onChange={this.handleTemperatureChange}
+                />
+                
+                <button className="temperature-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
+
+                <button className="temperature-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
+
+                <button className="temperature-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
+                </label>
+            
+                </div>
+                </div>
+                    )}
+
+
+
+                    <input
+                        id="question"
+                        name="question"
+                        className="QuestionClass"
+                        placeholder="e.g. What genes are promising targets for prostate cancer?"
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                    />
+                    
+                    <button className='AskButton' role="button" onClick={this.handleSubmit}>Ask</button>
+                    </div>
+                    
+
+                    
+                    {this.state.submitted && (
+                    <div>
+                        
+                        <h2>{this.state.value} {this.state.loading && (<div className="spinner" />)}</h2>
+                        
+                       
+                              
+                       
+                        
+                        
+                        <div className="output-section">     
+                            <div className="output-tokens" dangerouslySetInnerHTML={{ __html: this.state.output }} />
+                        </div>
+                    </div>
+                )}
+
+                    
+
+                  
+                </div>
+            </div>
+        );
+    }
+}    
 
 export default MainScreen;

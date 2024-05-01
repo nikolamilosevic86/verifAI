@@ -1,5 +1,5 @@
 from threading import Thread
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI,HTTPException, Request
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
@@ -8,12 +8,12 @@ from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
 import torch
 from sentence_transformers import SentenceTransformer
-from transformers import TextStreamer
+from transformers import TextStreamer, TextIteratorStreamer
 import nltk
 from nltk.corpus import stopwords
 import transformers
 from query_parser import QueryProcessor
-from utils import convert_documents, generate_answer_stream
+from utils import convert_documents, generate
 from peft import PeftModel
 import time 
 from fastapi.responses import StreamingResponse
@@ -30,11 +30,11 @@ sys.path.insert(0, parent_dir_path)
 # constants
 model_card = 'sentence-transformers/msmarco-distilbert-base-tas-b'
 
-base_model_id = 'mistralai/Mistral-7B-Instruct-v0.1'
+base_model_id = 'mistralai/Mistral-7B-Instruct-v0.2'
 #'filipealmeida/Mistral-7B-Instruct-v0.1-sharded' #'bn22/Mistral-7B-Instruct-v0.1-sharded'
 
-peft_model_id = 'BojanaBas/Mistral-7B-Instruct-v0.1-pqa'
-
+#peft_model_id = 'BojanaBas/Mistral-7B-Instruct-v0.1-pqa'
+peft_model_id = 'BojanaBas/Mistral-7B-Instruct-v0.2-pqa-10'
 
 # Models
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -56,9 +56,6 @@ base_model = transformers.AutoModelForCausalLM.from_pretrained(base_model_id,
 tokenizer = transformers.AutoTokenizer.from_pretrained(base_model_id)
 
 model_mistral = PeftModel.from_pretrained(base_model, peft_model_id).to(device)
-
-text_streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
-
 
 model_mistral.eval() # setting the model in evaluation mode
 
@@ -93,17 +90,17 @@ app.add_middleware(
 class Query(BaseModel):
     query: str
     # IR parameters
-    search_type: str
+    search_type: str = "hybrid"
     lex_par : float = 0.7
     semantic_par :float = 0.3
+    limit : int = 10
     stop_word : bool = True
     # rescore ?
     # To set 
     filter_date_lte: str = "2100-01-01" # date before this one
     filter_date_gte: str = "1900-01-01" # date after this one
     # Mistral parameters
-    temperature: str = "0.35"
-    output_len: str = "300"
+    temperature: float = 0.
     
     
 
@@ -166,26 +163,31 @@ def search(query: Query):
 
 @app.post("/query")
 async def answer_generation(query: Query):
-    try:
-        start = time.time()
-        documents = query_parser.execute_query(query.query, query.search_type, lex_parameter=query.lex_par, 
-                                               semantic_parameter=query.semantic_par, limit=10,
-                                               pubdate_filter_lte=query.filter_date_lte, 
-                                               pubdate_filter_gte=query.filter_date_gte,stopwords_preprocessing=query.stop_word)
-        documents_string = convert_documents(documents)
-        print("Finished IR = ", time.time() - start)
-        mistral_input = f"{query.query}\nPapers:\n" + documents_string
-        print(mistral_input)
-        print("")
-        print("")
-        #outputs = generate_answer(mistral_input, text_streamer, tokenizer, model_mistral, device)
-         
-
-        # Return a StreamingResponse with the streamed data
-        return StreamingResponse(generate_answer_stream(mistral_input, text_streamer, tokenizer, model_mistral, device),
-                             media_type="text/event-stream")
-     
-           
-    except Exception as e:
+    # request: Request
+    #query = Query()
+    #search_query = request.query_params.get('search')
+    search_query = query.query
+    
+    print("THE SEARCH QUERY IS ",search_query)
+    print(f"Search type {query.search_type}, Date {query.filter_date_lte}, {query.filter_date_gte}, Temperature = {query.temperature}")
+    print(f"Param lex = {query.lex_par}, sem_param = {query.semantic_par}")
+    if not search_query:
+        raise HTTPException(status_code=400, detail="Query parameter 'search' is missing")
+    
+    #try:
+    start = time.time()
+    documents = query_parser.execute_query(search_query, query.search_type, lex_parameter=query.lex_par, 
+                                            semantic_parameter=query.semantic_par, limit=query.limit,
+                                            pubdate_filter_lte=query.filter_date_lte, 
+                                            pubdate_filter_gte=query.filter_date_gte,stopwords_preprocessing=query.stop_word)
+    documents_string = convert_documents(documents)
+    print("Finished IR = ", time.time() - start)
+    mistral_input = f"{search_query}\nPapers:\n" + documents_string
+    print(mistral_input)
+    print("")
+    print("")
+    return StreamingResponse(generate(mistral_input,query.temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
+        
+    #except Exception as e:
         # Handle a specific type of exception
-        raise HTTPException(status_code=400, detail="{}".format(str(e)))
+    #    raise HTTPException(status_code=500, detail="{}".format(str(e)))

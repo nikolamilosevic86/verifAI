@@ -1,6 +1,24 @@
-
 import torch
 from datetime import datetime
+from threading import Thread
+from transformers import TextIteratorStreamer
+
+async def generate(instruction: str, temperature:float, tokenizer, model, device):
+    prompt = f"""Respond to the Instruction using only the information provided in the relevant abstracts in ```Papers``` below.
+Instruction: {instruction}
+Answer:"""
+    encodeds = tokenizer(prompt, return_tensors="pt").to(device)
+    
+    if encodeds["input_ids"].shape[1] >= 32000:
+        raise Exception("Promt too long")
+    else:
+        streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+        generation_kwargs = dict(encodeds, streamer=streamer, max_new_tokens=600, temperature=temperature)
+        thread = Thread(target=model.generate, kwargs=generation_kwargs)
+        thread.start()
+        for new_text in streamer:
+            yield new_text
+        
 
 def convert_documents(documents:list) -> str:
     # no documents found
@@ -10,22 +28,8 @@ def convert_documents(documents:list) -> str:
     for document in documents:
         output_string += f"[{document['pmid']}]\n{document['text']}\n\n"
     return output_string
-
-def generate_answer_stream(instruction: str, text_streamer, tokenizer, model, device):
-    prompt = f"""Respond to the Instruction using only the information provided in the relevant abstracts in ```Papers``` below.
-Instruction: {instruction}
-Answer:"""
-    encodeds = tokenizer(prompt, return_tensors="pt").to(device)
-    if encodeds["input_ids"].shape[1] >= 32000:
-        yield "Too Long"
-    else:
-        with torch.no_grad():
-            outputs = model.generate(**encodeds,
-                                     streamer=text_streamer, # our streamer object!
-                                     do_sample=True,
-                                     max_new_tokens=500)
-            for token in outputs:
-                yield tokenizer.decode(token, skip_special_tokens=True)
+            
+        
     
 
 def parse_date(date_string:str, format_strings:datetime = ["%Y-%m-%d", "%Y-%m", "%Y"]):
