@@ -21,6 +21,16 @@
   font-size:18px;
   border-radius: 8px;
 }
+
+.QuestionClassForm{
+  width: 100%;
+  height: 30px;
+  size:200;
+  font-size:18px;
+  border-radius: 8px;
+}
+
+
 .QuestionLabel{
   text-align: left;
 }
@@ -326,6 +336,16 @@ p {
 
 }
 
+
+.output-verification {
+  background-color: #fafafa;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 20px;
+  max-width: 770px;
+
+}
+
 .output-tokens {
   white-space: pre-line; /* Ensures that line breaks are respected */
   
@@ -357,4 +377,29 @@ h2 {
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+.green-ball, .red-ball, .gray-ball,.yellow-ball {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.green-ball {
+  background-color: #00ff00; /* Green color */
+}
+
+.red-ball {
+  background-color: #ff0000; /* Red color */
+}
+
+.gray-ball{
+  background-color: gray;
+}
+
+.yellow-ball{
+  background-color:yellow;
 }

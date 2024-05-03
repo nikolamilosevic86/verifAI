@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import NumericInput from 'react-numeric-input';
 import logo from './verifai-logo.png';
 import './App.css';
 
@@ -19,13 +18,16 @@ class MainScreen extends Component {
             search_type: "hybrid",
             submitted: false,
             loading: false,
-            output: ""  // Holds HTML content safely
+            output: "" , // Holds HTML content safely
+            output_verification: ""
         };
         
-        
+        this.postVerification = this.postVerification.bind(this)
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setOutput = this.setOutput.bind(this);  // Binding setOutput for proper 'this' context
+        this.setOutputVerification = this.setOutputVerification.bind(this)
+        
         this.handleTemperatureChange = this.handleTemperatureChange.bind(this);
         this.handleNumDocumentsChange = this.handleNumDocumentsChange.bind(this);
         this.handleSearchTypeChange = this.handleSearchTypeChange.bind(this);
@@ -83,6 +85,7 @@ class MainScreen extends Component {
     
     clearOutput(){
         this.setState({ output: "" });
+        this.setState({ output_verification: "" });
         
     }
 
@@ -127,10 +130,12 @@ class MainScreen extends Component {
         const regex9 = /^\d+\)\.$/;
         const regex10 = /^\(\d+\)\.$/;
         const regex11 = /^\(\d+\)\$/;
-        
+        const regex12 = /^\(\[\d+\]\,$/;
+        const regex13 = /^\[\d+\]\).$/;
         const processResult = async (result) => {
             if (result.done) {
                 this.setState({loading:false});
+                this.postVerification(this.state.output);
                 return;
             }
             let token = decoder.decode(result.value, {stream: true});
@@ -139,7 +144,7 @@ class MainScreen extends Component {
             if (regex.test(no_space_token) || regex1.test(no_space_token) || regex2.test(no_space_token) || regex3.test(no_space_token)
                 || regex5.test(no_space_token) || regex6.test(no_space_token) || regex7.test(no_space_token) || 
                 regex8.test(no_space_token) || regex9.test(no_space_token) || regex10.test(no_space_token) ||
-                regex11.test(no_space_token)) {
+                regex11.test(no_space_token) || regex12.test(no_space_token) || regex13.test(no_space_token)) {
                 no_space_token = no_space_token.replace(/[\[\]()\.,;]/g, '');
                 var new_token = `<a href="${baseUrl + no_space_token}" target="_blank">${token}</a>`;
                 token = new_token;
@@ -151,6 +156,62 @@ class MainScreen extends Component {
         reader.read().then(processResult);
         
     }
+
+    postVerification(completeText) {
+        const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+        fetch("http://3.74.47.54:5001/verification", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ text: completeText })
+        })
+        .then(response => {
+            const readerVerification = response.body.getReader();
+            const decoderVerification = new TextDecoder('utf-8');
+    
+            const processResultVerification = async (result) => {
+                if (result.done) {
+                    console.log("Streaming finished.");
+                    return;
+                }
+                let claim_string = decoderVerification.decode(result.value, {stream: true});
+                console.log(claim_string)
+                var claim_dict = JSON.parse(claim_string);
+                
+                var ballHtml = (claim_dict.result === "SUPPORT") ? '  <span class="green-ball"></span>' :
+                            (claim_dict.result === "NO REFERENCE") ? '  <span class="gray-ball"></span>' : ''
+                            (claim_dict.result === "NO_EVIDENCE") ? '  <span class="yellow-ball"></span>' : ''
+                            (claim_dict.result === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
+                
+                            console.log(claim_dict)
+
+                console.log(typeof claim_dict)
+                if (claim_dict["result"] === "NO REFERENCE") {
+                    this.setOutputVerification("Claim:\n"+ claim_dict.claim + " <strong>" +claim_dict.result + "</strong>" +
+                                                 ballHtml + "\n\n");
+                } else {
+                    // Otherwise, print claim, result, and pmid
+                    var url_reference = `<a href="${baseUrl + claim_dict.pmid}" target="_blank">${claim_dict.pmid}</a>`;
+                    
+                    this.setOutputVerification("Claim for document " + url_reference + ':\n' + claim_dict.claim +  " " + 
+                    "<strong>" + claim_dict.result + "</strong>" + ballHtml + "\n\n");
+                    
+                }
+                
+                // Read next portion of the stream
+                return readerVerification.read().then(processResultVerification);
+            };
+    
+            // Start reading the stream
+            readerVerification.read().then(processResultVerification);
+        })
+        .catch(error => {
+            console.error('Error during verification:', error);
+        });
+    }
+    
+    
 
     handleChange(event) {
         this.setState({ submitted: false });
@@ -184,6 +245,11 @@ class MainScreen extends Component {
         }));
     }
 
+    setOutputVerification(newOutput) {
+        this.setState(prevState => ({
+            output_verification: prevState.output_verification  + newOutput
+        }));
+    }
     setWrapperRef(node) {
         this.wrapperRef = node;
       }
@@ -204,6 +270,7 @@ class MainScreen extends Component {
 
     render() {
         return (
+            
             <div className="App">
                 
                 <img className="App-logo" src={logo} alt="Logo" />
@@ -252,7 +319,7 @@ class MainScreen extends Component {
                     
 
     
-                        
+                    
                     <label>Number of Documents:
                     <select
                         value={this.state.numDocuments}
@@ -316,7 +383,7 @@ class MainScreen extends Component {
                     )}
 
 
-
+                    <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
                     <input
                         id="question"
                         name="question"
@@ -324,9 +391,14 @@ class MainScreen extends Component {
                         placeholder="e.g. What genes are promising targets for prostate cancer?"
                         value={this.state.value}
                         onChange={this.handleChange}
+                       
                     />
                     
-                    <button className='AskButton' role="button" onClick={this.handleSubmit}>Ask</button>
+                    <button className='AskButton' onClick={this.handleSubmit}>
+                        Ask
+                    </button>
+                    </form>
+
                     </div>
                     
 
@@ -344,6 +416,15 @@ class MainScreen extends Component {
                         <div className="output-section">     
                             <div className="output-tokens" dangerouslySetInnerHTML={{ __html: this.state.output }} />
                         </div>
+                        
+                        {!this.state.loading && (
+                        <>
+                            <h2>Fact Verification </h2>
+                            <div className="output-verification">     
+                            <div className="output-tokens" dangerouslySetInnerHTML={{ __html: this.state.output_verification }} />
+                            </div>
+                        </>
+                        )}
                     </div>
                 )}
 
