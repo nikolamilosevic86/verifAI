@@ -1,0 +1,82 @@
+.login-container {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    height: 100vh; /* Full viewport height to center everything in the middle of the page */
+    background-color: #f8f8f8; /* Background color, optional */
+}
+
+.login-logo {
+    width: auto; /* Adjust the width as necessary */
+    height: 30vmin; /* Adjust the height as necessary */
+    margin-bottom: 1rem; /* Adds space between the logo and the form */
+}
+
+.login-form {
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 300px; /* Adjust width as necessary */
+    display: flex;
+    flex-direction: column; /* Ensures form elements stack vertically */
+    align-items: center; /* Aligns form elements to the center horizontally */
+}
+
+.login-form h2, input {
+    width: 100%; /* Ensures form elements take full width of the form */
+    text-align: center; /* Center text for inputs and buttons */
+}
+
+input, button {
+    padding: 10px;
+    margin-top: 10px; /* Spacing between form elements */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.login-form h2 {
+    text-align: left;  /* Aligns the text to the left */
+    padding-left: 180px; /* Adds padding to create some space from the edge of the form */
+}
+
+.login-form .special-h2 h2 {
+    text-align: left; 
+    margin-left: 0px;
+    padding-left: 20px; /* Example of a different padding */
+}
+
+
+button {
+    background-color: #007bff;  /* Primary blue color */
+    color: white;
+    border: none;
+    padding: 10px 20px; /* Provides padding inside the button, adjust as needed */
+    width: auto; /* Adjust width based on content, ensures it doesn't take full width of the form */
+    border-radius: 20px; /* This creates the pill effect */
+    cursor: pointer;
+    text-align: left; /* Aligns text to the left */
+    display: block; /* Ensures button uses block layout for better control over width and padding */
+    overflow: hidden; /* Keeps the content within the borders */
+    position: relative; /* Needed if we use a pseudo-element for positioning the text */
+}
+
+button:focus {
+    outline: none; /* Removes the outline to keep the UI clean on focus */
+}
+
+button::after {
+   
+    position: absolute;
+    left: 20px; /* Distance from the left edge */
+    top: 50%; /* Centers vertically */
+    transform: translateY(-50%); /* Adjusts the position to truly center it vertically */
+    white-space: nowrap; /* Ensures the text doesn't wrap */
+}
+
+h1 {
+    text-align: left;
+    transform: translateX(10px); 
+    /* Other styles... */
+  }

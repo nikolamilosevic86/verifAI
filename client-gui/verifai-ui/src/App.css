@@ -14,6 +14,23 @@
     animation: App-logo-spin infinite 20s linear;
   }
 } */
+
+.router-reset * {
+  padding: 0;
+  margin: 0;
+  
+  text-align: left;
+
+}
+
+.main-screen {
+  width: 100%;
+  max-width: 1500px; /* or whatever your design requires */
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box; /* Helps control padding and border */
+}
+
 .QuestionClass{
   width: 60%;
   height: 30px;
@@ -65,6 +82,34 @@
   -webkit-user-select: none;
   touch-action: manipulation;
 }
+
+.LogoutButton {
+  backface-visibility: hidden;
+  
+  background: #343334;
+  height: 30px;
+  border: 0;
+  border-radius: .375rem;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Circular,Helvetica,sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  padding: 0.2rem 1.25rem;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
 
 .AskButton:disabled {
   color: #787878;
@@ -238,12 +283,14 @@ input[type=range]::-moz-range-thumb {
 .temperature-labels {
   display: flex;
   position: relative; /* Added to position buttons absolutely relative to this container */
+  height: 50;
   width: 100%; /* Ensure it spans the full width of the range input */
 }
 
 /* Style for the buttons */
 .temperature-labels button {
-  position: relative; /* Absolutely position each button */
+  position: absolute; /* Absolutely position each button */
+  top: 100;
   background: none;
   border: 10px;
   color: #009688;
@@ -259,13 +306,13 @@ input[type=range]::-moz-range-thumb {
 }
 
 .temperature-labels button.middle {
-  left: 28%; /* Align to the center */
-  transform: translateX(-28%); /* Center the button */
+  left: 45%; /* Align to the center */
+  transform: translateX(-45%); /* Center the button */
 }
 
 .temperature-labels button.end {
-  left: 55%; /* Align to the right */
-  transform: translateX(-55%);
+  left: 90%; /* Align to the right */
+  transform: translateX(-90%);
 }
 
 p {
@@ -357,8 +404,10 @@ p {
 }
 
 h2 {
+  text-align: center;
   margin-left: 50px; /* Adjust the value as needed to move the text to the left */
   max-width: 770px;
+  transform: translateX(50px); 
   /* Other styles... */
 }
 
@@ -402,4 +451,33 @@ h2 {
 
 .yellow-ball{
   background-color:yellow;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 280px;
+  background-color: #f9f9f9;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -140px; /* Use half of the width to center it. */
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+  /* Fade in tooltip - animation */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
