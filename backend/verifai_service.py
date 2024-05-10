@@ -11,15 +11,14 @@ from sentence_transformers import SentenceTransformer
 from transformers import TextStreamer, TextIteratorStreamer, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForCausalLM, BitsAndBytesConfig
 from nltk.corpus import stopwords
 from query_parser import QueryProcessor
-from utils import convert_documents, generate
+from utils import convert_documents, generate, hash_password, check_password
 from peft import PeftModel
 import time 
 import json
-import asyncio
 from fastapi.responses import StreamingResponse
 from constants import *
 from verification import *
-
+from database import Database
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -33,6 +32,7 @@ sys.path.insert(0, parent_dir_path)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print("Device = ", device)
+
 
 bnb_config = BitsAndBytesConfig(load_in_4bit=True,
                                              # bnb_4bit_use_double_quant=True,  # kod našeg fine-tuninga modela ovo je bilo False, što se može videti ovde: https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.1-pqa/blob/main/README.md i zato je zakomentarisano
@@ -58,6 +58,7 @@ model = SentenceTransformer(MODEL_CARD).to(device)
 verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICATION_MODEL_CARD)
 
 verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
+
 
 # stopwords from nltk
 english_stopwords = set(stopwords.words('english'))
@@ -114,7 +115,6 @@ for line in lines:
     if line.startswith("VERIFAI_PASS"):
         verifai_pass = line.split(',')[1].replace('\n','').strip()
 """
-
 # should be read from file
 verifai_ip = '3.145.52.195' # localhost
 verifai_user = "admin"
@@ -143,6 +143,45 @@ query_parser = QueryProcessor(index_lexical=INDEX_NAME_LEXICAL, index_name_seman
                                model= model, lexical_client=client_lexical, semantic_client=client_semantic, stopwords=english_stopwords)
 
 documents_found = {}
+
+
+# Login Database Management 
+
+users_db = Database(dbname="verifai_database",user="myuser",password="mypassword",host="localhost")
+
+class User(BaseModel):
+    name :str = ""
+    surname: str = ""
+    username: str
+    password: str
+
+@app.post("/registration/")
+async def register_user(user: User):
+    
+    user_exists = await users_db.verify_user(user.username)
+    print(user_exists, type(user_exists))
+    if user_exists['exists']:   
+        raise HTTPException(status_code=400, detail="Username already registered")
+    
+    # Hash the password
+    hashed_password = hash_password(user.password)
+    
+    # Insert the user into the database
+    await users_db.insert_user(user.name, user.surname, user.username, hashed_password)
+   
+    return {"message": "User registered successfully."}
+
+
+@app.post("/login/")
+async def login_user(user: User):
+   
+    user_row = await users_db.get_user(user.username)
+  
+    if user_row and check_password(user_row['password'], user.password):      
+        return {"message": "Login successful!"}
+  
+    raise HTTPException(status_code=401, detail="Invalid username or password")
+
 
 @app.get("/")
 def swagger_documentaiton():
@@ -196,17 +235,16 @@ async def answer_generation(query: Query):
 @app.post("/verification")
 async def verification_answer(answer: VerificationInput):
     answer_complete = answer.text
-   
+    print("ANSWER =\n",answer_complete)
     pmid_claim = split_text_by_pubmed_references(answer_complete)
+    #print("PMID CLAIM = ",pmid_claim)
+    claim_pmid_list = verification_format(pmid_claim)
     print("Results of splitting...")
-    print(pmid_claim)
+    print(claim_pmid_list)
    
     async def generate_results():
-        for result in verification_claim(pmid_claim, documents_found, verification_model, verification_tokenizer):
+        for result in verification_claim(claim_pmid_list, documents_found, verification_model, verification_tokenizer):
             json_result = json.dumps(result)
-            if result['result'] == NO_REFERENCE:
-                await asyncio.sleep(0.3)  # Delay in seconds
-            
             yield json_result
     
     return StreamingResponse(generate_results(), media_type="application/json")

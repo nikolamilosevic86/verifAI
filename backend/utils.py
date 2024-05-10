@@ -2,6 +2,8 @@ import torch
 from datetime import datetime
 from threading import Thread
 from transformers import TextIteratorStreamer
+import hashlib
+
 
 async def generate(instruction: str, temperature:float, tokenizer, model, device):
     """
@@ -59,3 +61,16 @@ def parse_date(date_string:str, format_strings:datetime = ["%Y-%m-%d", "%Y-%m", 
             pass
     # If none of the formats match, return None or handle the error as needed
     raise ValueError("Incorrect form of date")
+
+def hash_password(password: str) -> str:
+    """Hash a password for storing."""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+
+
+def check_password(stored_hash: str, user_password: str) -> bool:
+    """Verify a stored password against one provided by user."""
+    
+    user_password_hash = hashlib.sha256(user_password.encode()).hexdigest()
+ 
+    return user_password_hash == stored_hash

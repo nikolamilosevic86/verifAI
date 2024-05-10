@@ -1,6 +1,7 @@
 import re
 import torch
 from nltk.tokenize import sent_tokenize
+import time
 from constants import *
 
 def split_text_by_pubmed_references(text:str) -> list:
@@ -32,7 +33,10 @@ def split_text_by_pubmed_references(text:str) -> list:
 
     # Search for the pattern in the text
     matches = list(pattern.finditer(text))
-   
+    
+    # No Reference
+    if matches == []:
+        return []
 
     start_pos = 0
     for match in matches:
@@ -59,6 +63,8 @@ def split_text_by_pubmed_references(text:str) -> list:
             results.append([pubmed_number,text_segment])
 
             start_pos = match.end()
+            
+        # taking the previous sentence because there are more reference for one sentence
         elif pubmed_number and len(results) > 0 and not text_segment:
             
             results.append([pubmed_number,results[-1][1]])
@@ -81,23 +87,54 @@ def split_text_by_pubmed_references(text:str) -> list:
     return results if no_reference == False else []
 
 
+def verification_format(claims:list) -> [ [str, list] ]:
+    """
+    param:
+    claims: list of claim for each pmid
+
+    return:
+    it returns a list where each element is composed by [claim, [pmid1,pmid2]] 
+    in order to manage better the situation with the front end part
+    """
+
+    if claims == []:
+        return []
+    
+    pmid, claim = claims[0]
+    output_format = [[claim, [pmid]]]
+    for pmid, claim in claims[1:]:
+        if claim == output_format[-1][0]: # check if the claim is present
+            output_format[-1][1].append(pmid)
+        else:
+            output_format.append([claim, [pmid]])
+    
+    return output_format
+
+
+
 def verification_claim(claims: list, abstracts: dict, verification_model, verification_tokenizer):
-    if not claims:
-        yield {"claim": "The whole abstract", "result": NO_REFERENCE}
+    if claims == []:
+        yield  {}
     
     for element in claims:
-        pmid, claim = element
-        if pmid in abstracts:
-            
-            model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + abstracts[pmid]["text"] + verification_tokenizer.sep_token
-            inputs = verification_tokenizer(model_instruction, return_tensors="pt")
-            with torch.no_grad(): 
-                outputs = verification_model(**inputs)
-                logits = outputs.logits
-                prediction = torch.argmax(logits).numpy()
-                label_prediction = LABELS[prediction] 
-                yield {"claim": claim, "pmid": pmid, "result": label_prediction}
-        else:
-            yield {"claim": claim, "result": NO_REFERENCE}
+        
+        claim, pmids = element
+        results = {"claim":claim, "result":{}}
+        
+        for pmid in pmids:
+            if pmid in abstracts:
+                model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + abstracts[pmid]["text"] + verification_tokenizer.sep_token
+                inputs = verification_tokenizer(model_instruction, return_tensors="pt")
+                with torch.no_grad(): 
+                    outputs = verification_model(**inputs)
+                    logits = outputs.logits
+                    prediction = torch.argmax(logits).numpy()
+                    label_prediction = LABELS[prediction] 
+                    results["result"][pmid] = label_prediction
+            else:
+                results["result"][NO_REFERENCE_NUMBER] = NO_REFERENCE
+                time.sleep(0.2)  # because the operation is so much faster than the others
+        yield results
+        
 
 
