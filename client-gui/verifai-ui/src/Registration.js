@@ -40,11 +40,14 @@ function Registration() {
         <div class="special-h2">
             <h1>Registration</h1>
         </div>
+    
+        <form onSubmit={handleLogin}>
             <input type="text" placeholder="Name" onChange={e => setName(e.target.value)}/>
             <input type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)}/>
             <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
             <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
-            <button onClick={handleLogin}>Submit</button>
+            <button class="center-button" onClick={handleLogin}>Submit</button>
+        </form>
         </div>
         <br></br>
        

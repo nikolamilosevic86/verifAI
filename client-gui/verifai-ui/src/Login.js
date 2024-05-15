@@ -42,9 +42,12 @@ function Login() {
         <img src={logo} alt="Logo" className="login-logo" />
         <div className="login-form">
             <h1>Sign in</h1>
-            <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
-            <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
-            <button onClick={handleLogin}>Login</button>
+            <form onSubmit={handleLogin}>
+                <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
+                <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
+                <button class="center-button" onClick={handleLogin}>Login</button>
+            </form>
+            
         </div>
         <br></br>
         <p>New to VerifAi <targe><span onClick={handleRegister} style={{ color: 'blue', cursor: 'pointer' }}>join now</span></targe></p>

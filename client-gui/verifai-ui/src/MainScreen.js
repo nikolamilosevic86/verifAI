@@ -1,14 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
+import { DataContext } from './DataContext';
+
 
 function NavigateWrapper(props) {
     const navigate = useNavigate();
+    const { setSharedData } = useContext(DataContext);
 
-    return <MainScreen {...props} navigate={navigate} />;
+    return <MainScreen {...props} navigate={navigate} setSharedData={setSharedData} />
 }
 
 
@@ -32,9 +35,10 @@ class MainScreen extends Component {
             output: "" , // Holds HTML content safely
             output_verification: ""
         };
-        
-        
+        this.componentRef = createRef();
+        this.captureStateAndHTML = this.captureStateAndHTML.bind(this)
         this.postVerification = this.postVerification.bind(this)
+        this.saveSession = this.saveSession.bind(this)
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setOutput = this.setOutput.bind(this);  
@@ -56,6 +60,29 @@ class MainScreen extends Component {
         
     }
     
+    fetchData() {
+        
+        return {
+            modalOpen: this.state.modalOpen,
+            value: this.state.value,
+            temperature: this.state.temperature,
+            lex_parameter: this.state.lex_parameter,
+            sem_parameter: this.state.sem_parameter,
+            numDocuments: this.state.numDocuments,
+            startDate: this.state.startDate,
+            endDate: this.state.endDate,
+            search_type: this.state.search_type,
+            submitted: this.state.submitted,
+            loading: this.state.loading,
+            output: this.state.output,
+            output_verification: this.state.output_verification
+        };
+    }
+
+    componentDidMount() {
+        const data = this.fetchData();
+        this.props.setSharedData(data);
+      }
     
     handleLogout = () => {
         this.context.logout();
@@ -175,10 +202,54 @@ class MainScreen extends Component {
         
     }
 
+    captureStateAndHTML() {
+        const currentState = this.state; // Capture the current state
+    
+        const htmlContent = this.componentRef.current ? this.componentRef.current.outerHTML : '';
+                
+        const getCircularReplacer = () => {
+            const seen = new WeakSet();
+            return (key, value) => {
+                if (typeof value === "object" && value !== null) {
+                    if (seen.has(value)) {
+                        return;
+                    }
+                    seen.add(value);
+                }
+                return value;
+            };
+        };
+
+        const stateString = JSON.stringify(currentState, getCircularReplacer());
+        return { state: stateString, html: htmlContent };
+    }
+
+    saveSession() {
+        
+        const { state, html } = this.captureStateAndHTML(); // Make sure you have implemented this method
+       
+        fetch(`http://3.74.47.54:5001/save_session`, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ state, html })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Session saved with ID:', data.session_id);
+            this.props.navigate(`/get_session/${data.session_id}`);
+            
+        })
+        .catch(error => console.error('Error saving session:', error));
+    }
+
+    
+
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
         
-        fetch("http://3.74.47.54:5001/verification", {
+        fetch("http://3.74.47.54:5001/verification_answer", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -190,11 +261,19 @@ class MainScreen extends Component {
             const decoderVerification = new TextDecoder('utf-8');
               
             const processResultVerification = async (result) => {
+                
                 if (result.done) {
                     console.log("Streaming finished.");
-                    this.setState({loading:false});
+                    this.setState({loading: false}, () => {
+                        // These operations will only execute after the state has been updated to false
+                        console.log("State = ", this.state.loading); // This will now log 'false'
+                        this.saveSession();
+                    });
                     return;
                 }
+                    // Any other operations if result.done is not true
+                
+                
                 
                 let claim_string = decoderVerification.decode(result.value, {stream: true});
                 
@@ -217,10 +296,13 @@ class MainScreen extends Component {
                 }
                 
                 function tooltipToWrite(listResult) {
+                    
                     let text = "";
                     let color = "";
-                    for (let [pmid,label] of Object.entries(listResult)) {
-                        console.log("ENTRO NEL FOR")
+                    for (let [pmid, result] of Object.entries(listResult)) {
+                        
+                        let label = result['label']
+
                         if (color === "") {
                             color = (label === "SUPPORT") ? 'green' :
                                     (label === "NO REFERENCE") ? 'gray' :
@@ -234,12 +316,18 @@ class MainScreen extends Component {
                                        (label === "NO REFERENCE") ? '  <span class="gray-ball"></span>' :
                                        (label === "NO_EVIDENCE") ? '  <span class="yellow-ball"></span>' :
                                        (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
-                
-                        let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid}>${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
-                                         (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
-                                         (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                         (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
                         
+                    
+
+                        let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid}>${result['title']}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                                         (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
+                                         (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>${result['title']}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                         (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>${result['title']}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                        
+                        if (label === "SUPPORT" || label === "CONTRADICT"){
+                            let closest_sentence = result['closest_sentence']
+                            tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
+                        }
                         console.log(tooltipText)
                         text += "<br>" + tooltipText;
                         console.log("Text = ",text)
@@ -375,7 +463,8 @@ class MainScreen extends Component {
                     
                     
                     return (
-                        <div className='App'>
+                        <div className='App' ref={this.componentRef}>
+                            <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                             <div className="router-reset">
                                 <img className="App-logo" src={logo} alt="Logo" />
                                 
@@ -482,7 +571,6 @@ class MainScreen extends Component {
                                         <button className='AskButton' onClick={this.handleSubmit}>
                                             Ask
                                         </button>
-                                        <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                                     </form>
                                 </div>
                                 <br></br>

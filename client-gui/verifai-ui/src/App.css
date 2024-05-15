@@ -84,32 +84,34 @@
 }
 
 .LogoutButton {
-  backface-visibility: hidden;
-  
-  background: #343334;
-  height: 30px;
+  position: absolute;
+  top: 10px;    /* Position at top-right corner */
+  right: 10px;
+  background: #615f61;
+  height: 25px;  /* Reduced height */
   border: 0;
   border-radius: .375rem;
   box-sizing: border-box;
   color: #fff;
   cursor: pointer;
   display: inline-block;
-  font-family: Circular,Helvetica,sans-serif;
-  font-size: 1.125rem;
+  font-family: Circular, Helvetica, sans-serif;
+  font-size: 0.875rem;  /* Smaller font size for a more compact look */
   font-weight: 700;
   letter-spacing: -.01em;
   line-height: 1.2;
-  padding: 0.2rem 1.25rem;
-  position: relative;
-  text-align: left;
+  padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
+  text-align: center;  /* Changed to center to align text properly */
   text-decoration: none;
-  transform: translateZ(0) scale(1);
   transition: transform .2s;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
 }
 
+.LogoutButton:hover {
+  background-color: #000000; /* Darker shade on hover */
+}
 
 .AskButton:disabled {
   color: #787878;
@@ -481,3 +483,19 @@ h2 {
   visibility: visible;
   opacity: 1;
 }
+
+.simpleBlueButton {
+  background-color: #007bff; /* A pleasant blue tone */
+  color: white;              /* White text for better readability */
+  border: none;              /* No border for a cleaner look */
+  border-radius: 4px;        /* Slightly rounded corners */
+  padding: 5px 10px;         /* Small padding to keep the button compact */
+  font-size: 15px;           /* Smaller font size for the small button design */
+  cursor: pointer;           /* Cursor changes to pointer to indicate it's clickable */
+  outline: none;             /* Removes the outline to maintain simplicity on focus */
+}
+
+.simpleBlueButton:hover {
+  background-color: #0056b3; /* Darker blue on hover for a subtle interaction effect */
+}
+
