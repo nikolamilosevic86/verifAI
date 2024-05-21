@@ -14,6 +14,23 @@
     animation: App-logo-spin infinite 20s linear;
   }
 } */
+
+.router-reset * {
+  padding: 0;
+  margin: 0;
+  
+  text-align: left;
+
+}
+
+.main-screen {
+  width: 100%;
+  max-width: 1500px; /* or whatever your design requires */
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box; /* Helps control padding and border */
+}
+
 .QuestionClass{
   width: 60%;
   height: 30px;
@@ -21,6 +38,16 @@
   font-size:18px;
   border-radius: 8px;
 }
+
+.QuestionClassForm{
+  width: 100%;
+  height: 30px;
+  size:200;
+  font-size:18px;
+  border-radius: 8px;
+}
+
+
 .QuestionLabel{
   text-align: left;
 }
@@ -54,6 +81,36 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+}
+
+.LogoutButton {
+  position: absolute;
+  top: 10px;    /* Position at top-right corner */
+  right: 10px;
+  background: #615f61;
+  height: 25px;  /* Reduced height */
+  border: 0;
+  border-radius: .375rem;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Circular, Helvetica, sans-serif;
+  font-size: 0.875rem;  /* Smaller font size for a more compact look */
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
+  text-align: center;  /* Changed to center to align text properly */
+  text-decoration: none;
+  transition: transform .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.LogoutButton:hover {
+  background-color: #000000; /* Darker shade on hover */
 }
 
 .AskButton:disabled {
@@ -228,12 +285,14 @@ input[type=range]::-moz-range-thumb {
 .temperature-labels {
   display: flex;
   position: relative; /* Added to position buttons absolutely relative to this container */
+  height: 50;
   width: 100%; /* Ensure it spans the full width of the range input */
 }
 
 /* Style for the buttons */
 .temperature-labels button {
-  position: relative; /* Absolutely position each button */
+  position: absolute; /* Absolutely position each button */
+  top: 100;
   background: none;
   border: 10px;
   color: #009688;
@@ -249,13 +308,13 @@ input[type=range]::-moz-range-thumb {
 }
 
 .temperature-labels button.middle {
-  left: 28%; /* Align to the center */
-  transform: translateX(-28%); /* Center the button */
+  left: 45%; /* Align to the center */
+  transform: translateX(-45%); /* Center the button */
 }
 
 .temperature-labels button.end {
-  left: 55%; /* Align to the right */
-  transform: translateX(-55%);
+  left: 90%; /* Align to the right */
+  transform: translateX(-90%);
 }
 
 p {
@@ -326,6 +385,16 @@ p {
 
 }
 
+
+.output-verification {
+  background-color: #fafafa;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 20px;
+  max-width: 770px;
+
+}
+
 .output-tokens {
   white-space: pre-line; /* Ensures that line breaks are respected */
   
@@ -337,8 +406,10 @@ p {
 }
 
 h2 {
+  text-align: center;
   margin-left: 50px; /* Adjust the value as needed to move the text to the left */
   max-width: 770px;
+  transform: translateX(50px); 
   /* Other styles... */
 }
 
@@ -358,3 +429,73 @@ h2 {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.green-ball, .red-ball, .gray-ball,.orange-ball {
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  vertical-align: middle;
+  display: inline-block;
+  margin-right: 5px;
+}
+
+.green-ball {
+  background-color: #00ff00; /* Green color */
+}
+
+.red-ball {
+  background-color: #ff0000; /* Red color */
+}
+
+.gray-ball{
+  background-color: gray;
+}
+
+.orange-ball{
+  background-color:orange;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 280px;
+  background-color: #f9f9f9;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -140px; /* Use half of the width to center it. */
+  box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+  /* Fade in tooltip - animation */
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.simpleBlueButton {
+  background-color: #007bff; /* A pleasant blue tone */
+  color: white;              /* White text for better readability */
+  border: none;              /* No border for a cleaner look */
+  border-radius: 4px;        /* Slightly rounded corners */
+  padding: 5px 10px;         /* Small padding to keep the button compact */
+  font-size: 15px;           /* Smaller font size for the small button design */
+  cursor: pointer;           /* Cursor changes to pointer to indicate it's clickable */
+  outline: none;             /* Removes the outline to maintain simplicity on focus */
+}
+
+.simpleBlueButton:hover {
+  background-color: #0056b3; /* Darker blue on hover for a subtle interaction effect */
+}
+

@@ -5,7 +5,7 @@ from qdrant_client.http import models
 from utils import parse_date
 
 class QueryProcessor:
-    def __init__(self, index_lexical:str = "medline-faiss-hnsw-lexical-pmid", index_name_semantic ="medline-faiss-hnsw",
+    def __init__(self, index_lexical:str = "medline-faiss-hnsw-lexical-pmid", index_name_semantic:str ="medline-faiss-hnsw",
                 model=None, lexical_client=None, semantic_client=None, rescore = True, stopwords=set([])):
         
         self.index_lexical_name = index_lexical
@@ -176,19 +176,19 @@ class QueryProcessor:
         date_lte = parse_date(pubdate_filter_lte)
         date_gte = parse_date(pubdate_filter_gte)
         
-        document_retrived = self.process_results(document_retrived, date_lte, date_gte)
+        document_retrived = self.process_results(document_retrived, limit, date_lte, date_gte)
         
         # should be cases using the date, where the systems does not find anything
         if document_retrived == []:
             raise Exception(f"No document retrived for {query_str} using {query_type} search")
 
-        return document_retrived[:limit]
+        return document_retrived
     
 
-    def process_results(self, results: list, date_lte: datetime, date_gte: datetime) -> list:
+    def process_results(self, results: list, limit:int, date_lte: datetime, date_gte: datetime) -> dict:
         
-        retrieved_documents = []
-        for element in results:
+        retrieved_documents = {}
+        for i,element in enumerate(results):
             
             pmid,_ = element
             query = {
@@ -204,13 +204,13 @@ class QueryProcessor:
             date_string = results['hits']['hits'][0]["_source"]['pubdate']
             
             date = parse_date(date_string)
-           
+            
             if date_gte <= date and date <= date_lte:
-                retrieved_documents.append({
-                    "pmid": pmid,
+                retrieved_documents[pmid] = {
                     "text": full_text,
                     "pubdate": date
-                    # if needed to add other field
-                })
+                }
+            if i == limit-1:
+                break
         
         return retrieved_documents
