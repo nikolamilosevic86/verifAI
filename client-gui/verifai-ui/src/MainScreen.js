@@ -168,6 +168,7 @@ class MainScreen extends Component {
         const regex1 = /^\(\[\d+\]\)\.$/;
         const regex2 = /^\(\[\d+\]\)\;$/;
         const regex3 = /^\(\[\d+\]\)\,$/;
+        const regex15 = /\[(\d+)\]/;
         const regex5 = /^\[\d+\]\.$/;
         const regex6 = /^\[\d+\]$/;
         const regex7 = /^\[\d+\]\,$/;
@@ -186,10 +187,11 @@ class MainScreen extends Component {
             let token = decoder.decode(result.value, {stream: true});
             
             var no_space_token = token.trim()
+            console.log("Token = ",no_space_token)
             if (regex.test(no_space_token) || regex1.test(no_space_token) || regex2.test(no_space_token) || regex3.test(no_space_token)
                 || regex5.test(no_space_token) || regex6.test(no_space_token) || regex7.test(no_space_token) || 
                 regex8.test(no_space_token) || regex9.test(no_space_token) || regex10.test(no_space_token) ||
-                regex11.test(no_space_token) || regex12.test(no_space_token) || regex13.test(no_space_token)) {
+                regex11.test(no_space_token) || regex12.test(no_space_token) || regex13.test(no_space_token) || regex15.test(no_space_token)) {
                 no_space_token = no_space_token.replace(/[\[\]()\.,;]/g, '');
                 var new_token = `<a href="${baseUrl + no_space_token}" target="_blank">${token}</a>`;
                 token = new_token;
@@ -238,7 +240,7 @@ class MainScreen extends Component {
         .then(response => response.json())
         .then(data => {
             console.log('Session saved with ID:', data.session_id);
-            this.props.navigate(`/get_session/${data.session_id}`);
+            //this.props.navigate(`/get_session/${data.session_id}`);
             
         })
         .catch(error => console.error('Error saving session:', error));
@@ -290,8 +292,14 @@ class MainScreen extends Component {
                     var final_output = `<span class="tooltip" style="color: gray;">${output}<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
 
                     
-                    this.setState({ output: final_output });
-                    this.setState({loading:false});
+                    
+
+                    this.setState({loading: false}, () => {
+                        // These operations will only execute after the state has been updated to false
+                        this.setState({ output: final_output });
+                        console.log("State = ", this.state.loading); // This will now log 'false'
+                        this.saveSession();
+                    });
                     return
                 }
                 
@@ -306,7 +314,7 @@ class MainScreen extends Component {
                         if (color === "") {
                             color = (label === "SUPPORT") ? 'green' :
                                     (label === "NO REFERENCE") ? 'gray' :
-                                    (label === "NO_EVIDENCE") ? 'yellow' :
+                                    (label === "NO_EVIDENCE") ? 'orange' :
                                     (label === "CONTRADICT") ? 'red' : '';
                         } else {
                             color = "blue"
@@ -314,7 +322,7 @@ class MainScreen extends Component {
                 
                         let ballHtml = (label === "SUPPORT") ? '  <span class="green-ball"></span>' :
                                        (label === "NO REFERENCE") ? '  <span class="gray-ball"></span>' :
-                                       (label === "NO_EVIDENCE") ? '  <span class="yellow-ball"></span>' :
+                                       (label === "NO_EVIDENCE") ? '  <span class="orange-ball"></span>' :
                                        (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
                         
                     

@@ -21,6 +21,7 @@ function Registration() {
                 body: JSON.stringify({ name, surname, username, password })
             });
             if (response.ok) {
+                alert('Registration completed successfully!');
                 navigate('/login');
             } else if (response.status === 400) {
                 alert('Username already registered');

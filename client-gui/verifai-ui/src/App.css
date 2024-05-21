@@ -430,7 +430,7 @@ h2 {
   100% { transform: rotate(360deg); }
 }
 
-.green-ball, .red-ball, .gray-ball,.yellow-ball {
+.green-ball, .red-ball, .gray-ball,.orange-ball {
   height: 20px;
   width: 20px;
   border-radius: 50%;
@@ -451,8 +451,8 @@ h2 {
   background-color: gray;
 }
 
-.yellow-ball{
-  background-color:yellow;
+.orange-ball{
+  background-color:orange;
 }
 
 .tooltip {

@@ -2,6 +2,7 @@ import re
 import torch
 from nltk.tokenize import sent_tokenize
 import time
+import numpy as np
 from constants import *
 
 def split_text_by_pubmed_references(text:str) -> list:
@@ -20,8 +21,8 @@ def split_text_by_pubmed_references(text:str) -> list:
 
     # parameter used to see if there are references, we assume at the beggining no reference
     no_reference = True 
-   
-    regular_expression = r'<a href=".*?" target="_blank">(.*?)<\/a>'
+    
+    regular_expression = r'<a href=".*?" target="_blank">(.*?)\n*<\/a>'
 
     # used to verify if the first sentence has the reference, it is usually the general response
     regular_expression_removing = r'<a href=".*?" target="_blank">'
@@ -101,6 +102,7 @@ def verification_format(claims:list) -> [ [str, list] ]:
         return []
     
     pmid, claim = claims[0]
+
     output_format = [[claim, [pmid]]]
     for pmid, claim in claims[1:]:
         if claim == output_format[-1][0]: # check if the claim is present
@@ -111,11 +113,26 @@ def verification_format(claims:list) -> [ [str, list] ]:
     return output_format
 
 
+def find_closest_sentence(claim, abstract, sentence_model):
+    abstract_sentence = sent_tokenize(abstract)
+    claim_vector = sentence_model.encode(claim)
+    max_dot_product = float('-inf')
+    closest_sentence = None
+    for sentence in abstract_sentence:
+        sentence_vector = sentence_model.encode(sentence)
+        dot_product = np.dot(claim_vector,sentence_vector)
+        if dot_product > max_dot_product:
+            max_dot_product = dot_product
+            closest_sentence = sentence
+    return closest_sentence
 
-def verification_claim(claims: list, abstracts: dict, verification_model, verification_tokenizer):
+
+
+
+def verification_claim(claims: list, abstracts: dict, verification_model, verification_tokenizer, sentence_model):
     if claims == []:
         yield  {}
-    
+    #print("SONO QUI E abstarcts vale = ",abstarcts)
     for element in claims:
         
         claim, pmids = element
@@ -123,6 +140,14 @@ def verification_claim(claims: list, abstracts: dict, verification_model, verifi
         
         for pmid in pmids:
             if pmid in abstracts:
+                results['result'][pmid] = {}
+
+                # Adding the title as information to sent, the title is divided for each document by \n\n
+                title = abstracts[pmid]["text"].split("\n\n")[0] 
+                abstract = ' '.join(abstracts[pmid]["text"].split("\n\n")[1:])
+                results['result'][pmid]['title'] = title
+                
+                # Inference
                 model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + abstracts[pmid]["text"] + verification_tokenizer.sep_token
                 inputs = verification_tokenizer(model_instruction, return_tensors="pt")
                 with torch.no_grad(): 
@@ -130,10 +155,14 @@ def verification_claim(claims: list, abstracts: dict, verification_model, verifi
                     logits = outputs.logits
                     prediction = torch.argmax(logits).numpy()
                     label_prediction = LABELS[prediction] 
-                    results["result"][pmid] = label_prediction
+                    results["result"][pmid]["label"] = label_prediction
+                    if label_prediction == SUPPORT or label_prediction == CONTRADICT:
+                        closest_sentence = find_closest_sentence(claim, abstract, sentence_model)
+                        results["result"][pmid]["closest_sentence"] = closest_sentence
             else:
-                results["result"][NO_REFERENCE_NUMBER] = NO_REFERENCE
-                time.sleep(0.2)  # because the operation is so much faster than the others
+                results["result"][NO_REFERENCE_NUMBER] = {}
+                results["result"][NO_REFERENCE_NUMBER]['label'] = NO_REFERENCE
+                
         yield results
         
 

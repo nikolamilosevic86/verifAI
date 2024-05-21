@@ -5,7 +5,7 @@ from qdrant_client.http import models
 from utils import parse_date
 
 class QueryProcessor:
-    def __init__(self, index_lexical:str = "medline-faiss-hnsw-lexical-pmid", index_name_semantic ="medline-faiss-hnsw",
+    def __init__(self, index_lexical:str = "medline-faiss-hnsw-lexical-pmid", index_name_semantic:str ="medline-faiss-hnsw",
                 model=None, lexical_client=None, semantic_client=None, rescore = True, stopwords=set([])):
         
         self.index_lexical_name = index_lexical
