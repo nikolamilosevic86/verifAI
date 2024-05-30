@@ -111,6 +111,38 @@
 
 .LogoutButton:hover {
   background-color: #000000; /* Darker shade on hover */
+  cursor: pointer;
+}
+
+.UserButton {
+  position: absolute;
+  top: 10px;    /* Position at top-right corner */
+  left: 10px;
+  background: #a90000;
+  height: 25px;  /* Reduced height */
+  border: 0;
+  border-radius: .375rem;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: Circular, Helvetica, sans-serif;
+  font-size: 0.875rem;  /* Smaller font size for a more compact look */
+  font-weight: 700;
+  letter-spacing: -.01em;
+  line-height: 1.2;
+  padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
+  text-align: center;  /* Changed to center to align text properly */
+  text-decoration: none;
+  transition: transform .2s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.UserButton:hover {
+  background-color: #8e0303; /* Darker shade on hover */
+  cursor: pointer;
 }
 
 .AskButton:disabled {
@@ -212,7 +244,7 @@
 
 .ModalContent h2 {
   color: #333;
-  font-size: 20px;
+  font-size: 10px;
 }
 
 .ModalContent label {
@@ -407,9 +439,19 @@ p {
 
 h2 {
   text-align: center;
-  margin-left: 50px; /* Adjust the value as needed to move the text to the left */
+  margin-left: 20px; /* Adjust the value as needed to move the text to the left */
   max-width: 770px;
-  transform: translateX(50px); 
+  transform: translateX(20px); 
+  font-size: 20px;
+  /* Other styles... */
+}
+
+h1 {
+  text-align: center;
+  margin-left: 20px; /* Adjust the value as needed to move the text to the left */
+  max-width: 770px;
+  transform: translateX(20px); 
+  font-size: 30px;
   /* Other styles... */
 }
 
@@ -498,4 +540,92 @@ h2 {
 .simpleBlueButton:hover {
   background-color: #0056b3; /* Darker blue on hover for a subtle interaction effect */
 }
+.document-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-left: 20px;
+  margin-top: 10px;
+  width: 700px;
+}
 
+.document-square {
+  width: 110px;  /* Reduced width */
+  height: 80px;  /* Reduced height */
+  border: 1px solid #ccc;
+  padding: 5px;  /* Reduced padding */
+  overflow: hidden;
+  background-color: #f9f9f9;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.document-title {
+  font-size: 14px;  /* Reduced font size */
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.document-content {
+  font-size: 12px;  /* Reduced font size */
+  flex-grow: 1;
+}
+
+.document-square.center {
+  justify-content: center;  /* Center content vertically */
+  align-items: center;      /* Center content horizontally */
+  text-align: center;       /* Center text */
+}
+
+.document-section:hover {
+  cursor: pointer; /* Change cursor to hand on hover */
+}
+
+h3 {
+  font-size: 10px;  
+  margin: 5px 0;    
+  padding: 0;       
+}
+
+.no-underline-link {
+  text-decoration: none; /* Remove underline */
+  color: inherit; /* Inherit the color from the parent */
+}
+
+.no-underline-link:hover {
+  text-decoration: none; /* Remove underline on hover */
+  color: inherit; /* Inherit the color from the parent */
+}
+
+
+.document-square h3,
+.document-square p {
+  color: initial;
+}
+
+
+.side-panel {
+  width: 300px;
+  overflow-y: auto;
+  padding: 10px;
+  border-left: 1px solid #ccc;
+  background-color: #f9f9f9;
+  position: fixed;
+  right: 0;
+  top: 0;
+  height: 100%;
+  z-index: 1000;
+}
+
+.document-detail {
+  border-bottom: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.document-detail h3, .document-detail p {
+  margin: 0;
+  padding: 0;
+}

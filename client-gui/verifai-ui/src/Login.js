@@ -1,40 +1,33 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import logo from './verifai-logo.png';
 import './Login.css';
 
 function Login() {
+   
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
-    const { login } = useAuth();
+    
+    const { user, login } = useAuth();
+    
+
     const handleLogin = async (e) => {
         e.preventDefault();
-        try {
-            const response = await fetch('http://3.74.47.54:5001/login/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password })
-            });
-            if (response.ok) {
-                const newUser = await response.json(); // Assume the response includes user data
-                login(newUser);
-                navigate('/main');
-            } else if (response.status === 401) {
-                alert('Invalid username or password');
-            }
-        } catch (error) {
-            console.error('Login error:', error);
-            alert('Login failed due to an unexpected error');
-        }
-    };
+        await login(username, password, navigate);
+    }
 
     const handleRegister = () => {
         navigate('/registration'); // Adjust the path according to your route settings
     };
+
+
+    useEffect(() => {
+        if (user && user.token && user.token != "" && user.token != undefined) {
+            navigate('/main');
+        }
+    }, [user, navigate]);
 
     return (
         
