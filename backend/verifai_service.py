@@ -1,5 +1,6 @@
 from threading import Thread
 from fastapi import FastAPI,HTTPException, Request, Depends
+from fastapi_jwt_auth import AuthJWT
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
@@ -10,7 +11,7 @@ import torch
 from sentence_transformers import SentenceTransformer
 from transformers import TextStreamer, TextIteratorStreamer, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForCausalLM, BitsAndBytesConfig
 from nltk.corpus import stopwords
-from query_parser import QueryProcessor
+
 from utils import convert_documents, generate, hash_password, check_password
 from peft import PeftModel
 import time 
@@ -19,8 +20,15 @@ import asyncio
 from fastapi.responses import StreamingResponse, HTMLResponse
 from jinja2 import Template
 from constants import *
-from verification import *
-from database import Database
+from query_handler.query_parser import QueryProcessor
+from verification_model.verification import *
+from database.database import *
+import jwt
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from the .env file
+load_dotenv()
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -37,16 +45,18 @@ print("Device = ", device)
 
 
 bnb_config = BitsAndBytesConfig(load_in_4bit=True,
-                                             # bnb_4bit_use_double_quant=True,  # kod našeg fine-tuninga modela ovo je bilo False, što se može videti ovde: https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.1-pqa/blob/main/README.md i zato je zakomentarisano
+                                             bnb_4bit_use_double_quant=True,  # kod našeg fine-tuninga modela ovo je bilo False, što se može videti ovde: https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.1-pqa/blob/main/README.md i zato je zakomentarisano
                                              bnb_4bit_quant_type="fp4",
                                              bnb_4bit_compute_dtype=torch.bfloat16
                                              )
 
+
 base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
+                                                               torch_dtype=torch.float32,  
                                                                trust_remote_code=True,
                                                                quantization_config=bnb_config,
                                                                device_map='auto',
-                                                               low_cpu_mem_usage=True
+                                                               low_cpu_mem_usage=True,
                                                                )
 
 tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
@@ -55,14 +65,15 @@ model_mistral = PeftModel.from_pretrained(base_model, PEFT_MODEL_ID).to(device)
 
 model_mistral.eval() # setting the model in evaluation mode
 
-model = SentenceTransformer(MODEL_CARD).to(device)
+
 
 verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICATION_MODEL_CARD)
 
 verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
 
-
+model = SentenceTransformer(MODEL_CARD).to(device)
 # stopwords from nltk
+
 english_stopwords = set(stopwords.words('english'))
 
 app = FastAPI(
@@ -87,6 +98,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class Settings(BaseModel):
+    authjwt_secret_key: str =  os.getenv("SECRET_KEY")
+    authjwt_algorithm: str =  os.getenv("ALGORITHM")
+
+# callback to get your configuration
+@AuthJWT.load_config
+def get_config():
+    return Settings()
 
 class Query(BaseModel):
     query: str
@@ -95,13 +114,10 @@ class Query(BaseModel):
     lex_par : float = 0.7
     semantic_par :float = 0.3
     limit : int = 10
-    stop_word : bool = True
-    # rescore ?
-    # To set 
+    stop_word : bool = True 
     filter_date_lte: str = "2100-01-01" # date before this one
     filter_date_gte: str = "1900-01-01" # date after this one
-    # Mistral parameters
-    temperature: float = 0.
+   
     
 class VerificationInput(BaseModel):
     query:str = ""
@@ -177,14 +193,38 @@ async def register_user(user: User):
 
 
 @app.post("/login/")
-async def login_user(user: User):
+async def login_user(user: User, Authorize: AuthJWT = Depends()):
    
     user_row = await users_db.get_user(user.username)
   
-    if user_row and check_password(user_row['password'], user.password):      
-        return {"message": "Login successful!"}
+    if user_row and check_password(user_row['password'], user.password):  
+        access_token = Authorize.create_access_token(subject=user.username) 
+        #{"name": user_row['name'], "surname": user_row["surname"], "username":user_row["username"], "token":token}
+        return {"token":access_token} 
   
     raise HTTPException(status_code=401, detail="Invalid username or password")
+
+@app.post("/change_password")
+async def change_password(request: Request, Authorize: AuthJWT = Depends()):
+ 
+    Authorize.jwt_required()
+    data = await request.json()
+    old_password = data.get("oldPassword")
+    new_password = data.get("newPassword")
+
+    username = Authorize.get_jwt_subject()
+    
+    user_row = await users_db.get_user(username)
+   
+    
+    
+    # when the request arrived we are sure that the user exists
+    if user_row and not check_password(user_row['password'], old_password):      
+        raise HTTPException(status_code=401, detail="Invalid old password")
+
+    hashed_password = hash_password(new_password)
+    
+    await users_db.change_password(username, hashed_password)
 
 
 @app.get("/")
@@ -194,7 +234,8 @@ def swagger_documentaiton():
 
 
 @app.post("/search_index")
-def search(query: Query):
+def search(query: Query,Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
     try:
         documents = query_parser.execute_query(query.query, query.search_type, lex_parameter=query.lex_par, 
                                                semantic_parameter=query.semantic_par,stopwords_preprocessing=query.stop_word)
@@ -205,13 +246,14 @@ def search(query: Query):
 
 
 @app.post("/query")
-async def answer_generation(query: Query):
+async def answer_generation(query: Query, Authorize: AuthJWT = Depends()):
     global documents_found
+    Authorize.jwt_required()
     search_query = query.query
     
     print("THE SEARCH QUERY IS ",search_query)
-    print(f"Search type {query.search_type}, Date {query.filter_date_lte}, {query.filter_date_gte}, Temperature = {query.temperature}")
-    print(f"Param lex = {query.lex_par}, sem_param = {query.semantic_par}")
+    print(f"Search type {query.search_type}, Date {query.filter_date_lte}, {query.filter_date_gte}")
+    print(f"Param lex = {query.lex_par}, sem_param = {query.semantic_par}, limit = {query.limit}")
     if not search_query:
         raise HTTPException(status_code=400, detail="Query parameter 'search' is missing")
     
@@ -223,21 +265,37 @@ async def answer_generation(query: Query):
                                                 pubdate_filter_gte=query.filter_date_gte,stopwords_preprocessing=query.stop_word)
         
         documents_found = documents
-        documents_string = convert_documents(documents)
-        print("Finished IR = ", time.time() - start)
-        mistral_input = f"{search_query}\nPapers:\n" + documents_string
-        print(mistral_input)
-        print("")
-        print("")
-        return StreamingResponse(generate(mistral_input,query.temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
-            
+        
+        return documents
     except Exception as e:
         #Handle a specific type of exception
         raise HTTPException(status_code=500, detail="{}".format(str(e)))
 
 
+
+@app.post("/stream_tokens")
+async def stream_tokens(request:Request, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
+    data = await request.json()
+    search_query = data['query']
+    temperature = data['temperature']
+    try:
+
+        documents_string = convert_documents(documents_found)
+        
+        mistral_input = f"{search_query}\nPapers:\n" + documents_string
+        
+        print(mistral_input)
+        print("")
+        print("")
+        
+        return StreamingResponse(generate(mistral_input,temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="{}".format(str(e)))
+
 @app.post("/verification_answer")
-async def verification_answer(answer: VerificationInput):
+async def verification_answer(answer: VerificationInput, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
     answer_complete = answer.text
     print("ANSWER =\n",answer_complete)
     pmid_claim = split_text_by_pubmed_references(answer_complete)
@@ -267,7 +325,8 @@ async def verification_answer(answer: VerificationInput):
 
 
 @app.post("/save_session")
-async def handle_save_session(request: Request):
+async def handle_save_session(request: Request, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
     data = await request.json()
     state = data['state']
     html = data['html']
@@ -276,7 +335,8 @@ async def handle_save_session(request: Request):
     return {"session_id": session_id}
 
 @app.get("/get_session/{session_id}")
-async def handle_get_session(session_id: str):
+async def handle_get_session(session_id: str, Authorize: AuthJWT = Depends()):
+    Authorize.jwt_required()
     print("ENTRO")
     session_data = await users_db.get_web_session(int(session_id))
     print("SESSION DATA = ", session_data)

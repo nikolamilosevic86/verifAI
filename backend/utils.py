@@ -25,7 +25,7 @@ Answer:"""
         raise Exception("Promt too long")
     else:
         streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
-        generation_kwargs = dict(encodeds, streamer=streamer, max_new_tokens=1200, temperature=temperature)
+        generation_kwargs = dict(encodeds, streamer=streamer, max_new_tokens=10, temperature=temperature)
         thread = Thread(target=model.generate, kwargs=generation_kwargs)
         thread.start()
         for new_text in streamer:
