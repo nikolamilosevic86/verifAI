@@ -18,3 +18,7 @@ VERIFICATION_MODEL_CARD = "MilosKosRad/TextualEntailment_DeBERTa_preprocessedSci
 # Indexing
 INDEX_NAME_LEXICAL = 'medline-faiss-hnsw-lexical-pmid'
 INDEX_NAME_SEMANTIC = "medline-faiss-hnsw"
+
+TIMEOUT = 120
+# Paralle Request
+#PARALLEL_PROCESSES = 2

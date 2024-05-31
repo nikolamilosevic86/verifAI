@@ -1,31 +1,30 @@
-from threading import Thread
 from fastapi import FastAPI,HTTPException, Request, Depends
 from fastapi_jwt_auth import AuthJWT
+from fastapi.responses import StreamingResponse, HTMLResponse
 from pydantic import BaseModel
+import jwt
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
-import os, sys
+
 from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
 import torch
 from sentence_transformers import SentenceTransformer
 from transformers import TextStreamer, TextIteratorStreamer, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForCausalLM, BitsAndBytesConfig
 from nltk.corpus import stopwords
-
-from utils import convert_documents, generate, hash_password, check_password
 from peft import PeftModel
+
 import time 
 import json
 import asyncio
-from fastapi.responses import StreamingResponse, HTMLResponse
-from jinja2 import Template
-from constants import *
-from query_handler.query_parser import QueryProcessor
-from verification_model.verification import *
-from database.database import *
-import jwt
+import os, sys
 from dotenv import load_dotenv
-import os
+
+from utils import convert_documents, generate, hash_password, check_password
+from query_handler.query_parser import QueryProcessor
+from database.database import Database
+from verification_model.verification import *
+from constants import *
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -38,7 +37,7 @@ sys.path.insert(0, parent_dir_path)
 
 
 
-# Models
+#-------------------------------------------------Models--------------------------------------------------------------
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print("Device = ", device)
@@ -71,11 +70,12 @@ verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICA
 
 verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
 
-model = SentenceTransformer(MODEL_CARD).to(device)
-# stopwords from nltk
+model = SentenceTransformer(MODEL_CARD) #.to(device)
 
+# stopwords from nltk
 english_stopwords = set(stopwords.words('english'))
 
+# ------------------------------------------------ App Settings -------------------------------------------
 app = FastAPI(
     title="Verif.ai project API",
     description="""APIs for running Verif.ai project. Here you can find interfaces for running queries, generating answers and verifying generated answers based on the given sources.
@@ -102,11 +102,6 @@ class Settings(BaseModel):
     authjwt_secret_key: str =  os.getenv("SECRET_KEY")
     authjwt_algorithm: str =  os.getenv("ALGORITHM")
 
-# callback to get your configuration
-@AuthJWT.load_config
-def get_config():
-    return Settings()
-
 class Query(BaseModel):
     query: str
     # IR parameters
@@ -123,57 +118,85 @@ class VerificationInput(BaseModel):
     query:str = ""
     text: str  # The large string result from `answer_generation`
 
-# Login Database Management 
-users_db = Database(dbname="verifai_database",user="myuser",password="mypassword",host="localhost")
-
-"""
-f = open("variables.csv",'r')
-lines = f.readlines()
-for line in lines:
-    if line.startswith("VERIFAI_IP"):
-        verifai_ip = line.split(',')[1].replace('\n','').strip()
-    if line.startswith("VERIFAI_USER"):
-        verifai_user = line.split(',')[1].replace('\n','').strip()
-    if line.startswith("VERIFAI_PASS"):
-        verifai_pass = line.split(',')[1].replace('\n','').strip()
-
-"""
-# should be read from file
-verifai_ip = '3.145.52.195' # localhost
-verifai_user = "admin"
-verifai_pass = 'IVIngi2024!'
-host = verifai_ip
-port = 9200
-auth = (verifai_user,verifai_pass)
-
-# Create the client with SSL/TLS and hostname verification disabled.
-client_lexical = OpenSearch(
-    hosts = [{'host': host, 'port': port}],
-    http_auth = auth,
-    use_ssl = True,
-    verify_certs = False,
-    ssl_assert_hostname = False,
-    ssl_show_warn = False,
-    timeout=60,
-    max_retries=10
-)
-
-client_semantic = QdrantClient(host, port=6333, timeout = 60)
-
-print("Connection opened...")
-
-query_parser = QueryProcessor(index_lexical=INDEX_NAME_LEXICAL, index_name_semantic = INDEX_NAME_SEMANTIC,
-                               model= model, lexical_client=client_lexical, semantic_client=client_semantic, stopwords=english_stopwords)
-
-documents_found = {}
-
-
 class User(BaseModel):
     name :str = ""
     surname: str = ""
     username: str
     password: str
 
+
+# --------------------------------------------IR and Database Connection ---------------------------------------------------------
+
+# Loading private data from .env 
+db_name = os.getenv("DBNAME")
+user_db = os.getenv("USER_DB")
+password_db = os.getenv("PASSWORD_DB")
+host_db = os.getenv("HOST_DB")
+
+verifai_ip = os.getenv("VERIFAI_IP")
+verifai_user =  os.getenv("VERIFAI_USER")
+verifai_pass = os.getenv("VERIFAI_PASSWORD")
+port = os.getenv("VERIFAI_PORT")
+qdrant_port = os.getenv("QDRANT_PORT") 
+
+# Login Database Management 
+users_db = Database(dbname=db_name, user=user_db, password=password_db, host=host_db)
+
+auth = (verifai_user,verifai_pass)
+
+# Create the client with SSL/TLS and hostname verification disabled.
+client_lexical = OpenSearch(
+    hosts = [{'host': verifai_ip, 'port': port}],
+    http_auth = auth,
+    use_ssl = True,
+    verify_certs = False,
+    ssl_assert_hostname = False,
+    ssl_show_warn = False,
+    timeout=TIMEOUT,
+    max_retries=10
+)
+
+client_semantic = QdrantClient(verifai_ip, port=qdrant_port, timeout = TIMEOUT)
+
+print("Connection opened...")
+
+query_parser = QueryProcessor(index_lexical=INDEX_NAME_LEXICAL, index_name_semantic = INDEX_NAME_SEMANTIC,
+                               model= model, lexical_client=client_lexical, semantic_client=client_semantic, stopwords=english_stopwords)
+
+# --------------------------------------------Parallell Request exceeded --------------------------------------------------------
+"""
+# Semaphore to limit concurrent workers
+semaphore = asyncio.Semaphore(PARALLEL_PROCESSES)
+
+# Queue to hold incoming requests
+queue = asyncio.Queue()
+
+async def worker():
+    while True:
+        # Get the next task from the queue
+        task = await queue.get()
+        try:
+            await semaphore.acquire()
+            # Process the task 
+            await task()
+        finally:
+            semaphore.release()
+            queue.task_done()
+"""
+# --------------------------------------------Function for Frontend Connection -------------------------------------------------------
+
+documents_found = {}
+
+# callback to get your configuration
+@AuthJWT.load_config
+def get_config():
+    return Settings()
+"""
+@app.on_event("startup")
+async def startup_event():
+    # Start the worker coroutine
+    asyncio.create_task(worker())
+"""
 
 @app.post("/registration/")
 async def register_user(user: User):
