@@ -1,6 +1,7 @@
 from fastapi import FastAPI,HTTPException, Request, Depends
 from fastapi_jwt_auth import AuthJWT
 from fastapi.responses import StreamingResponse, HTMLResponse
+from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel
 import jwt
 from starlette.middleware.cors import CORSMiddleware
@@ -76,6 +77,10 @@ model = SentenceTransformer(MODEL_CARD) #.to(device)
 english_stopwords = set(stopwords.words('english'))
 
 # ------------------------------------------------ App Settings -------------------------------------------
+
+# for permanently user token
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
 app = FastAPI(
     title="Verif.ai project API",
     description="""APIs for running Verif.ai project. Here you can find interfaces for running queries, generating answers and verifying generated answers based on the given sources.
@@ -183,7 +188,26 @@ async def worker():
             semaphore.release()
             queue.task_done()
 """
-# --------------------------------------------Function for Frontend Connection -------------------------------------------------------
+# ----------------------------------------- Custom Permanent Token -------------------------------------------------------------------
+
+async def get_current_user(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if not auth_header:
+        raise HTTPException(status_code=403, detail="Authorization header is missing")
+
+    try:
+        token_type, token = auth_header.split()
+        if token_type.lower() != "bearer":
+            raise HTTPException(status_code=403, detail="Invalid token type")
+
+        user = await users_db.get_user_by_api_token(token)
+        if not user:
+            raise HTTPException(status_code=403, detail="Invalid API token")
+        return user
+    except ValueError:
+        raise HTTPException(status_code=403, detail="Malformed authorization header")
+
+# --------------------------------------------Functions for Frontend Connection -------------------------------------------------------
 
 documents_found = {}
 
@@ -216,38 +240,30 @@ async def register_user(user: User):
 
 
 @app.post("/login/")
-async def login_user(user: User, Authorize: AuthJWT = Depends()):
+async def login_user(user: User):
    
     user_row = await users_db.get_user(user.username)
   
     if user_row and check_password(user_row['password'], user.password):  
-        access_token = Authorize.create_access_token(subject=user.username) 
-        #{"name": user_row['name'], "surname": user_row["surname"], "username":user_row["username"], "token":token}
+        access_token = user_row['api_token'] 
         return {"token":access_token} 
   
     raise HTTPException(status_code=401, detail="Invalid username or password")
 
 @app.post("/change_password")
-async def change_password(request: Request, Authorize: AuthJWT = Depends()):
+async def change_password(request: Request, current_user: dict = Depends(get_current_user)):
  
-    Authorize.jwt_required()
     data = await request.json()
     old_password = data.get("oldPassword")
     new_password = data.get("newPassword")
-
-    username = Authorize.get_jwt_subject()
-    
-    user_row = await users_db.get_user(username)
-   
-    
     
     # when the request arrived we are sure that the user exists
-    if user_row and not check_password(user_row['password'], old_password):      
+    if current_user and not check_password(current_user['password'], old_password):      
         raise HTTPException(status_code=401, detail="Invalid old password")
 
     hashed_password = hash_password(new_password)
     
-    await users_db.change_password(username, hashed_password)
+    await users_db.change_password(current_user['username'], hashed_password)
 
 
 @app.get("/")
@@ -256,22 +272,11 @@ def swagger_documentaiton():
     return response
 
 
-@app.post("/search_index")
-def search(query: Query,Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
-    try:
-        documents = query_parser.execute_query(query.query, query.search_type, lex_parameter=query.lex_par, 
-                                               semantic_parameter=query.semantic_par,stopwords_preprocessing=query.stop_word)
-        return documents
-    except Exception as e:
-        # Handle a specific type of exception
-        raise HTTPException(status_code=400, detail="{}".format(str(e)))
-
 
 @app.post("/query")
-async def answer_generation(query: Query, Authorize: AuthJWT = Depends()):
+async def answer_generation(query: Query, current_user: dict = Depends(get_current_user)):
     global documents_found
-    Authorize.jwt_required()
+    #Authorize.jwt_required()
     search_query = query.query
     
     print("THE SEARCH QUERY IS ",search_query)
@@ -297,8 +302,8 @@ async def answer_generation(query: Query, Authorize: AuthJWT = Depends()):
 
 
 @app.post("/stream_tokens")
-async def stream_tokens(request:Request, Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
+async def stream_tokens(request:Request, current_user: dict = Depends(get_current_user)):
+    
     data = await request.json()
     search_query = data['query']
     temperature = data['temperature']
@@ -317,8 +322,7 @@ async def stream_tokens(request:Request, Authorize: AuthJWT = Depends()):
         raise HTTPException(status_code=500, detail="{}".format(str(e)))
 
 @app.post("/verification_answer")
-async def verification_answer(answer: VerificationInput, Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
+async def verification_answer(answer: VerificationInput, current_user: dict = Depends(get_current_user)):
     answer_complete = answer.text
     print("ANSWER =\n",answer_complete)
     pmid_claim = split_text_by_pubmed_references(answer_complete)
@@ -348,8 +352,7 @@ async def verification_answer(answer: VerificationInput, Authorize: AuthJWT = De
 
 
 @app.post("/save_session")
-async def handle_save_session(request: Request, Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
+async def handle_save_session(request: Request, current_user: dict = Depends(get_current_user)):
     data = await request.json()
     state = data['state']
     html = data['html']
@@ -358,8 +361,7 @@ async def handle_save_session(request: Request, Authorize: AuthJWT = Depends()):
     return {"session_id": session_id}
 
 @app.get("/get_session/{session_id}")
-async def handle_get_session(session_id: str, Authorize: AuthJWT = Depends()):
-    Authorize.jwt_required()
+async def handle_get_session(session_id: str,current_user: dict = Depends(get_current_user)):
     print("ENTRO")
     session_data = await users_db.get_web_session(int(session_id))
     print("SESSION DATA = ", session_data)
