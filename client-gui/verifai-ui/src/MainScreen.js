@@ -17,10 +17,14 @@ function NavigateWrapper(props) {
 
 class MainScreen extends Component {
    static contextType = AuthContext
+
+   
     constructor(props) {
         
         super(props);
         this.state = {
+            //selectedDocuments: [],
+            //showAllDocuments: false,
             modalOpen: false,
             value: "",
             temperature: 0,
@@ -31,10 +35,11 @@ class MainScreen extends Component {
             endDate: "2030-01-01",
             search_type: "hybrid",
             submitted: false,
-            loading: false,
             output: "" , // Holds HTML content safely
-            output_verification: ""
+            output_verification: "",
+            questions: []
         };
+
         this.componentRef = createRef();
         this.captureStateAndHTML = this.captureStateAndHTML.bind(this)
         this.postVerification = this.postVerification.bind(this)
@@ -51,12 +56,12 @@ class MainScreen extends Component {
         this.handleEndDateChange = this.handleEndDateChange.bind(this);
 
         this.handleLexParamChange = this.handleLexParamChange.bind(this);
-       
-        this.handleLogout = this.handleLogout.bind(this)
+        this.handleLogout = this.handleLogout.bind(this);
+        this.handleUserCredential = this.handleUserCredential.bind(this);
         this.modalRef = React.createRef(); // Create a ref for the modal
         this.setWrapperRef = this.setWrapperRef.bind(this);             
         this.handleClickOutside = this.handleClickOutside.bind(this);
-
+        this.handleTooltip = this.handleTooltip.bind(this);
         
     }
     
@@ -73,7 +78,6 @@ class MainScreen extends Component {
             endDate: this.state.endDate,
             search_type: this.state.search_type,
             submitted: this.state.submitted,
-            loading: this.state.loading,
             output: this.state.output,
             output_verification: this.state.output_verification
         };
@@ -84,6 +88,10 @@ class MainScreen extends Component {
         this.props.setSharedData(data);
       }
     
+    handleUserCredential = () => {
+        this.props.navigate('/user_credential');
+      };
+
     handleLogout = () => {
         this.context.logout();
         this.props.navigate('/login');
@@ -123,8 +131,8 @@ class MainScreen extends Component {
 
     handleNumDocumentsChange = (event) => {
         const numDocuments = event.target.value;
-        
-        this.setState({numDocuments: numDocuments,});
+       
+        this.setState({numDocuments: numDocuments});
       }
 
     
@@ -135,7 +143,7 @@ class MainScreen extends Component {
     }
 
     
-    sendMessage = async () => {
+    sendMessage = async (callback) => {
         const { value,
               temperature, 
               numDocuments,
@@ -145,19 +153,46 @@ class MainScreen extends Component {
               lex_parameter,
               sem_parameter
              } = this.state;  // Using value from the state for the message
-        const response = await fetch('http://3.74.47.54:5001/query/', {
+        console.log("Num = ",this.state.numDocuments)
+        
+        const document_response = await fetch('http://18.198.26.251:5001/query/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': "Bearer " + this.context.user.token, 
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({ query: value,
                                    search_type: search_type,
                                    limit : numDocuments,
                                    filter_date_lte: endDate,
                                    filter_date_gte: startDate,
-                                   temperature: temperature,
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
+                                })
+        });
+        
+        const document_found = await document_response.json()
+        console.log(document_found)
+        this.setState(prevState => ({
+            questions: prevState.questions.map((q, i) => (
+                i === prevState.questions.length - 1 ? { ...q, document_found } : q
+            )),
+        }));
+
+        console.log("Prima dello streaming ")
+        console.log(this.state.questions[this.state.questions.length-1].document_found)
+        if (callback) {
+            callback();
+        }
+        
+        const response = await fetch('http://18.198.26.251:5001/stream_tokens/', {
+            method: 'POST',
+            headers: {
+                'Authorization': "Bearer " + this.context.user.token, 
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: value,
+                                   temperature:temperature
                                 })
         });
     
@@ -180,14 +215,19 @@ class MainScreen extends Component {
         const regex13 = /^\[\d+\]\).$/;
         const processResult = async (result) => {
             if (result.done) {
-                
-                this.postVerification(this.state.output);
+                //this.setState({  });
+                this.setState(prevState => ({
+                    questions: prevState.questions.map((q, i) => (
+                        i === prevState.questions.length - 1 ? { ...q, status: "fetching_verification", loading:true} : q
+                    )),
+                }));
+                this.postVerification(this.state.questions[this.state.questions.length - 1].result);
                 return;
             }
             let token = decoder.decode(result.value, {stream: true});
             
             var no_space_token = token.trim()
-            console.log("Token = ",no_space_token)
+           
             if (regex.test(no_space_token) || regex1.test(no_space_token) || regex2.test(no_space_token) || regex3.test(no_space_token)
                 || regex5.test(no_space_token) || regex6.test(no_space_token) || regex7.test(no_space_token) || 
                 regex8.test(no_space_token) || regex9.test(no_space_token) || regex10.test(no_space_token) ||
@@ -196,11 +236,12 @@ class MainScreen extends Component {
                 var new_token = `<a href="${baseUrl + no_space_token}" target="_blank">${token}</a>`;
                 token = new_token;
             }
+            console.log("Token = ",token)
             this.setOutput(token);
             await reader.read().then(processResult);
         };
     
-        reader.read().then(processResult);
+        return reader.read().then(processResult);
         
     }
 
@@ -230,9 +271,10 @@ class MainScreen extends Component {
         
         const { state, html } = this.captureStateAndHTML(); // Make sure you have implemented this method
        
-        fetch(`http://3.74.47.54:5001/save_session`, {
+        fetch(`http://18.198.26.251:5001/save_session`, {
             method: "POST",
             headers: {
+                'Authorization': "Bearer " + this.context.user.token, 
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ state, html })
@@ -246,38 +288,43 @@ class MainScreen extends Component {
         .catch(error => console.error('Error saving session:', error));
     }
 
-    
+   
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
         
-        fetch("http://3.74.47.54:5001/verification_answer", {
+        fetch("http://18.198.26.251:5001/verification_answer", {
             method: "POST",
             headers: {
+                'Authorization': "Bearer " + this.context.user.token, 
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ text: completeText })
         })
-        .then(response => {
+        .then(async response => {
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
               
             const processResultVerification = async (result) => {
                 
                 if (result.done) {
-                    console.log("Streaming finished.");
-                    this.setState({loading: false}, () => {
-                        // These operations will only execute after the state has been updated to false
-                        console.log("State = ", this.state.loading); // This will now log 'false'
-                        this.saveSession();
+                      this.setState(prevState => ({
+                        questions: prevState.questions.map((q, i) => (
+                            i === prevState.questions.length - 1 ? { ...q, status: "finished", loading:false} : q
+                        )),
+                    }), () => {
+                        console.log("Moment for saving")
+                        //this.saveSession();
+                        //console.log("State = ", this.state.loading);
                     });
+
                     return;
                 }
                     // Any other operations if result.done is not true
                 
                 
                 
-                let claim_string = decoderVerification.decode(result.value, {stream: true});
+                let claim_string = await decoderVerification.decode(result.value, {stream: true});
                 
                 
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
@@ -288,19 +335,19 @@ class MainScreen extends Component {
                     var color =  `<span class="tooltip" style="color: gray;">$1<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
                     
 
-                    const output = this.state.output;
+                    const output = this.state.questions[this.state.questions.length - 1].result;
                     var final_output = `<span class="tooltip" style="color: gray;">${output}<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
 
                     
                     
 
-                    this.setState({loading: false}, () => {
-                        // These operations will only execute after the state has been updated to false
-                        this.setState({ output: final_output });
-                        console.log("State = ", this.state.loading); // This will now log 'false'
-                        this.saveSession();
-                    });
-                    return
+                    this.setState(prevState => ({
+                        loading: false,
+                        questions: prevState.questions.map((q, i) => (
+                            i === prevState.questions.length - 1 ? { ...q, result: final_output } : q
+                        ))
+                    }), () => this.saveSession());
+                    return;
                 }
                 
                 function tooltipToWrite(listResult) {
@@ -336,9 +383,9 @@ class MainScreen extends Component {
                             let closest_sentence = result['closest_sentence']
                             tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
                         }
-                        console.log(tooltipText)
+                       
                         text += "<br>" + tooltipText;
-                        console.log("Text = ",text)
+                        
                     }
                     return { text: text, color: color };
                 }
@@ -354,8 +401,8 @@ class MainScreen extends Component {
                     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 }
 
-                    
-                const output = this.state.output;
+                 
+                const output = this.state.questions[this.state.questions.length - 1].result
     
                 const safeHTML = DOMPurify.sanitize(output);
                 
@@ -368,15 +415,19 @@ class MainScreen extends Component {
                 const claim_regex = new RegExp(`(${regexPattern})`, 'gi');
 
                 highlightedHTML = safeHTML.replace(claim_regex, color);
-
+                    
                 
-                this.setState({ output: highlightedHTML });
+                this.setState(prevState => ({
+                    questions: prevState.questions.map((q, i) => (
+                        i === prevState.questions.length - 1 ? { ...q, result: highlightedHTML } : q
+                    ))
+                }));
 
 
                 // ------------------------
                 /*
                 if (claim_dict["result"] === "NO REFERENCE") {
-                    this.setOutputVerification("Claim:\n"+ claim_dict.claim + " <strong>" +claim_dict.result + "</strong>" +
+                    this.setOutputVerification("Claim:\n"+ claim_dict.claim + " <strong>" + claim_dict.result + "</strong>" +
                                                  ballHtml + "\n\n");
                 } else {
                     // Otherwise, print claim, result, and pmid
@@ -392,7 +443,7 @@ class MainScreen extends Component {
             };
     
             // Start reading the stream
-            readerVerification.read().then(processResultVerification);
+            await readerVerification.read().then(processResultVerification);
         })
         .catch(error => {
             console.error('Error during verification:', error);
@@ -407,36 +458,60 @@ class MainScreen extends Component {
     }
 
     handleSubmit(event) {
-        
         event.preventDefault();
-        this.setState({ submitted: true, loading:true });
-        console.log("Loading", this.state.loading)
-        this.clearOutput();
-        this.sendMessage();
-
-        this.setState({temperature: 0,
-                      numDocuments: 10,
-                      startDate: "1940-01-01",
-                      endDate: "2030-01-01",
-                      search_type: "hybrid",
-                      lex_parameter:0.5,
-                      sem_parameter:0.5,
-                      });
-
+        
+        // First setState call with callback to execute after state is set
+        this.setState(prevState => ({
+            submitted: true,
+            questions: [...prevState.questions, { 
+                question: prevState.value, 
+                result: "", 
+                output_verification: "",
+                status: "fetching_query", 
+                loading: true, 
+                document_found: {}, 
+                showAllDocuments: false
+            }]
+        }), () => {
+            // Call sendMessage function and use callback to update state
+            this.sendMessage(() => {
+                this.setState({
+                    temperature: 0,
+                    numDocuments: 10,
+                    startDate: "1940-01-01",
+                    endDate: "2030-01-01",
+                    search_type: "hybrid",
+                    lex_parameter: 0.5,
+                    sem_parameter: 0.5,
+                });
+            });
+        });
     }
 
     
     setOutput(newOutput) {
-        this.setState(prevState => ({
-            output: prevState.output + newOutput
-        }));
-    }
+       
+        // Get the current state directly
+        const questions = [...this.state.questions];
+        var currentQuestion = questions[questions.length - 1];
+        
+        currentQuestion.result = currentQuestion.result + newOutput;
 
-    setOutputVerification(newOutput) {
-        this.setState(prevState => ({
-            output_verification: prevState.output_verification  + newOutput
-        }));
+        this.setState({ questions });
+    
     }
+    
+    setOutputVerification(newOutput) {
+        
+        //output_verification: prevState.output_verification  + newOutput
+        const questions = [...this.state.questions];
+        const currentQuestion = questions[questions.length - 1];
+        currentQuestion.output_verification +=  newOutput;
+        this.setState({ questions });
+        return { questions };
+
+    }
+  
     setWrapperRef(node) {
         this.wrapperRef = node;
       }
@@ -454,8 +529,22 @@ class MainScreen extends Component {
     componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
     }
+
+
+    handleTooltip(index) {
+
+        if (index >= this.state.questions.length) {
+            throw new Error("Index out of bounds");
+        } 
+        console.log("ENTRO")
+        const questions = [...this.state.questions];
+        questions[index].showAllDocuments = !questions[index].showAllDocuments; 
+        this.setState({questions})
+        
+    }
     
     render() {
+        
         return (
             <AuthContext.Consumer>
                 {({ user, logout }) => {
@@ -466,13 +555,19 @@ class MainScreen extends Component {
                                 <h1>Please log in to access this page.</h1>
                             </div>
                         );
-                    }
+                    } 
                     
                     
                     
                     return (
                         <div className='App' ref={this.componentRef}>
+                            
+                            
+                            
+                            <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
                             <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
+                            
+                       
                             <div className="router-reset">
                                 <img className="App-logo" src={logo} alt="Logo" />
                                 
@@ -582,15 +677,57 @@ class MainScreen extends Component {
                                     </form>
                                 </div>
                                 <br></br>
-                                {this.state.submitted && (
-                                    <div>
-                                        <h2>{this.state.value} {this.state.loading && (<div className="spinner" />)}</h2>
-                                        <div className="output-section">     
-                                            <div className="output-tokens" dangerouslySetInnerHTML={{ __html: this.state.output }} />
+                                {this.state.questions.slice().reverse().map((q, index) => (
+                                <div key={index}>
+                                    <h1>{q.question}</h1>
+                                    <br></br>
+                                    <h2>Sources:</h2>
+                                    <div className="document-section">
+                                        {q.document_found && Object.keys(q.document_found)
+                                            .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 4)
+                                            .map((pmid, i) => {
+                                                const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+                                                const doc = q.document_found[pmid];
+                                                const title = doc.text.split('\n\n')[0];
+                                                const content = doc.text.replace(title, '').trim();
+                                                const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
+                                                const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
+                                                const docUrl = baseUrl + pmid;
+
+                                                return (
+                                                    <a href={docUrl} target="_blank" rel="noopener noreferrer" key={i} className="no-underline-link">
+                                                        <div className="document-square">
+                                                            <h3 className="document-title">{truncatedTitle}</h3>
+                                                            <p className="document-content">{truncatedContent}</p>
+                                                        </div>
+                                                    </a>
+                                                );
+                                            })}
+                                        {!q.showAllDocuments && Object.keys(q.document_found).length > 3 && (
+                                        <div className="document-square center" onClick={() => this.handleTooltip(this.state.questions.length - 1 - index)}>  
+                                            <h3 className="document-title">
+                                                {`View ${Object.keys(q.document_found).length - 3} more`}
+                                            </h3>
                                         </div>
-                                       
+                                    )}
+                                   
+                                    
                                     </div>
-                                )}
+                                    <br></br>
+                                    {Object.keys(q.document_found).length > 0 && (
+                                    <h2>
+                                        {q.status === "fetching_query" && "Answering"}
+                                        {q.status === "fetching_verification" && "Verification"}
+                                        
+                                        {q.loading && <div className="spinner" />}
+                                    </h2>
+                                    )}
+                            
+                                <div className="output-section">
+                                    <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
+                                </div>
+                            </div>
+                                ))}
                             </div>
                         </div>
                     </div>

@@ -13,7 +13,7 @@ function Registration() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://3.74.47.54:5001/registration/', {
+            const response = await fetch('http://18.198.26.251:5001/registration/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
