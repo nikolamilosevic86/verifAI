@@ -51,6 +51,7 @@ bnb_config = BitsAndBytesConfig(load_in_4bit=True,
                                              )
 
 
+#MISTRAL 
 base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
                                                                torch_dtype=torch.float32,  
                                                                trust_remote_code=True,
@@ -64,9 +65,22 @@ tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
 model_mistral = PeftModel.from_pretrained(base_model, PEFT_MODEL_ID).to(device)
 
 model_mistral.eval() # setting the model in evaluation mode
+"""
+# LLAMA 3 ------------------------------------------------
+model_mistral = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
+                                            trust_remote_code=True,
+                                            quantization_config=bnb_config, 
+                                            device_map='auto',
+                                            token = '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'
+)
 
+tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID, token = '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')
 
+tokenizer.pad_token = tokenizer.eos_token
 
+model_mistral.eval() # setting the model in evaluation mode
+# END LLAMA 3-----------------------------------------------
+"""
 verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICATION_MODEL_CARD)
 
 verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
@@ -122,6 +136,7 @@ class Query(BaseModel):
 class VerificationInput(BaseModel):
     query:str = ""
     text: str  # The large string result from `answer_generation`
+    document_found: list
 
 class User(BaseModel):
     name :str = ""
@@ -209,8 +224,6 @@ async def get_current_user(request: Request):
 
 # --------------------------------------------Functions for Frontend Connection -------------------------------------------------------
 
-documents_found = {}
-
 # callback to get your configuration
 @AuthJWT.load_config
 def get_config():
@@ -275,7 +288,7 @@ def swagger_documentaiton():
 
 @app.post("/query")
 async def answer_generation(query: Query, current_user: dict = Depends(get_current_user)):
-    global documents_found
+    
     #Authorize.jwt_required()
     search_query = query.query
     
@@ -292,7 +305,7 @@ async def answer_generation(query: Query, current_user: dict = Depends(get_curre
                                                 pubdate_filter_lte=query.filter_date_lte, 
                                                 pubdate_filter_gte=query.filter_date_gte,stopwords_preprocessing=query.stop_word)
         
-        documents_found = documents
+       
         
         return documents
     except Exception as e:
@@ -307,6 +320,7 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
     data = await request.json()
     search_query = data['query']
     temperature = data['temperature']
+    documents_found = data['document_found']
     try:
 
         documents_string = convert_documents(documents_found)
@@ -323,11 +337,18 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
 
 @app.post("/verification_answer")
 async def verification_answer(answer: VerificationInput, current_user: dict = Depends(get_current_user)):
+    
+    # Extracting input 
     answer_complete = answer.text
+    documents = answer.document_found
+    
+    documents_found = converting_document_for_verification(documents)
+    
     print("ANSWER =\n",answer_complete)
     pmid_claim = split_text_by_pubmed_references(answer_complete)
     print("PMID CLAIM = ",pmid_claim)
     claim_pmid_list = verification_format(pmid_claim)
+    
     #print("Results of splitting...")
     #print(claim_pmid_list)
    
@@ -340,9 +361,9 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
                 print("-"*50)
 
             if result != {} and NO_REFERENCE_NUMBER in result["result"]:
+                time.sleep(0.3)
                 # beacuse the operation is so much faster
-                print("ENTRO E ASPETTO")
-                await asyncio.sleep(0.3)
+                #await asyncio.sleep(0.3)
 
             yield json_result
         
