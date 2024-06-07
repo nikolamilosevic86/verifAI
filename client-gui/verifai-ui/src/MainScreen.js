@@ -192,7 +192,8 @@ class MainScreen extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ query: value,
-                                   temperature:temperature
+                                   temperature:temperature,
+                                   document_found: document_found
                                 })
         });
     
@@ -271,7 +272,7 @@ class MainScreen extends Component {
         
         const { state, html } = this.captureStateAndHTML(); // Make sure you have implemented this method
        
-        fetch(`http://18.198.26.251:5001/save_session`, {
+        /*fetch(`http://18.198.26.251:5001/save_session`, {
             method: "POST",
             headers: {
                 'Authorization': "Bearer " + this.context.user.token, 
@@ -285,21 +286,22 @@ class MainScreen extends Component {
             //this.props.navigate(`/get_session/${data.session_id}`);
             
         })
-        .catch(error => console.error('Error saving session:', error));
+        .catch(error => console.error('Error saving session:', error));*/
     }
 
    
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
-        
+        const document_found = this.state.questions[this.state.questions.length-1].document_found
+
         fetch("http://18.198.26.251:5001/verification_answer", {
             method: "POST",
             headers: {
                 'Authorization': "Bearer " + this.context.user.token, 
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ text: completeText })
+            body: JSON.stringify({ text: completeText, document_found:document_found })
         })
         .then(async response => {
             const readerVerification = response.body.getReader();
@@ -308,6 +310,7 @@ class MainScreen extends Component {
             const processResultVerification = async (result) => {
                 
                 if (result.done) {
+                      
                       this.setState(prevState => ({
                         questions: prevState.questions.map((q, i) => (
                             i === prevState.questions.length - 1 ? { ...q, status: "finished", loading:false} : q
@@ -340,13 +343,12 @@ class MainScreen extends Component {
 
                     
                     
-
                     this.setState(prevState => ({
-                        loading: false,
                         questions: prevState.questions.map((q, i) => (
-                            i === prevState.questions.length - 1 ? { ...q, result: final_output } : q
-                        ))
-                    }), () => this.saveSession());
+                            i === prevState.questions.length - 1 ? { ...q, result: final_output, status: "finished", loading:false} : q
+                        )),
+                    }));
+                    
                     return;
                 }
                 
@@ -685,9 +687,10 @@ class MainScreen extends Component {
                                     <div className="document-section">
                                         {q.document_found && Object.keys(q.document_found)
                                             .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 4)
-                                            .map((pmid, i) => {
+                                            .map((i) => {
                                                 const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
-                                                const doc = q.document_found[pmid];
+                                                const doc = q.document_found[i];
+                                                const pmid = doc.pmid;
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
                                                 const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;

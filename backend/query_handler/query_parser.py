@@ -185,9 +185,9 @@ class QueryProcessor:
         return document_retrived
     
 
-    def process_results(self, results: list, limit:int, date_lte: datetime, date_gte: datetime) -> dict:
+    def process_results(self, results: list, limit:int, date_lte: datetime, date_gte: datetime) -> list:
         
-        retrieved_documents = {}
+        retrieved_documents = []
         for i,element in enumerate(results):
             
             pmid,_ = element
@@ -206,10 +206,12 @@ class QueryProcessor:
             date = parse_date(date_string)
             
             if date_gte <= date and date <= date_lte:
-                retrieved_documents[pmid] = {
+                retrieved_documents.append({
+                    "pmid": pmid,
                     "text": full_text,
                     "pubdate": date
-                }
+                    })
+
             if i == limit-1:
                 break
         

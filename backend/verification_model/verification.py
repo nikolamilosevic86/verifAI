@@ -14,7 +14,7 @@ def split_text_by_pubmed_references(text:str) -> list:
     it returns a list where each element is composed by [Pmid, claim]
     if there are no reference it returns an empy list 
     """
-
+    
     previous_sentences = ""
    
     results = []
@@ -77,9 +77,14 @@ def split_text_by_pubmed_references(text:str) -> list:
 
 
     if re.search(regular_expression_removing, sentences[0]) == None:
-        
-        results[0][1] = results[0][1].replace(sentences[0], "")
-        results.insert(0, [NO_REFERENCE_NUMBER,sentences[0]])
+        # Removing the first sentence from all the first sentences
+        i = 0
+        while i < len(results) and sentences[0] in results[i][1]:
+            results[i][1] = results[i][1].replace(sentences[0], "").strip()
+            i += 1
+        # Adding the first sentence which it usually that does not have a reference
+        results.insert(0, [-1,sentences[0]])
+
 
 
     if text[start_pos:] != "":
@@ -112,6 +117,29 @@ def verification_format(claims:list) -> [ [str, list] ]:
     
     return output_format
 
+            
+def converting_document_for_verification(documents:list) -> dict:
+    """
+    This is a function to convert the data type of the document in order to reducing the 
+    complexity during the search from O(N^2) to O(N)
+
+    param:
+    documents: list of documents found from IR component
+
+    return:
+    documents_found: return a dict of document found in this way:
+        key is the pmid
+        item is a dict contain the "text" and as value the text of the document
+    """
+    if len(documents) == 0:
+        return {}
+
+    documents_found = {}
+    for document in documents:   
+        documents_found[document["pmid"]] = {"text": document["text"]}
+    
+    return documents_found
+
 
 def find_closest_sentence(claim, abstract, sentence_model):
     abstract_sentence = sent_tokenize(abstract)
@@ -132,7 +160,7 @@ def find_closest_sentence(claim, abstract, sentence_model):
 def verification_claim(claims: list, abstracts: dict, verification_model, verification_tokenizer, sentence_model):
     if claims == []:
         yield  {}
-    #print("SONO QUI E abstarcts vale = ",abstarcts)
+    
     for element in claims:
         
         claim, pmids = element
