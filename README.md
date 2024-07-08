@@ -33,7 +33,7 @@ export VERIFAI_PORT=port_open_search
 export QDRANT_PORT=port_qdrant
 ```
 13. Run backend by running `python backend/main.py`
-14. Install React by following (this guide)[https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/]
+14. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
 15. Run `npm build`
 16. Run frontend by running `npm start` in client-gui/verifai-ui
 
