@@ -9,7 +9,7 @@ path = '../outputNJSONextracted' #"../outputNJSONextracted"
 
 host = '127.0.0.1' 
 port = 9200
-auth = ('admin','IVIngi2024!') #('admin', 'admin') 
+auth = ('admin','admin!') #('admin', 'admin') 
 
 # Create the client with SSL/TLS and hostname verification disabled.
 
