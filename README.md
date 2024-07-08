@@ -9,11 +9,17 @@ Verif.ai is an AI system designed to verify and document the correctness of AI-g
 ## Installation and start-up
 
 1. Clone the repository
-2. Run requirements.txt in
-3. Install Qdrant following the guide [here](https://qdrant.tech/documentation/quick-start/)
-4. Change configuration file
-5. Install OpenSearch following the guide [here](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/index/)
-6. Set up system variables that are needed for the project:
+2. Run requirements.txt by running `pip install -r backend/requirements.txt`
+3. Download Medline. You can do it by executing `download_medline_data.sh` for core files for the current year and `download_medline_data_update.sh` for Medline current update files.
+4. Install Qdrant following the guide [here](https://qdrant.tech/documentation/quick-start/)
+5. Run the script: `python medline2json.py` to transform MEDLINE XML files into JSON
+6. Run `python json2selected.py` to selects the fields that should be inported into the index
+7. Run `python abstarct_parser.py` to concatinate abstract titles and abstracts and splits texts to 512 parts that can be indexed using a transformer model
+8. Run `python embeddings_creation.py` to create embeddings.
+9. Run `python scripts/indexing_qdrant.py` to create qdrant index. Make sure to point to the right folder created in the previous step and to the qdrant instance. 
+10. Install OpenSearch following the guide [here](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/index/)
+11. Create OpenSearch index by running `python scripts/indexing_lexical_pmid.py`. Make sure to configure access to the OpenSearch and point the path variable to the folder created by json2selected script.
+12. Set up system variables that are needed for the project:
 ```
 export DBNAME=db_name
 export USER_DB=db_username
@@ -26,10 +32,10 @@ export VERIFAI_PASSWORD=password_open_search
 export VERIFAI_PORT=port_open_search
 export QDRANT_PORT=port_qdrant
 ```
-7. Download Medline
-8. Create indecies
-9. Run backend
-10. Run frontend
+13. Run backend by running `python backend/main.py`
+14. Install React by following (this guide)[https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/]
+15. Run `npm build`
+16. Run frontend by running `npm start` in client-gui/verifai-ui
 
 ## Collaborators and contributions
 
