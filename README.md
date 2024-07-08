@@ -8,6 +8,29 @@ Verif.ai is an AI system designed to verify and document the correctness of AI-g
 
 ## Installation and start-up
 
+1. Clone the repository
+2. Run requirements.txt in
+3. Install Qdrant following the guide [here](https://qdrant.tech/documentation/quick-start/)
+4. Change configuration file
+5. Install OpenSearch following the guide [here](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/index/)
+6. Set up system variables that are needed for the project:
+```
+export DBNAME=db_name
+export USER_DB=db_username
+export PASSWORD_DB=db_password
+export HOST_DB=db_host_name
+
+export VERIFAI_IP=ip_address_of_machines_with_qdrant_and_opensearch
+export VERIFAI_USER=user_name_open_search
+export VERIFAI_PASSWORD=password_open_search
+export VERIFAI_PORT=port_open_search
+export QDRANT_PORT=port_qdrant
+```
+7. Download Medline
+8. Create indecies
+9. Run backend
+10. Run frontend
+
 ## Collaborators and contributions
 
 Currently, two institutions are the main drivers of this project, namely Bayer A.G and Institute for Artificial Intelligence Research and Development of Serbia. Current contrbiutors are by institutions
