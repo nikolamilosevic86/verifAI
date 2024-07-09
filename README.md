@@ -38,7 +38,7 @@ export QDRANT_PORT=port_qdrant
 ```
 13. Run backend by running `python backend/main.py`
 14. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
-15. Run `npm build`
+15. Run `npm run-script build`
 16. Run frontend by running `npm start` in client-gui/verifai-ui
 
 ## Collaborators and contributions
