@@ -1,9 +1,5 @@
 # VerifAI project
-
-
-<img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/5110891c-34f3-4072-a659-22e7ed40273b"  width="500"/>
-
-
+<img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/e95b4877-0847-4fa2-99e5-a6a7fc0003f8"  width="500"/>
 No more searches, just verifiably accurate answers.
 
 ## Project Description
