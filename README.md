@@ -39,6 +39,13 @@ export QDRANT_PORT=port_qdrant
 15. Run `npm run-script build`
 16. Run frontend by running `npm start` in client-gui/verifai-ui
 
+## Developed models and datasets
+
+1. [Fine tuned QLoRA addapted for Mistral 7B-instruct v01](https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.1-pqa-10)
+2. [Fine tuned QLoRA addapted for Mistral 7B-instruct v02](https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.2-pqa-10)
+3. [PQAref dataset](https://huggingface.co/datasets/BojanaBas/PQAref)
+4. [Verification model based on DeBERTa, fine-tuned on SciFact dataset](https://huggingface.co/MilosKosRad/TextualEntailment_DeBERTa_preprocessedSciFACT)
+
 ## Collaborators and contributions
 
 Currently, two institutions are the main drivers of this project, namely Bayer A.G and Institute for Artificial Intelligence Research and Development of Serbia. Current contrbiutors are by institutions
