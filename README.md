@@ -1,5 +1,6 @@
 # VerifAI project
 
+
 <img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/5110891c-34f3-4072-a659-22e7ed40273b"  width="500"/>
 
 
