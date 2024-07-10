@@ -125,7 +125,7 @@ class QueryProcessor:
         
         lexical_results = thread_lexical.result()
         semantic_results = thread_semantic.result()
-
+        
         #lexical_results = self.lexical_query(query_lexical, limit = limit) 
         #semantic_results = self.semantic_query(query_semantic, limit)
         max_score = 0
@@ -152,7 +152,7 @@ class QueryProcessor:
     def execute_query(self, query_str: str, query_type: str ='lexical',lex_parameter: float = 0.5, semantic_parameter: float = 0.5,
                       limit:int = 10, pubdate_filter_lte :str = "2100-01-01",
                       pubdate_filter_gte :str = "1900-01-01",stopwords_preprocessing: bool = True) -> list:
-        
+   
         text_query = self.preprocess_query(query_str) if stopwords_preprocessing else query_str
         
         if query_type == 'lexical':
@@ -162,12 +162,10 @@ class QueryProcessor:
             results = self.semantic_query(query_str, limit=limit)
 
         elif query_type == 'hybrid':
-
             results = self.hybrid_query(text_query, query_str, pubdate_filter_lte, pubdate_filter_gte,
                                         lex_parameter, semantic_parameter, limit=limit)
         else:
             raise ValueError("Invalid query type specified. Choose 'lexical', 'semantic', or 'hybrid'.")
-        
         
         
         document_retrived = sorted(results.items(), key=lambda x: x[1], reverse=True)
@@ -175,7 +173,6 @@ class QueryProcessor:
 
         date_lte = parse_date(pubdate_filter_lte)
         date_gte = parse_date(pubdate_filter_gte)
-        
         document_retrived = self.process_results(document_retrived, limit, date_lte, date_gte)
         
         # should be cases using the date, where the systems does not find anything
@@ -186,7 +183,6 @@ class QueryProcessor:
     
 
     def process_results(self, results: list, limit:int, date_lte: datetime, date_gte: datetime) -> list:
-        
         retrieved_documents = []
         for i,element in enumerate(results):
             

@@ -4,93 +4,142 @@ from nltk.tokenize import sent_tokenize
 import time
 import numpy as np
 from constants import *
+import numpy as np
+import re
+import nltk
+from nltk.tokenize import sent_tokenize
+from utils import calculate_similarity, clean_text, extract_pubmed_references
 
-def split_text_by_pubmed_references(text:str) -> list:
+nltk.download('punkt')
+
+
+
+def find_max_similarity_and_count(splits: list, sentence: str, documents: dict, start: int, step: int, sentence_model) -> (float, int):
     """
+    Find the maximum similarity and count of the abstract to analyze cited in the same sentence..
+
     param:
-    text: it is the response of our LLM
+    splits: The list of splits containing [Pmid, sentence] pairs.
+    sentence:The sentence to compare for similarity.
+    documents: The dictionary containing the abstract in the form [pmid, dict["text": text of the abstract]].
+    start:  The starting index for the search.
+    step: The step direction for the search (positive for forward, negative for backward).
+    sentence_model: The model used to encode the sentences.
 
     return:
-    it returns a list where each element is composed by [Pmid, claim]
-    if there are no reference it returns an empy list 
+    tuple - The maximum similarity score and the count of the abstract to analyze cited in the same sentence.
     """
+    max_similarity = 0
+    count = 0
+    j = start
     
-    previous_sentences = ""
-   
-    results = []
+    # this variable is needed to check if we are analyzing the same previous/next sentence but with a different pmid associated
+    sentence_to_check = "" 
+    while 0 <= j < len(splits):
+        
+        pmid_to_check = splits[j][0]
+        current_sentence = splits[j][1]
 
-    # parameter used to see if there are references, we assume at the beggining no reference
-    no_reference = True 
-    
-    regular_expression = r'<a href=".*?" target="_blank">(.*?)\n*<\/a>'
+        sentence_to_check = current_sentence if j == start else sentence_to_check
+        # the loop has been created for the case of when a sentence is cited by more pmid
+        # so the loop stops continues because it analyze the same sentence but associated with an other pmid
+        if current_sentence != sentence_to_check:
+            break
 
-    # used to verify if the first sentence has the reference, it is usually the general response
-    regular_expression_removing = r'<a href=".*?" target="_blank">'
-    
-    pattern = re.compile(regular_expression)
+        # Calculate similarity score
+        similarity_score = calculate_similarity(sentence, documents[pmid_to_check]['text'], sentence_model)
+        max_similarity = max(max_similarity, similarity_score)
+        count += 1
+        j += step
 
+    return max_similarity, count
+
+def correct_splits(splits: list, documents: dict, sentence_model) -> list:
+    """
+    Correct the splits by merging the sentences with no references, the merge is based computing the highest similarity between the previous and the next sentence,
+    taking in account the all possible pubmed references of a sentence.
+
+    param:
+    splits: The list of splits containing [Pmid, sentence] pairs.
+    documents: The dictionary containing the abstract in the form [pmid, dict["text": text of the abstract]].
+    sentence_model: The model used to encode the sentences.
+
+    return:
+    list - The corrected list of splits.
+    """
+    for i, (pmid, sentence) in enumerate(splits):
+        
+        # the assumptionis that the first sentence: "Premise" and last sentence "Conclusion" could not be associated to any Pubmed reference
+        if i == 0 or i == len(splits) - 1 or pmid != NO_REFERENCE_NUMBER:
+            continue
+
+        # Find maximum similarity and count in both directions
+        prev_max_sim, prev_count = find_max_similarity_and_count(splits, sentence, documents, i - 1, -1, sentence_model)
+        next_max_sim, next_count = find_max_similarity_and_count(splits, sentence, documents, i + 1, 1, sentence_model)
+
+        if next_max_sim >= prev_max_sim:
+            merge_count, step = next_count, 1
+        else:
+            merge_count, step = prev_count, -1
+
+        for j in range(1, merge_count + 1):
+            target_index = i + j * step
+            if 0 <= target_index < len(splits):
+                if step == 1:
+                    splits[target_index][1] = sentence + ' ' + splits[target_index][1]
+                else:
+                    splits[target_index][1] += ' ' + sentence
+
+    # Remove the split with No Reference because has been merged with the previous or next sentence based on the highest similarity with the model
+    # first sentence: "Premise" and last sentence "Conclusion" could not be associated to any Pubmed reference, so are not deleted
+    splits = [split for split in splits if split[0] != -1 or split == splits[0] or split == splits[-1]]
+    return splits
+
+
+
+
+def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) -> list:
+    """
+    Split the text by PubMed references and return a list of [Pmid, sentence].
+    If there are no references, return an empty list.
+
+    param:
+    text: The input text to split by PubMed references.
+    documents: The dictionary containing the abstract in the form [pmid, dict["text": text of the abstract]].
+    sentence_model: The model used to encode the sentences.
+
+    return:
+    The list of [Pmid, sentence] pairs.
+    """
+    text = clean_text(text)
     sentences = sent_tokenize(text)
-    
+    matches = extract_pubmed_references(text)
 
-    # Search for the pattern in the text
-    matches = list(pattern.finditer(text))
-    
-    # No Reference
-    if matches == []:
+    if not matches:
         return []
 
-    start_pos = 0
-    for match in matches:
-        no_reference = False # reference found 
-        pubmed_number = match.group(0) if match.group(0) != None else match.group(1) if match.group(1) != None else match.group(2)
-        
-        # exctracting just the number (pubmid)
-        pubmed_number = re.sub(r'<.*?>', '', pubmed_number)
-        pubmed_number = re.sub(r'\D', '', pubmed_number)
-       
-        end_pos = match.start()  
-        text_segment = text[start_pos:end_pos].strip()  
-        
-        # text cleaning
-        text_segment = text_segment.replace("</a>", "")
-        text_segment = re.sub(r'[\s\[\(\)\],;.]*$', '', previous_sentences + text_segment)
-        
-        if pubmed_number and text_segment:
-            
-            text_segment = re.sub(r'^[\s\[\(\)\],;.]*', '', text_segment)
-        
-            text_segment = re.sub(r'^[\)\]]?[.,;]', '', text_segment)
+    results = []
 
-            results.append([pubmed_number,text_segment])
+    for sentence in sentences:
+        matches = extract_pubmed_references(sentence)
 
-            start_pos = match.end()
-            
-        # taking the previous sentence because there are more reference for one sentence
-        elif pubmed_number and len(results) > 0 and not text_segment:
-            
-            results.append([pubmed_number,results[-1][1]])
+        if not matches:
+            if results and results[-1][0] == NO_REFERENCE_NUMBER:
+                results[-1][1] += sentence
+            else:
+                results.append([-1, sentence])
+        else:
+            for match in matches:
+                pubmed_number = re.sub(r'\D', '', match.group(0))
+                
+                # if len the result is less then a small value it means that there are edge case that leads to a wrong split so we merge with the last one
+                # the wrong splits are generate by the tokenizer of nltk for edge cases
+                if results and len(results[-1][1]) < 4 and results[-1][0] == NO_REFERENCE_NUMBER:
+                    results[-1] = [pubmed_number, results[-1][1] + sentence]
+                else:
+                    results.append([pubmed_number, sentence])
 
-            start_pos = match.end()
-
-        
-        previous_sentences = ""
-
-
-    if re.search(regular_expression_removing, sentences[0]) == None:
-        # Removing the first sentence from all the first sentences
-        i = 0
-        while i < len(results) and sentences[0] in results[i][1]:
-            results[i][1] = results[i][1].replace(sentences[0], "").strip()
-            i += 1
-        # Adding the first sentence which it usually that does not have a reference
-        results.insert(0, [-1,sentences[0]])
-
-
-
-    if text[start_pos:] != "":
-        results.append([NO_REFERENCE_NUMBER,text[start_pos:]])
-        
-    return results if no_reference == False else []
+    return correct_splits(results, documents, sentence_model)
 
 
 def verification_format(claims:list) -> [ [str, list] ]:
@@ -141,7 +190,15 @@ def converting_document_for_verification(documents:list) -> dict:
     return documents_found
 
 
-def find_closest_sentence(claim, abstract, sentence_model):
+def find_closest_sentence(claim: str, abstract: str, sentence_model) -> str:
+    """
+    It founds the similar sentence in the abstarct:
+    param:
+        claim: is the sentence to use
+        abstract: is the abstract where to find the closest sentence
+    return:
+        the closest sentence in the abstract
+    """
     abstract_sentence = sent_tokenize(abstract)
     claim_vector = sentence_model.encode(claim)
     max_dot_product = float('-inf')

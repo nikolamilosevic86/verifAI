@@ -41,10 +41,10 @@ class Database:
         await self.close()
         return row
 
-    async def insert_user(self, name:str, surname:str, username: str, password_hash: str, api_token: str):
+    async def insert_user(self, name:str, surname:str, username: str, email: str, password_hash: str, api_token:str):
         await self.open()
-        await self.sql_database.execute('INSERT INTO users (name, surname, username, password, api_token) VALUES ($1, $2, $3, $4, $5)',
-                                        name, surname, username, password_hash, api_token)
+        await self.sql_database.execute('INSERT INTO users (name, surname, username, email, password, api_token) VALUES ($1, $2, $3, $4, $5, $6)',
+                                        name, surname, username, email, password_hash, api_token)
         await self.close()
 
     async def change_password(self, username: str, password_hash: str):
@@ -52,11 +52,11 @@ class Database:
         await self.sql_database.execute('UPDATE users SET password=$1 WHERE username=$2',password_hash, username)
         await self.close()
 
-    async def save_session(self, state, html):
+    async def save_session(self, state):
         await self.open()
         result = await self.sql_database.fetchrow(
-            'INSERT INTO web_sessions (state, html) VALUES ($1, $2) RETURNING id',
-            json.dumps(state), html
+            'INSERT INTO web_sessions (state) VALUES ($1) RETURNING id',
+            json.dumps(state)
         )
         print("Result = ",result)
         await self.close()
@@ -64,7 +64,7 @@ class Database:
 
     async def get_web_session(self, session_id):
         await self.open()
-        query = 'SELECT state, html FROM web_sessions WHERE id=$1'
+        query = 'SELECT state FROM web_sessions WHERE id=$1'
         row = await self.sql_database.fetchrow(query, session_id)
         await self.close()
         if row:
@@ -72,7 +72,6 @@ class Database:
             state = json.loads(row['state']) if row['state'] else {}
             return {
                 'state': state,
-                'html': row['html']
             }
         else:
             return None

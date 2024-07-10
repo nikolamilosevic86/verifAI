@@ -2,10 +2,12 @@ from fastapi import FastAPI,HTTPException, Request, Depends
 from fastapi_jwt_auth import AuthJWT
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 import jwt
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import RedirectResponse
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 
 from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
@@ -26,6 +28,8 @@ from query_handler.query_parser import QueryProcessor
 from database.database import Database
 from verification_model.verification import *
 from constants import *
+#from vllm import LLM
+
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -65,6 +69,8 @@ tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
 model_mistral = PeftModel.from_pretrained(base_model, PEFT_MODEL_ID).to(device)
 
 model_mistral.eval() # setting the model in evaluation mode
+
+#vllm_model = LLM(model=model_mistral, tensor_parallel_size=4)
 """
 # LLAMA 3 ------------------------------------------------
 model_mistral = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
@@ -108,18 +114,25 @@ app = FastAPI(
 origins = [
     "*"
 ]
+#app.add_middleware(HTTPSRedirectMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-)
+    allow_headers=["*"]
+) 
 
-class Settings(BaseModel):
-    authjwt_secret_key: str =  os.getenv("SECRET_KEY")
-    authjwt_algorithm: str =  os.getenv("ALGORITHM")
+# Middleware to add CORS headers to streaming responses
+class CustomCORSMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["Access-Control-Allow-Origin"] = origins[0]
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        return response
+
+app.add_middleware(CustomCORSMiddleware)
 
 class Query(BaseModel):
     query: str
@@ -142,7 +155,9 @@ class User(BaseModel):
     name :str = ""
     surname: str = ""
     username: str
+    email: str
     password: str
+
 
 
 # --------------------------------------------IR and Database Connection ---------------------------------------------------------
@@ -158,6 +173,11 @@ verifai_user =  os.getenv("VERIFAI_USER")
 verifai_pass = os.getenv("VERIFAI_PASSWORD")
 port = os.getenv("VERIFAI_PORT")
 qdrant_port = os.getenv("QDRANT_PORT") 
+qdrant_api = os.getenv("QDRANT_API")
+
+jwt_secret_key =  os.getenv("SECRET_KEY")
+jwt_algorithm =  os.getenv("ALGORITHM")
+  
 
 # Login Database Management 
 users_db = Database(dbname=db_name, user=user_db, password=password_db, host=host_db)
@@ -176,7 +196,9 @@ client_lexical = OpenSearch(
     max_retries=10
 )
 
-client_semantic = QdrantClient(verifai_ip, port=qdrant_port, timeout = TIMEOUT)
+url = f"https://{verifai_ip}:{qdrant_port}"
+
+client_semantic = QdrantClient(url=url, api_key=qdrant_api, timeout=TIMEOUT, https=True,**{'verify': False})
 
 print("Connection opened...")
 
@@ -224,10 +246,6 @@ async def get_current_user(request: Request):
 
 # --------------------------------------------Functions for Frontend Connection -------------------------------------------------------
 
-# callback to get your configuration
-@AuthJWT.load_config
-def get_config():
-    return Settings()
 """
 @app.on_event("startup")
 async def startup_event():
@@ -235,7 +253,7 @@ async def startup_event():
     asyncio.create_task(worker())
 """
 
-@app.post("/registration/")
+@app.post("/registration")  
 async def register_user(user: User):
     
     user_exists = await users_db.verify_user(user.username)
@@ -245,19 +263,19 @@ async def register_user(user: User):
     
     # Hash the password
     hashed_password = hash_password(user.password)
-    
+    api_token = jwt.encode({"username": user.username}, jwt_secret_key, algorithm=jwt_algorithm).decode('utf-8')
     # Insert the user into the database
-    await users_db.insert_user(user.name, user.surname, user.username, hashed_password)
+    await users_db.insert_user(user.name, user.surname, user.username, user.email, hashed_password, api_token)
    
     return {"message": "User registered successfully."}
 
 
-@app.post("/login/")
-async def login_user(user: User):
-   
-    user_row = await users_db.get_user(user.username)
-  
-    if user_row and check_password(user_row['password'], user.password):  
+@app.post("/login")
+async def login_user(request: Request):
+    user = await request.json()
+    user_row = await users_db.get_user(user['username'])
+
+    if user_row and check_password(user_row['password'], user['password']):  
         access_token = user_row['api_token'] 
         return {"token":access_token} 
   
@@ -278,18 +296,21 @@ async def change_password(request: Request, current_user: dict = Depends(get_cur
     
     await users_db.change_password(current_user['username'], hashed_password)
 
-
+"""
 @app.get("/")
 def swagger_documentaiton():
     response = RedirectResponse(url='/docs')
     return response
+"""
 
-
+@app.get("/")
+def get_home():
+    response = {"message":"Hello"}
+    return response
 
 @app.post("/query")
 async def answer_generation(query: Query, current_user: dict = Depends(get_current_user)):
     
-    #Authorize.jwt_required()
     search_query = query.query
     
     print("THE SEARCH QUERY IS ",search_query)
@@ -310,6 +331,7 @@ async def answer_generation(query: Query, current_user: dict = Depends(get_curre
         return documents
     except Exception as e:
         #Handle a specific type of exception
+        print(str(e))
         raise HTTPException(status_code=500, detail="{}".format(str(e)))
 
 
@@ -319,13 +341,14 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
     
     data = await request.json()
     search_query = data['query']
-    temperature = data['temperature']
+    temperature = float(data['temperature'])
+    print("Temperature = ", temperature)
     documents_found = data['document_found']
     try:
 
         documents_string = convert_documents(documents_found)
         
-        mistral_input = f"{search_query}\nPapers:\n" + documents_string
+        mistral_input = f"{search_query}\Abstracts:\n" + documents_string
         
         print(mistral_input)
         print("")
@@ -341,18 +364,19 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
     # Extracting input 
     answer_complete = answer.text
     documents = answer.document_found
-    
+    print("ANSWER =\n")
+    print(answer_complete)
     documents_found = converting_document_for_verification(documents)
+    print("DOCUEMNT FOUND = ",documents_found)
     
-    print("ANSWER =\n",answer_complete)
-    pmid_claim = split_text_by_pubmed_references(answer_complete)
-    print("PMID CLAIM = ",pmid_claim)
+    pmid_claim = split_text_by_pubmed_references(answer_complete, documents_found, model)
+   
     claim_pmid_list = verification_format(pmid_claim)
     
     #print("Results of splitting...")
     #print(claim_pmid_list)
    
-    async def generate_results():
+    def generate_results():
         for result in verification_claim(claim_pmid_list, documents_found, verification_model, verification_tokenizer, model):
             json_result = json.dumps(result)
             if result != {}:
@@ -365,7 +389,7 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
                 # beacuse the operation is so much faster
                 #await asyncio.sleep(0.3)
 
-            yield json_result
+            yield json_result  
         
     
     return StreamingResponse(generate_results(), media_type="application/json")
@@ -376,20 +400,20 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
 async def handle_save_session(request: Request, current_user: dict = Depends(get_current_user)):
     data = await request.json()
     state = data['state']
-    html = data['html']
-    session_id = await users_db.save_session(state, html)
+    print("STATE = ", json.dumps(state))
+    session_id = await users_db.save_session(state)
     print("SESSION ID = ",session_id)
     return {"session_id": session_id}
 
+
 @app.get("/get_session/{session_id}")
-async def handle_get_session(session_id: str,current_user: dict = Depends(get_current_user)):
+async def handle_get_session(session_id: str): #current_user: dict = Depends(get_current_user)
     print("ENTRO")
     session_data = await users_db.get_web_session(int(session_id))
     print("SESSION DATA = ", session_data)
     if session_data:
         return {
-            "html": session_data['html'],
-            "state": json.loads(session_data['state'])
+            "state": session_data['state']
         }
     else:
         raise HTTPException(status_code=404, detail="Session not found")
