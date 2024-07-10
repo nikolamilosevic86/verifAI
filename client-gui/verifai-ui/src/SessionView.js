@@ -1,48 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import MainScreen from './MainScreen';
+import { BACKEND } from './App';
 
-function SessionView() {
+function MainScreenWrapper(props) {
     const { sessionId } = useParams();
-    const [content, setContent] = useState('');
-    const navigate = useNavigate();
+    const [sessionData, setSessionData] = useState(null);
 
     useEffect(() => {
-        const url = `http://3.74.47.54:5001/get_session/${sessionId}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                // Pass an array of selectors for classes to remove
-                function removeSpecificDiv(htmlContent, selectors) {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(htmlContent, 'text/html');
+        async function fetchSessionData() {
+            try {
                 
-                    // Iterate over all selectors and remove elements
-                    selectors.forEach(selector => {
-                        const elementsToRemove = doc.querySelectorAll(selector);
-                        elementsToRemove.forEach(element => {
-                            element.remove();
-                        });
-                    });
-                
-                    // Serialize the document back to string
-                    return doc.body.innerHTML;
+                const response = await fetch(`${BACKEND}get_session/${sessionId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-                const modifiedContent = removeSpecificDiv(data.html, ['.search-area','.tabbed']);
-                setContent(modifiedContent);
-            })
-            .catch(error => console.error('Error fetching data:', error));
+                const data = await response.json();
+                setSessionData(data['state']);
+            } catch (error) {
+                console.error('Failed to fetch session data:', error);
+            }
+        }
+
+        if (sessionId) {
+            fetchSessionData();
+        }
     }, [sessionId]);
 
-    const handleNavigateMain = () => {
-        navigate('/main');  // Navigate to the main page
-    };
-    return (
-        <div>
-            <button class="simpleBlueButton" onClick={handleNavigateMain}>Go to Main</button>  
-            <div dangerouslySetInnerHTML={{ __html: content }} />
-            
-        </div>
-    );
+  
+    if (!sessionData) {
+        return <div>Loading...</div>;
+    }
+
+   
+    return <MainScreen {...props} sessionData={sessionData} />;
 }
 
-export default SessionView;
+export default MainScreenWrapper;

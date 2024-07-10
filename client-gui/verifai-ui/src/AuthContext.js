@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-
+import { BACKEND } from './App.js';
 
 const AuthContext = createContext(null) ?? {};
 
@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     const syncTokenFromSessionStorage = () => {
       const token = sessionStorage.getItem("token");
       const username = sessionStorage.getItem("username");
+      
       if (token && token != "" && token != undefined) setUser({token: token, username: username});
     }
 
@@ -21,12 +22,13 @@ export const AuthProvider = ({ children }) => {
 
     const login = async (username, password, navigate) => {
     try {
-        const response = await fetch('http://18.198.26.251:5001/login/', {
+        const response = await fetch(BACKEND + 'login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
+                
             },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username: username, password: password })
         });
         if (response.ok) {
             const data = await response.json(); 

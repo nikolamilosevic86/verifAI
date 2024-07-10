@@ -19,7 +19,7 @@ function Login() {
     }
 
     const handleRegister = () => {
-        navigate('/registration'); // Adjust the path according to your route settings
+        navigate('/registration'); 
     };
 
 
