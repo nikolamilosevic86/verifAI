@@ -48,7 +48,7 @@ export QDRANT_PORT=port_qdrant
 
 ## Using our APP
 
-You can use our app [here] (https://app.verifai-project.com). You need to create a free account by clicking on Join now.
+You can use our app [here](https://app.verifai-project.com). You need to create a free account by clicking on Join now.
 
 ## Collaborators and contributions
 
