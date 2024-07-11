@@ -46,6 +46,10 @@ export QDRANT_PORT=port_qdrant
 3. [PQAref dataset](https://huggingface.co/datasets/BojanaBas/PQAref)
 4. [Verification model based on DeBERTa, fine-tuned on SciFact dataset](https://huggingface.co/MilosKosRad/TextualEntailment_DeBERTa_preprocessedSciFACT)
 
+## Using our APP
+
+You can use our app [here] (https://app.verifai-project.com). You need to create a free account by clicking on Join now.
+
 ## Collaborators and contributions
 
 Currently, two institutions are the main drivers of this project, namely Bayer A.G and Institute for Artificial Intelligence Research and Development of Serbia. Current contrbiutors are by institutions
