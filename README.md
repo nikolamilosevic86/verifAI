@@ -1,5 +1,5 @@
 # VerifAI project
-<iframe src="https://github.com/sponsors/nikolamilosevic86/button" title="Sponsor nikolamilosevic86" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
+<iframe src="https://github.com/sponsors/nikolamilosevic86/button" title="Sponsor nikolamilosevic86" height="32" width="114" style="border: 0; border-radius: 6px;"\>
 
 <img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/e95b4877-0847-4fa2-99e5-a6a7fc0003f8"  width="500"/>
 
