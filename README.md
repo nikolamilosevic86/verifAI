@@ -51,6 +51,9 @@ export QDRANT_PORT=port_qdrant
 
 You can use our app [here](https://app.verifai-project.com). You need to create a free account by clicking on Join now.
 
+<img width="1512" alt="image" src="https://github.com/user-attachments/assets/47d3b9bb-2c54-4448-b608-cf96589bd63d">
+
+
 ## Collaborators and contributions
 
 Currently, two institutions are the main drivers of this project, namely Bayer A.G and Institute for Artificial Intelligence Research and Development of Serbia. Current contrbiutors are by institutions
