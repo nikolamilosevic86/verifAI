@@ -49,7 +49,8 @@ class MainScreen extends Component {
                 submitted: false,
                 output: "" , // Holds HTML content safely
                 output_verification: "",
-                questions: []
+                questions: [],
+                stream: true
             };  
         }
         
@@ -62,6 +63,7 @@ class MainScreen extends Component {
         this.setOutput = this.setOutput.bind(this);  
         this.setOutputVerification = this.setOutputVerification.bind(this)
         
+        this.handleStreamChange = this.handleStreamChange.bind(this);
         this.handleTemperatureChange = this.handleTemperatureChange.bind(this);
         this.handleNumDocumentsChange = this.handleNumDocumentsChange.bind(this);
         this.handleSearchTypeChange = this.handleSearchTypeChange.bind(this);
@@ -97,6 +99,12 @@ class MainScreen extends Component {
         };
     }
     
+
+    handleStreamChange(event) {
+        this.setState({ stream: event.target.value === "true" });
+    }
+
+
     handleUserCredential = () => {
         this.props.navigate('/user_credential');
       };
@@ -301,14 +309,14 @@ class MainScreen extends Component {
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
         const document_found = this.state.questions[this.state.questions.length-1].document_found
-        const stream = false;
+       
         fetch(BACKEND + "verification_answer", {
             method: "POST",
             headers: {
                 'Authorization': "Bearer " + this.context.user.token, 
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ text: completeText, document_found:document_found, stream: stream})
+            body: JSON.stringify({ text: completeText, document_found:document_found, stream: this.state.stream})
         })
         .then(async response => {
 
@@ -353,49 +361,7 @@ class MainScreen extends Component {
             }
 
 
-            function escapeRegex(string) {
-                return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            }
-
-            function normalizeWhitespace(string) {
-                return string.replace(/\s+/g, ' ').trim();
-            }
-
-            // Function to highlight text in HTML
-            function highlightText(html, textToHighlight, color) {
-                // Sanitize the HTML input
-                const safeHTML = DOMPurify.sanitize(html);
-                
-                // Split the claim text into sentences
-                const sentences = textToHighlight.match(/[^\.!\?]+[\.!\?]+/g) || [textToHighlight];
-
-                // Function to replace each sentence individually
-                function replaceSentence(html, sentence) {
-                    // Escape special characters in the sentence
-                    const escapedSentence = escapeRegex(normalizeWhitespace(sentence));
-                    
-
-                    // Create a regex pattern that handles whitespace and HTML tags between words
-                 
-                    const regexPattern = escapedSentence.split('\\s+').join('\\s*(?:<[^>]*>\\s*)*');
-                  
-                    const claim_regex = new RegExp(`(${regexPattern})`, 'gi');
-                    
-                    // Replace the matched text with the highlighted version
-                    return html.replace(claim_regex, color);
-                }
-                // Process each sentence
-                let highlightedHTML = safeHTML;
-                if (sentences) {
-                    sentences.forEach(sentence => {
-                        highlightedHTML = replaceSentence(highlightedHTML, sentence);
-                    });
-                }
-
-                
-                return highlightedHTML;
-            }
-
+            
             function replacePubMedLinks(inputString) {
                 const replaceWithLink = (match) => {
                     const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
@@ -412,7 +378,9 @@ class MainScreen extends Component {
             }
             
 
-            if (stream) {
+            if (this.state.stream) {
+
+                
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
               
@@ -436,8 +404,8 @@ class MainScreen extends Component {
                 
                 //console.log("Arriva = ", claim_string)
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
-                console.log("Result = ",claim_dict)
-                console.log(typeof claim_dict);
+                
+              
                 
                 if (Object.keys(claim_dict).length === 0) {
                     const ballHtml = ' <span class="gray-ball"></span>';
@@ -470,6 +438,53 @@ class MainScreen extends Component {
                 const regex_output = /<a\s+href=.*?>/gi;
                 output = output.replace(regex_output, '');
                 
+
+                function escapeRegex(string) {
+                    return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                }
+    
+                function normalizeWhitespace(string) {
+                    return string.replace(/\s+/g, ' ').trim();
+                }
+    
+
+                // Function to highlight text in HTML
+                function highlightText(html, textToHighlight, color) {
+                    // Sanitize the HTML input
+                    const safeHTML = DOMPurify.sanitize(html);
+                    
+                    // Split the claim text into sentences
+                    const sentences = textToHighlight.match(/[^\.!\?]+[\.!\?]+/g) || [textToHighlight];
+    
+                    // Function to replace each sentence individually
+                    function replaceSentence(html, sentence) {
+                        // Escape special characters in the sentence
+                        const escapedSentence = escapeRegex(normalizeWhitespace(sentence));
+                        
+    
+                        // Create a regex pattern that handles whitespace and HTML tags between words
+                     
+                        const regexPattern = escapedSentence.split('\\s+').join('\\s*(?:<[^>]*>\\s*)*');
+                      
+                        const claim_regex = new RegExp(`(${regexPattern})`, 'gi');
+                        
+                        // Replace the matched text with the highlighted version
+                        return html.replace(claim_regex, color);
+                    }
+                    // Process each sentence
+                    let highlightedHTML = safeHTML;
+                    if (sentences) {
+                        sentences.forEach(sentence => {
+                            highlightedHTML = replaceSentence(highlightedHTML, sentence);
+                        });
+                    }
+    
+                    
+                    return highlightedHTML;
+                }
+
+                console.log("CLAIM = ",claim_dict.claim);
+
                 var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
@@ -512,20 +527,23 @@ class MainScreen extends Component {
                     // Replace the matched parts with an empty string
                     return inputText.replace(regex, '');
                   }
-
+                
+                function normalizeWhitespace2(string) {
+                    string = string.replace(/\s/g, ' ').trim();
+                    return string.replace(/\s*([.,;!?:])\s*/g, '$1');
+                }
                 html = cleanHTML(html)
-                //html = normalizeWhitespace(html)
+                html = normalizeWhitespace2(html)
                 const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
                 console.log("text toolpit = ", text_toolpit)
                 const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>` 
                 
-                console.log("Claim ", claim_dict.claim)
-                console.log("HTML = ", html);
+                
                 
                 //const claimRegex = new RegExp(claim_dict.claim.split(/\s+/).join('\\s*'), 'g');
                
 
-                html = html.replace(claim_dict.claim, color);
+                html = html.replace(normalizeWhitespace2(claim_dict.claim), color);
                
                 console.log("HTML dopo = ", html);
                 
@@ -758,10 +776,17 @@ class MainScreen extends Component {
                                                 </label>
                                             </div>
                                                 
-                                            
-
-
-                                        </div>
+                                            <label>Stream:
+                                                <select
+                                                    value={this.state.stream}
+                                                    onChange={this.handleStreamChange}
+                                                    title="Please select the stream option"
+                                                >
+                                                    <option value="true">Stream</option>
+                                                    <option value="false">Not Stream</option>
+                                                </select>
+                                            </label>
+                                            </div>
                                     )}
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
