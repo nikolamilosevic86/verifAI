@@ -150,6 +150,7 @@ class VerificationInput(BaseModel):
     query:str = ""
     text: str  # The large string result from `answer_generation`
     document_found: list
+    stream: bool
 
 class User(BaseModel):
     name :str = ""
@@ -348,7 +349,7 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
 
         documents_string = convert_documents(documents_found)
         
-        mistral_input = f"{search_query}\Abstracts:\n" + documents_string
+        mistral_input = f"{search_query}\nAbstracts:\n\n" + documents_string
         
         print(mistral_input)
         print("")
@@ -364,6 +365,7 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
     # Extracting input 
     answer_complete = answer.text
     documents = answer.document_found
+    stream = answer.stream
     print("ANSWER =\n")
     print(answer_complete)
     documents_found = converting_document_for_verification(documents)
@@ -375,25 +377,33 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
     
     #print("Results of splitting...")
     #print(claim_pmid_list)
-   
-    def generate_results():
-        for result in verification_claim(claim_pmid_list, documents_found, verification_model, verification_tokenizer, model):
-            json_result = json.dumps(result)
-            if result != {}:
-                print("RESULT = ",result)
-                print("RESULT = ",result['result'], type(result["result"]))
-                print("-"*50)
+    if stream: 
+        def generate_results():
+            for result in verification_claim(claim_pmid_list, documents_found, verification_model, verification_tokenizer, model):
+                json_result = json.dumps(result)
+                if result != {}:
+                    print("RESULT = ",result)
+                    print("RESULT = ",result['result'], type(result["result"]))
+                    print("-"*50)
 
-            if result != {} and NO_REFERENCE_NUMBER in result["result"]:
-                time.sleep(0.3)
-                # beacuse the operation is so much faster
-                #await asyncio.sleep(0.3)
+                if result != {} and NO_REFERENCE_NUMBER in result["result"]:
+                    time.sleep(0.3)
+                    # beacuse the operation is so much faster
+                    #await asyncio.sleep(0.3)
 
-            yield json_result  
+                yield json_result  
+            
         
-    
-    return StreamingResponse(generate_results(), media_type="application/json")
-    
+        return StreamingResponse(generate_results(), media_type="application/json")
+    else:
+        output = []
+        for result in verification_claim(claim_pmid_list, documents_found, verification_model, verification_tokenizer, model):
+            output.append(result)
+
+        print("Output = ",output)
+        json_output = json.dumps(output)
+        
+        return json_output
 
 
 @app.post("/save_session")

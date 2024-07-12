@@ -49,7 +49,8 @@ class MainScreen extends Component {
                 submitted: false,
                 output: "" , // Holds HTML content safely
                 output_verification: "",
-                questions: []
+                questions: [],
+                stream: true
             };  
         }
         
@@ -62,6 +63,7 @@ class MainScreen extends Component {
         this.setOutput = this.setOutput.bind(this);  
         this.setOutputVerification = this.setOutputVerification.bind(this)
         
+        this.handleStreamChange = this.handleStreamChange.bind(this);
         this.handleTemperatureChange = this.handleTemperatureChange.bind(this);
         this.handleNumDocumentsChange = this.handleNumDocumentsChange.bind(this);
         this.handleSearchTypeChange = this.handleSearchTypeChange.bind(this);
@@ -97,6 +99,12 @@ class MainScreen extends Component {
         };
     }
     
+
+    handleStreamChange(event) {
+        this.setState({ stream: event.target.value === "true" });
+    }
+
+
     handleUserCredential = () => {
         this.props.navigate('/user_credential');
       };
@@ -234,7 +242,7 @@ class MainScreen extends Component {
             
                 let match;
                 while ((match = regex.exec(no_space_token)) !== null) {
-                    console.log("Match = ", match);
+                   
                     const number = match[1];
                     const matchedPart = match[0];
                     const linkedPart = `<a href="${baseUrl + number}" target="_blank">${matchedPart}</a>`;
@@ -301,16 +309,78 @@ class MainScreen extends Component {
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
         const document_found = this.state.questions[this.state.questions.length-1].document_found
-
+       
         fetch(BACKEND + "verification_answer", {
             method: "POST",
             headers: {
                 'Authorization': "Bearer " + this.context.user.token, 
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ text: completeText, document_found:document_found })
+            body: JSON.stringify({ text: completeText, document_found:document_found, stream: this.state.stream})
         })
         .then(async response => {
+
+            function tooltipToWrite(listResult) {
+                    
+                let text = "";
+                let color = "";
+                for (let [pmid, result] of Object.entries(listResult)) {
+                    
+                    let label = result['label']
+
+                    if (color === "") {
+                        color = (label === "SUPPORT") ? 'green' :
+                                (label === "NO REFERENCE") ? 'gray' :
+                                (label === "NO_EVIDENCE") ? 'orange' :
+                                (label === "CONTRADICT") ? 'red' : '';
+                    } else {
+                        color = "blue"
+                    }
+            
+                    let ballHtml = (label === "SUPPORT") ? '  <span class="green-ball"></span>' :
+                                   (label === "NO REFERENCE") ? '  <span class="gray-ball"></span>' :
+                                   (label === "NO_EVIDENCE") ? '  <span class="orange-ball"></span>' :
+                                   (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
+                    
+                
+
+                    let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                                     (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
+                                     (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                     (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                    
+                    if (label === "SUPPORT" || label === "CONTRADICT"){
+                        let closest_sentence = result['closest_sentence']
+                        tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
+                    }
+                   
+                    text += "<br>" + tooltipText;
+                    
+                }
+                return { text: text, color: color };
+            }
+
+
+            
+            function replacePubMedLinks(inputString) {
+                const replaceWithLink = (match) => {
+                    const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
+                    return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
+                };
+            
+                let result = inputString.replace(MainScreen.regex, replaceWithLink);
+                result = result.replace(MainScreen.regex_punct, replaceWithLink);
+                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
+                result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
+                result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
+            
+                return result;
+            }
+            
+
+            if (this.state.stream) {
+
+                
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
               
@@ -334,8 +404,8 @@ class MainScreen extends Component {
                 
                 //console.log("Arriva = ", claim_string)
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
-                console.log("Result = ",claim_dict)
-                console.log(typeof claim_dict);
+                
+              
                 
                 if (Object.keys(claim_dict).length === 0) {
                     const ballHtml = ' <span class="gray-ball"></span>';
@@ -356,91 +426,51 @@ class MainScreen extends Component {
                     return;
                 }
                 
-                function tooltipToWrite(listResult) {
-                    
-                    let text = "";
-                    let color = "";
-                    for (let [pmid, result] of Object.entries(listResult)) {
-                        
-                        let label = result['label']
-
-                        if (color === "") {
-                            color = (label === "SUPPORT") ? 'green' :
-                                    (label === "NO REFERENCE") ? 'gray' :
-                                    (label === "NO_EVIDENCE") ? 'orange' :
-                                    (label === "CONTRADICT") ? 'red' : '';
-                        } else {
-                            color = "blue"
-                        }
-                
-                        let ballHtml = (label === "SUPPORT") ? '  <span class="green-ball"></span>' :
-                                       (label === "NO REFERENCE") ? '  <span class="gray-ball"></span>' :
-                                       (label === "NO_EVIDENCE") ? '  <span class="orange-ball"></span>' :
-                                       (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
-                        
-                    
-
-                        let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
-                                         (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
-                                         (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                         (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
-                        
-                        if (label === "SUPPORT" || label === "CONTRADICT"){
-                            let closest_sentence = result['closest_sentence']
-                            tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
-                        }
-                       
-                        text += "<br>" + tooltipText;
-                        
-                    }
-                    return { text: text, color: color };
-                }
                 
 
                 const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
 
-                console.log("Text toolpit = ",text_toolpit)
+                
                 var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>` 
                             
+                
+                var output = this.state.questions[this.state.questions.length - 1].result
+                const regex_output = /<a\s+href=.*?>/gi;
+                output = output.replace(regex_output, '');
+                
+
                 function escapeRegex(string) {
                     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 }
-
+    
                 function normalizeWhitespace(string) {
                     return string.replace(/\s+/g, ' ').trim();
                 }
-                
-                // Function to highlight text in HTML
-                function highlightText(html, textToHighlight) {
-                    console.log("Original HTML:\n", html);
+    
 
+                // Function to highlight text in HTML
+                function highlightText(html, textToHighlight, color) {
                     // Sanitize the HTML input
                     const safeHTML = DOMPurify.sanitize(html);
-                    console.log("Sanitized HTML:\n", safeHTML);
-
+                    
                     // Split the claim text into sentences
                     const sentences = textToHighlight.match(/[^\.!\?]+[\.!\?]+/g) || [textToHighlight];
-                    console.log("Sentences to highlight:\n", sentences);
-
+    
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
                         // Escape special characters in the sentence
-                        
                         const escapedSentence = escapeRegex(normalizeWhitespace(sentence));
-                        console.log("Escaped sentence to search:\n", escapedSentence);
-
+                        
+    
                         // Create a regex pattern that handles whitespace and HTML tags between words
                      
                         const regexPattern = escapedSentence.split('\\s+').join('\\s*(?:<[^>]*>\\s*)*');
-                        console.log("Regex pattern:\n", regexPattern);
+                      
                         const claim_regex = new RegExp(`(${regexPattern})`, 'gi');
-                        console.log("Regex object:\n", claim_regex);
-
                         
                         // Replace the matched text with the highlighted version
                         return html.replace(claim_regex, color);
                     }
-
                     // Process each sentence
                     let highlightedHTML = safeHTML;
                     if (sentences) {
@@ -448,34 +478,14 @@ class MainScreen extends Component {
                             highlightedHTML = replaceSentence(highlightedHTML, sentence);
                         });
                     }
-
-                    console.log("Highlighted HTML:\n", highlightedHTML);
+    
+                    
                     return highlightedHTML;
                 }
 
-                
-                function replacePubMedLinks(inputString) {
-                    const replaceWithLink = (match) => {
-                        const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
-                        return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
-                    };
-                
-                    let result = inputString.replace(MainScreen.regex, replaceWithLink);
-                    result = result.replace(MainScreen.regex_punct, replaceWithLink);
-                    result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
-                    result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
-                    result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
-                
-                    return result;
-                }
-                
-                var output = this.state.questions[this.state.questions.length - 1].result
-                const regex_output = /<a\s+href=.*?>/gi;
-                output = output.replace(regex_output, '');
-                //output = output.replace('</a>', '');
-                //const claim_to_search =  replacePubMedLinks(claim_dict.claim)
-                //console.log("CLAIM TO SEARCH = ",claim_to_search)
-                var highlightedHTML = highlightText(output, claim_dict.claim);
+                console.log("CLAIM = ",claim_dict.claim);
+
+                var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
                 highlightedHTML = replacePubMedLinks(highlightedHTML)
@@ -487,30 +497,76 @@ class MainScreen extends Component {
                     ))
                 }));
 
-
-                // ------------------------
-                /*
-                if (claim_dict["result"] === "NO REFERENCE") {
-                    this.setOutputVerification("Claim:\n"+ claim_dict.claim + " <strong>" + claim_dict.result + "</strong>" +
-                                                 ballHtml + "\n\n");
-                } else {
-                    // Otherwise, print claim, result, and pmid
-                    var url_reference = `<a href="${baseUrl + claim_dict.pmid}" target="_blank">${claim_dict.pmid}</a>`;
-                    
-                    this.setOutputVerification("Claim for document " + url_reference + ':\n' + claim_dict.claim +  " " + 
-                    "<strong>" + claim_dict.result + "</strong>" + ballHtml + "\n\n");
-                    
-                }
-                */
-                // Read next portion of the stream
                 return readerVerification.read().then(processResultVerification);
             };
     
             // Start reading the stream
             await readerVerification.read().then(processResultVerification);
+        } else {
+            console.log("I am in the else");
+            
+        
+
+            const claim_dict_list_string = await response.json();
+
+            const claim_dict_list = JSON.parse(claim_dict_list_string);
+
+            const output = this.state.questions[this.state.questions.length - 1].result
+            
+            let html = DOMPurify.sanitize(output);
+
+            console.log("Arriva questa lista = ", claim_dict_list);
+
+            let i = 0
+            for (const claim_dict of claim_dict_list) {
+                
+                function cleanHTML(inputText) {
+                    // Regular expression to match tags that are not <span> or </span>
+                    const regex = /<(?!\/?span\b)[^>]*>/gi;
+                    
+                    // Replace the matched parts with an empty string
+                    return inputText.replace(regex, '');
+                  }
+                
+                function normalizeWhitespace2(string) {
+                    string = string.replace(/\s/g, ' ').trim();
+                    return string.replace(/\s*([.,;!?:])\s*/g, '$1');
+                }
+                html = cleanHTML(html)
+                html = normalizeWhitespace2(html)
+                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
+                console.log("text toolpit = ", text_toolpit)
+                const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>` 
+                
+                
+                
+                //const claimRegex = new RegExp(claim_dict.claim.split(/\s+/).join('\\s*'), 'g');
+               
+
+                html = html.replace(normalizeWhitespace2(claim_dict.claim), color);
+               
+                console.log("HTML dopo = ", html);
+                
+                i = i + 1;
+            }
+            
+            html = replacePubMedLinks(html)
+            this.setState(prevState => ({
+                questions: prevState.questions.map((q, i) => (
+                    i === prevState.questions.length - 1 ? { ...q, result: html } : q
+                ))
+            }));
+
+            this.setState(prevState => ({
+                questions: prevState.questions.map((q, i) => (
+                    i === prevState.questions.length - 1 ? { ...q, status: "finished", loading:false} : q
+                )),
+            }), 
+            );
+            }
         })
         .catch(error => {
-            console.error('Error during verification:');
+            console.error('Error during verification:', error);
         });
     }
     
@@ -719,9 +775,20 @@ class MainScreen extends Component {
                                                     <button className="temperature-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
                                                 </label>
                                             </div>
-                                        
-                                        </div>
+                                                
+                                            <label>Stream:
+                                                <select
+                                                    value={this.state.stream}
+                                                    onChange={this.handleStreamChange}
+                                                    title="Please select the stream option"
+                                                >
+                                                    <option value="true">Stream</option>
+                                                    <option value="false">Not Stream</option>
+                                                </select>
+                                            </label>
+                                            </div>
                                     )}
+                                  
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
                                         <input
                                             id="question"
