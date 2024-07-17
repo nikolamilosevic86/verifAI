@@ -8,6 +8,8 @@ No more searches, just verifiably accurate answers.
 Verif.ai project aims to address problem of hallucinations in generative large language models and generative search, especially focusing on life sciences domain.
 Verif.ai is an AI system designed to verify and document the correctness of AI-generated texts. In the core of the engine is generative search engine, powered by open technologies. However, generative models may hallucinate, and therefore Verif.ai is developing a second model that would check the sources of generative model and flag any misinformation or misinterpretations of source documents. Therefore, make the answer created by generative search engine completly verifiable. The best part is, that we are making it open source, so anyone can use it!
 
+Check the [article about VerifAI project published on TowardsDataScience](https://towardsdatascience.com/verifai-project-open-source-biomedical-question-answering-with-verified-answers-5417cd9003e0)
+
 
 ## Installation and start-up
 
@@ -71,6 +73,7 @@ We welcome contribution to this project by anyone interested in participating. T
 
 ## Citations
 
+* [Adela Ljajić, Miloš Košprdić, Bojana Bašaragin, Darija Medvecki, Lorenzo Cassano, Nikola Milošević, “Scientific QA System with Verifiable Answers”, The 6th International Open Search Symposium 2024](https://arxiv.org/pdf/2407.11485)
 * [Košprdić, M., Ljajić, A., Bašaragin, B., Medvecki, D., & Milošević, N. "Verif. ai: Towards an Open-Source Scientific Generative Question-Answering System with Referenced and Verifiable Answers." The Sixteenth International Conference on Evolving Internet INTERNET 2024 (2024).](https://arxiv.org/pdf/2402.18589.pdf)
 * [Bojana Bašaragin, Adela Ljajić, Darija Medvecki, Lorenzo Cassano, Miloš Košprdić, Nikola Milošević "How do you know that? Teaching Generative Language Models to Reference Answers to Biomedical Questions", Accepted at BioNLP 2024, Colocated with ACL 2024](https://arxiv.org/pdf/2407.05015)
 
