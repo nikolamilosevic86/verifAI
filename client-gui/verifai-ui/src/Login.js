@@ -43,7 +43,7 @@ function Login() {
             
         </div>
         <br></br>
-        <p>New to VerifAi <targe><span onClick={handleRegister} style={{ color: 'blue', cursor: 'pointer' }}>join now</span></targe></p>
+        <p>New to VerifAi app? <targe><span onClick={handleRegister} style={{ color: 'blue', cursor: 'pointer' }}>Sign up</span></targe> to get instant access.</p>
     </div>
     
     );
