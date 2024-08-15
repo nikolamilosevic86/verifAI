@@ -30,6 +30,7 @@ function App() {
             <Route path="/user_credential" element={<UserCredential />} />
             <Route path="/" element={<Login />} />
             <Route path="/get_session/:sessionId" element={<MainScreenWrapper />} />
+
           </Routes>
         </Router>
       </DataProvider>
