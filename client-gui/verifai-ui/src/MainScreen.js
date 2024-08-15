@@ -123,6 +123,8 @@ class MainScreen extends Component {
       };
 
     
+
+    
     handleLexParamChange = (event) => {
         const newValue = parseFloat(event.target.value);  // Ensure the value is treated as a number
         this.setState({
@@ -658,9 +660,21 @@ class MainScreen extends Component {
                 {({ user, logout }) => {
                     
                     if (!user) {
+             
+                        const handleLogin = () => {                     
+                          this.props.navigate("/login");              
+
+                        }
+            
                         return (
                             <div className='App'>
-                                <h1>Please log in to access this page.</h1>
+                                <div className='login-message'>
+                                    <img src={logo} alt="Logo" className="login-logo" />
+                                    <div class='message-container'>
+                                        <h1>Please log in to access this page.</h1>
+                                        <button onClick={handleLogin}>Log in</button>
+                                    </div>
+                                </div>
                             </div>
                         );
                     } 

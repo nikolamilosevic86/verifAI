@@ -1,10 +1,22 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { BACKEND } from './App.js';
-
 const AuthContext = createContext(null) ?? {};
 
-export const useAuth = () => useContext(AuthContext);
+function getRedirectionPath() {
+  
+  const query = window.location.search;
+  const params = new URLSearchParams(query);
+  const redirectionPath = params.get('redirection')
 
+  if(redirectionPath)
+    return '/' + redirectionPath;
+  else
+    return '/main';
+ 
+     
+}
+
+export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     
@@ -20,6 +32,8 @@ export const AuthProvider = ({ children }) => {
       syncTokenFromSessionStorage();
     }, []);
 
+   
+
     const login = async (username, password, navigate) => {
     try {
         const response = await fetch(BACKEND + 'login', {
@@ -30,12 +44,17 @@ export const AuthProvider = ({ children }) => {
             },
             body: JSON.stringify({ username: username, password: password })
         });
+
+     
+
         if (response.ok) {
             const data = await response.json(); 
             sessionStorage.setItem("token",data.token);
             sessionStorage.setItem("username",username);
             setUser({ token: data.token, username: username}); 
-            navigate('/main');
+            const redirectionPath = getRedirectionPath();
+            navigate(redirectionPath);
+            
         } else if (response.status === 401) {
             alert('Invalid username or password');
         }

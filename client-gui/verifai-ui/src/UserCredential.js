@@ -47,13 +47,36 @@ function UserCredential() {
         navigate('/main');
     };
 
-    if (!user) {
+   /* if (!user) {
         return (
             <div className="login-container">
                 <h1>Login before</h1>
             </div>
         );
-    }
+    }*/
+
+        if (!user) {
+             
+            const handleLogin = () => {                     
+              navigate("/login/?redirection=user_credential");              
+
+            }
+
+            return (
+                <div className='App'>
+                    <div className='login-message'>
+                        <img src={logo} alt="Logo" className="login-logo" />
+                        <div class='message-container'>
+                            <h1>Please log in to access this page.</h1>
+                        <button onClick={handleLogin}>Log in</button>
+                    </div>
+                </div>
+               
+                
+            </div>
+            );
+        } 
+        
 
     return (
         <div className="login-container">

@@ -668,3 +668,23 @@ h3 {
   margin: 0;
   padding: 0;
 }
+
+.login-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+  height: 100vh;
+}
+
+.message-container {
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  width: 300px; /* Adjust width as necessary */
+  display: flex;
+  flex-direction: column; /* Ensures form elements stack vertically */
+  align-items: center; /* Aligns form elements to the center horizontally */
+  padding:40px;
+}
