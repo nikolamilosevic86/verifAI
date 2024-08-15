@@ -5,14 +5,15 @@ import MainScreen from './MainScreen';
 import Login from './Login';
 import Registration from './Registration';
 //import SessionView from './SessionView';
+import MainScreenWrapper from './SessionView';
 import { AuthProvider } from './AuthContext';
 import { DataProvider } from './DataContext'; // Import the DataProvider
 import UserCredential from './UserCredential';
 
-function MainScreenWrapper(props) {
-  const { sessionId } = useParams();
-  return <MainScreen {...props} sessionId={sessionId} />;
-}
+//function MainScreenWrapper(props) {
+//  const { sessionId } = useParams();
+//  return <MainScreen {...props} sessionId={sessionId} />;
+//}
 
 export const BACKEND = "https://api.verifai-project.com/";
 
