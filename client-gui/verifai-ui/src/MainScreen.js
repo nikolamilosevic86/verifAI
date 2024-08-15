@@ -1,5 +1,6 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
+import share from './share.png';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import {BACKEND} from './App.js'
@@ -404,8 +405,8 @@ class MainScreen extends Component {
                 
                 //console.log("Arriva = ", claim_string)
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
-                
-              
+                console.log("Result = ",claim_dict)
+                console.log(typeof claim_dict);
                 
                 if (Object.keys(claim_dict).length === 0) {
                     const ballHtml = ' <span class="gray-ball"></span>';
@@ -475,6 +476,7 @@ class MainScreen extends Component {
                     let highlightedHTML = safeHTML;
                     if (sentences) {
                         sentences.forEach(sentence => {
+                            console.log("Sentence = ", sentence);
                             highlightedHTML = replaceSentence(highlightedHTML, sentence);
                         });
                     }
@@ -482,8 +484,6 @@ class MainScreen extends Component {
                     
                     return highlightedHTML;
                 }
-
-                console.log("CLAIM = ",claim_dict.claim);
 
                 var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
@@ -503,10 +503,7 @@ class MainScreen extends Component {
             // Start reading the stream
             await readerVerification.read().then(processResultVerification);
         } else {
-            console.log("I am in the else");
             
-        
-
             const claim_dict_list_string = await response.json();
 
             const claim_dict_list = JSON.parse(claim_dict_list_string);
@@ -678,9 +675,10 @@ class MainScreen extends Component {
                             <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
                             <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                             
-                            <button class="SharingButton" onClick={this.saveSession}>
-                                 Share
-                            </button>
+                        <button className="SharingButton" onClick={this.saveSession}>
+                            <img className="Share-logo" src={share}  />
+                          
+                        </button>
                             <div className="router-reset">
                                 
                                 <img className="App-logo" src={logo} alt="Logo" />
