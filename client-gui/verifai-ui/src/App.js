@@ -14,6 +14,8 @@ function MainScreenWrapper(props) {
   return <MainScreen {...props} sessionId={sessionId} />;
 }
 
+export const BACKEND = "https://api.verifai-project.com/";
+
 function App() {
 
 

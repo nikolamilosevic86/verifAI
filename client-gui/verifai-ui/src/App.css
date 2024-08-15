@@ -1,19 +1,27 @@
 .App {
   text-align: center;
-}
+ }
+
 
 .App-logo {
-  height: 40vmin;
+  height: 100%; /* Adjust the logo size to fill the container */
+  width: auto; /* Maintain aspect ratio */
+  
   pointer-events: none;
-  align-self: flex-start; /* Align to the start of the flex container */
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin-top: 40px; /* Space at the top */
+  width: 25vmin; /* Set a fixed width */
+  height: 25vmin; /* Set a fixed height to make it a circle */
+  overflow: hidden; /* Hide the overflow to make the image fit inside the circle */
 }
 
-
-/* @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-} */
+.Share-logo {
+  
+  display: block;
+  height: 35px;
+  width: auto;  /* Maintain aspect ratio */
+}
 
 .router-reset * {
   padding: 0;
@@ -22,6 +30,14 @@
   text-align: left;
 
 }
+
+/* @media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+} */
+
+
 
 .main-screen {
   width: 100%;
@@ -37,6 +53,7 @@
   size:200;
   font-size:18px;
   border-radius: 8px;
+  padding-left: 5px;
 }
 
 .QuestionClassForm{
@@ -45,8 +62,8 @@
   size:200;
   font-size:18px;
   border-radius: 8px;
-}
-
+ 
+ }
 
 .QuestionLabel{
   text-align: left;
@@ -59,7 +76,7 @@
 .AskButton {
   backface-visibility: hidden;
   
-  background: #332cf2;
+  background: #0058b7;
   height: 40px;
   border: 0;
   border-radius: .375rem;
@@ -145,6 +162,27 @@
   cursor: pointer;
 }
 
+
+.SharingButton {
+  position: absolute;
+  top: 40px;    
+  left: 10px;
+  background: none;
+  height: auto;  /* Let the image determine the height */
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-block;  /* Display as inline-block for proper alignment */
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.SharingButton:hover {
+  background: none;
+  cursor: pointer;
+}
+
 .AskButton:disabled {
   color: #787878;
   cursor: auto;
@@ -184,7 +222,7 @@
 .InputQuestion{
   text-align: left;
   margin-left: 30%;
-
+  margin-top: 2%;
 }
 
 .App-header {
@@ -280,7 +318,7 @@ input[type=range]::-webkit-slider-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #009688;
+  background:#0058b7;
   cursor: pointer;
 }
 
@@ -289,7 +327,7 @@ input[type=range]::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #009688;
+  background: #0058b7;
   cursor: pointer;
 }
 
@@ -303,13 +341,13 @@ input[type=range]::-moz-range-thumb {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1c8a7f; /* scrollbar thumb color */
+  background:#0058b7; /* scrollbar thumb color */
 }
 
 /* Styling for the scrollbar (Firefox) */
 * {
   scrollbar-width: thin; /* or 'auto' or 'none' */
-  scrollbar-color: #009688 #ddd; /* thumb and track color */
+  scrollbar-color:#0058b7 #ddd; /* thumb and track color */
 }
 
 
@@ -327,7 +365,7 @@ input[type=range]::-moz-range-thumb {
   top: 100;
   background: none;
   border: 10px;
-  color: #009688;
+  color:#0058b7;
   cursor: pointer;
   user-select: none; /* Prevent text selection */
   transition: color 0.3s; /* Smooth transition for color changes */
@@ -372,6 +410,7 @@ p {
   display: block;
   margin-bottom: 5px;
 }
+
 .search-area {
   display: flex;
   align-items: center;
@@ -379,7 +418,7 @@ p {
 }
 
 #settings-btn {
-  background: #009688;
+  background:#0058b7;
   border: 2px solid #000; /* Example border - you can change color and width */
   cursor: pointer;
   font-size: 24px; /* Adjust the size as necessary */
