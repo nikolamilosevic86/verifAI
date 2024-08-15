@@ -668,3 +668,9 @@ h3 {
   margin: 0;
   padding: 0;
 }
+
+.login-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
