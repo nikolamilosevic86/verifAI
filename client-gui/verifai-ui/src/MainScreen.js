@@ -669,12 +669,12 @@ class MainScreen extends Component {
                         return (
                             <div className='App'>
                                 <div className='login-message'>
-                                <h1>Please log in to access this page.</h1>
-                                <button onClick={handleLogin}>Log in</button>
-
+                                    <img src={logo} alt="Logo" className="login-logo" />
+                                    <div class='message-container'>
+                                        <h1>Please log in to access this page.</h1>
+                                        <button onClick={handleLogin}>Log in</button>
+                                    </div>
                                 </div>
-                               
-                                
                             </div>
                         );
                     } 
