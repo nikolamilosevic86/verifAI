@@ -261,6 +261,23 @@
   left: 10px;
 }
 
+.copiedMessage{
+  display: flex;
+  flex-direction: row;
+  margin-left: 50px;
+}
+
+.copiedMessage h1{
+  margin-top: 5px;
+  margin-left: -5px;
+}
+
+.checkmark{
+  width: 35px;
+  height: 35px;
+  margin-top: 8px;
+
+}
 .sharing-options{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -294,6 +311,10 @@
 #TwitterButton img{
   margin-left: 20px;
 
+}
+
+#TwitterButton p{
+  margin-left: 10px;
 }
 #CopyLinkButton img {
   margin-left: 10px;

@@ -5,7 +5,7 @@ import link from './link.svg';
 import facebook from './facebook.svg';
 import linkedin from './linkedin.svg';
 import twitter from './twitter.svg';
-
+import checkmark from './checkmark.svg';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import {BACKEND} from './App.js'
@@ -701,6 +701,12 @@ class MainScreen extends Component {
                             </div>
                         </button>
                         <div className="SharingModalContent">
+                            <div className="copiedMessage">
+                            <img className="checkmark" src={checkmark}/>
+                            <h1>Link copied</h1>
+
+                            </div>
+                           
                             <h1 id="share-header">Share</h1>
                             <div className='sharing-options'>
                             
