@@ -1,6 +1,6 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
-import share from './share.png';
+import share from './share.svg';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import {BACKEND} from './App.js'
@@ -690,8 +690,10 @@ class MainScreen extends Component {
                             <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                             
                         <button className="SharingButton" onClick={this.saveSession}>
-                            <img className="Share-logo" src={share}  />
-                          
+                            <div className="button-content">
+                                <img className="Share-logo" src={share}  />
+                                <p>Share</p>
+                            </div>
                         </button>
                             <div className="router-reset">
                                 

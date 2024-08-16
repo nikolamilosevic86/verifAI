@@ -165,23 +165,85 @@
 
 .SharingButton {
   position: absolute;
-  top: 40px;    
+  top: 50px;    
   left: 10px;
   background: none;
   height: auto;  /* Let the image determine the height */
   border: none;
   padding: 0;
   cursor: pointer;
-  display: inline-block;  /* Display as inline-block for proper alignment */
+  /*display: inline-block;*/  /* Display as inline-block for proper alignment */
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  background-color:  #0058b7;
+  width: 100px;
+  height: 42px;
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
+  border-radius: .375rem;
 }
 
-.SharingButton:hover {
-  background: none;
-  cursor: pointer;
+.SharingButton p {
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  margin-left: 7px;
+  margin-top: 11px;
+  
+
 }
+
+.SharingButton img {
+  width: 23px;
+  height: 23px;
+  margin-left: 8px;
+  margin-top: 9px;
+
+}
+
+.button-content{
+  display: flex;
+  flex-direction: row;
+  margin-top: 0px;
+}
+
+.SharingButton:disabled {
+  color: #787878;
+  cursor: auto;
+}
+
+.SharingButton:not(:disabled):hover {
+  transform: scale(1.05);
+}
+
+.SharingButton:not(:disabled):hover:active {
+  transform: scale(1.05) translateY(.125rem);
+}
+
+.SharingButton:focus {
+  outline: 0 solid transparent;
+}
+
+.SharingButton:focus:before {
+  border-width: .125rem;
+  content: "";
+  left: calc(-1*.375rem);
+  pointer-events: none;
+  position: absolute;
+  top: calc(-1*.375rem);
+  transition: border-radius;
+  user-select: none;
+}
+
+.SharingButtonfocus:not(:focus-visible) {
+  outline: 0 solid transparent;
+}
+
+.SharingButton:not(:disabled):active {
+  transform: translateY(.125rem);
+}
+
 
 .AskButton:disabled {
   color: #787878;
