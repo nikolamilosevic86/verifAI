@@ -44,6 +44,7 @@ class MainScreen extends Component {
             this.state = {
                 
                 modalOpen: false,
+                sharingModalOpen: false,
                 value: "",
                 temperature: 0,
                 lex_parameter:0.7,
@@ -91,6 +92,7 @@ class MainScreen extends Component {
         
         return {
             modalOpen: this.state.modalOpen,
+            sharingModalOpen: this.state.sharingModalOpen,
             value: this.state.value,
             temperature: this.state.temperature,
             lex_parameter: this.state.lex_parameter,
@@ -105,6 +107,7 @@ class MainScreen extends Component {
         };
     }
     
+ 
 
     handleStreamChange(event) {
         this.setState({ stream: event.target.value === "true" });
@@ -120,6 +123,11 @@ class MainScreen extends Component {
         this.props.navigate('/login');
       };
 
+   /*   handleSharingModalToggle = () => {
+        this.setState(prevState => ({
+            sharingModalOpen: !prevState.sharingModalOpen
+        }));
+    };*/
 
     handleModalToggle = () => {
         this.setState(prevState => ({
@@ -307,15 +315,18 @@ class MainScreen extends Component {
         .then(data => {
             console.log('Session saved with ID:', data.session_id);
             //this.props.navigate(`/get_session/${data.session_id}`);
-            window.open(`/get_session/${data.session_id}`, '_blank');
+           // window.open(`/get_session/${data.session_id}`, '_blank');
            const baseUrl = window.location.protocol + '//' + window.location.host; 
             navigator.clipboard.writeText(baseUrl + `/get_session/${data.session_id}`).then(()=>{
-                alert("Link copied");}).catch(error => alert("Failed to copy link"));
+                this.setState(prevState => ({
+                    sharingModalOpen: !prevState.sharingModalOpen
+                }));
+            }).catch(error => alert("Failed to copy link"));
         })
         .catch(error => console.error('Error saving session:', error));
     }
 
-   
+
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -703,7 +714,8 @@ class MainScreen extends Component {
                                 <p>Share</p>
                             </div>
                         </button>
-                        <div className="SharingModalContent">
+                        {this.state.sharingModalOpen && (
+                            <div className="SharingModalContent">
                             <div className="copiedMessage">
                             <img className="checkmark" src={checkmark}/>
                             <h1>Link copied</h1>
@@ -743,6 +755,8 @@ class MainScreen extends Component {
                                 
                             </div>
                         </div>
+                        )}
+                        
                             <div className="router-reset">
                                 
                                 <img className="App-logo" src={logo} alt="Logo" />
