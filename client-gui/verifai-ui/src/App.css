@@ -91,6 +91,7 @@
   line-height: 1.2;
   padding: 0.2rem 1.25rem;
   position: relative;
+  left: 10px;
   text-align: left;
   text-decoration: none;
   transform: translateZ(0) scale(1);
@@ -120,6 +121,7 @@
   padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
   text-align: center;  /* Changed to center to align text properly */
   text-decoration: none;
+  transform: translateZ(0) scale(1);
   transition: transform .2s;
   user-select: none;
   -webkit-user-select: none;
@@ -132,6 +134,7 @@
 .LogoutButton:hover {
   background-color: #000000; /* Darker shade on hover */
   cursor: pointer;
+  transform: scale(1.05);
 }
 
 .UserButton {
@@ -154,6 +157,7 @@
   padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
   text-align: center;  /* Changed to center to align text properly */
   text-decoration: none;
+  transform: translateZ(0) scale(1);
   transition: transform .2s;
   user-select: none;
   -webkit-user-select: none;
@@ -166,6 +170,7 @@
 .UserButton:hover {
   background-color: #8e0303; /* Darker shade on hover */
   cursor: pointer;
+  transform: scale(1.05);
 }
 
 .BlueButton{
@@ -189,7 +194,7 @@
 #SharingButton {
   position: absolute;
   top: 10px;    
-  right: 115px;
+  right: 120px;
 
 }
 
@@ -223,12 +228,15 @@
 }
 
 .BlueButton:not(:disabled):hover {
+  background-color: #013e80;
   transform: scale(1.05);
 }
 
 .BlueButton:not(:disabled):hover:active {
   transform: scale(1.05) translateY(.125rem);
+  background-color: #013e80;
 }
+
 
 .BlueButton:focus {
   outline: 0 solid transparent;
@@ -263,8 +271,8 @@
   padding: 10px; /* Slightly reduced padding */
   margin-top: 5px; /* Space between the input field and this box */
   background: #fff;
-  top: 60px;
-  right: 115px;
+  top: 65px;
+  right: 120px;
 }
 
 .copiedMessage{
@@ -355,10 +363,14 @@
 
 .AskButton:not(:disabled):hover {
   transform: scale(1.05);
+  background-color: #013e80;
+
 }
 
 .AskButton:not(:disabled):hover:active {
   transform: scale(1.05) translateY(.125rem);
+  background-color: #013e80;
+  
 }
 
 .AskButton:focus {
@@ -594,12 +606,16 @@ p {
   display: flex;
   align-items: center; /* This will center the icon vertically */
   justify-content: center; /* This will center the icon horizontally */
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
  
 }
 
 /* Optional: add some visual feedback on hover */
 #settings-btn:hover {
-  color: #464646; /* Change color on hover */
+  /*color: #464646;*/ /* Change color on hover */
+  background-color: #013e80;
+  transform: scale(1.05);
 }
 
 .search-config {
