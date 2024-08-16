@@ -162,17 +162,13 @@
   cursor: pointer;
 }
 
-
-.SharingButton {
-  position: absolute;
-  top: 50px;    
-  left: 10px;
+.BlueButton{
   background: none;
   height: auto;  /* Let the image determine the height */
   border: none;
   padding: 0;
   cursor: pointer;
-  /*display: inline-block;*/  /* Display as inline-block for proper alignment */
+  display: inline-block; /* Display as inline-block for proper alignment */
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
@@ -182,9 +178,16 @@
   transform: translateZ(0) scale(1);
   transition: transform .2s;
   border-radius: .375rem;
+
+}
+#SharingButton {
+  position: absolute;
+  top: 50px;    
+  left: 10px;
+
 }
 
-.SharingButton p {
+.BlueButton p {
   color: white;
   font-weight: bold;
   font-size: large;
@@ -194,7 +197,7 @@
 
 }
 
-.SharingButton img {
+.BlueButton img {
   width: 23px;
   height: 23px;
   margin-left: 8px;
@@ -208,24 +211,24 @@
   margin-top: 0px;
 }
 
-.SharingButton:disabled {
+.BlueButton:disabled {
   color: #787878;
   cursor: auto;
 }
 
-.SharingButton:not(:disabled):hover {
+.BlueButton:not(:disabled):hover {
   transform: scale(1.05);
 }
 
-.SharingButton:not(:disabled):hover:active {
+.BlueButton:not(:disabled):hover:active {
   transform: scale(1.05) translateY(.125rem);
 }
 
-.SharingButton:focus {
+.BlueButton:focus {
   outline: 0 solid transparent;
 }
 
-.SharingButton:focus:before {
+.BlueButton:focus:before {
   border-width: .125rem;
   content: "";
   left: calc(-1*.375rem);
@@ -236,13 +239,85 @@
   user-select: none;
 }
 
-.SharingButtonfocus:not(:focus-visible) {
+.BlueButton:not(:focus-visible) {
   outline: 0 solid transparent;
 }
 
-.SharingButton:not(:disabled):active {
+.BlueButton:not(:disabled):active {
   transform: translateY(.125rem);
 }
+
+.SharingModalContent{
+  position: absolute;
+  width: 80%; /* Reduced width percentage */
+  max-width: 320px; /* Reduced maximum width */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* Slightly reduced padding */
+  margin-top: 5px; /* Space between the input field and this box */
+  background: #fff;
+  top: 110px;
+  left: 10px;
+}
+
+.sharing-options{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-left: 12px;
+  
+}
+
+#share-header{
+  font-size: larger;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 2px;
+  
+}
+
+
+
+#FacebookButton{
+  width: 140px;
+}
+
+#CopyLinkButton{
+  width: 140px;
+  
+}
+
+#TwitterButton{
+  width: 140px;
+}
+
+#TwitterButton img{
+  margin-left: 20px;
+
+}
+#CopyLinkButton img {
+  margin-left: 10px;
+  
+}
+
+#CopyLinkButton p {
+  margin-left: 10px;
+}
+
+#LinkedInButton{
+  width: 140px;
+}
+
+#LinkedInButton img {
+  margin-top: 10px;
+  margin-left: 10px;
+  
+}
+
+#LinkedInButton p {
+  margin-left: 12px;
+}
+
 
 
 .AskButton:disabled {

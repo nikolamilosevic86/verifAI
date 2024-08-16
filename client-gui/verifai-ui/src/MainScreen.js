@@ -1,6 +1,11 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
 import share from './share.svg';
+import link from './link.svg';
+import facebook from './facebook.svg';
+import linkedin from './linkedin.svg';
+import twitter from './twitter.svg';
+
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import {BACKEND} from './App.js'
@@ -689,12 +694,46 @@ class MainScreen extends Component {
                             <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
                             <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                             
-                        <button className="SharingButton" onClick={this.saveSession}>
+                        <button className="BlueButton" id="SharingButton" onClick={this.saveSession}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
                                 <p>Share</p>
                             </div>
                         </button>
+                        <div className="SharingModalContent">
+                            <h1 id="share-header">Share</h1>
+                            <div className='sharing-options'>
+                            
+                            <button className="BlueButton" id="CopyLinkButton" onClick={this.saveSession}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={link}  />
+                                    <p>Copy link</p>
+                                </div>
+                            </button>
+
+                            <button className="BlueButton" id="LinkedInButton" onClick={this.saveSession}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={linkedin}  />
+                                    <p>LinkedIn</p>
+                                </div>
+                            </button>
+                          
+                           
+                            <button className="BlueButton" id="FacebookButton" onClick={this.saveSession}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={facebook}  />
+                                    <p>Facebook</p>
+                                </div>
+                            </button>
+                            <button className="BlueButton" id="TwitterButton" onClick={this.saveSession}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={twitter}  />
+                                    <p>Twitter</p>
+                                </div>
+                            </button>
+                                
+                            </div>
+                        </div>
                             <div className="router-reset">
                                 
                                 <img className="App-logo" src={logo} alt="Logo" />
