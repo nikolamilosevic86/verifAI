@@ -308,6 +308,9 @@ class MainScreen extends Component {
             console.log('Session saved with ID:', data.session_id);
             //this.props.navigate(`/get_session/${data.session_id}`);
             window.open(`/get_session/${data.session_id}`, '_blank');
+           const baseUrl = window.location.protocol + '//' + window.location.host; 
+            navigator.clipboard.writeText(baseUrl + `/get_session/${data.session_id}`).then(()=>{
+                alert("Link copied");}).catch(error => alert("Failed to copy link"));
         })
         .catch(error => console.error('Error saving session:', error));
     }
