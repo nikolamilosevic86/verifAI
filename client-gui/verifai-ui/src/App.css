@@ -124,6 +124,9 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  width: 100px;
+  height: 42px;
+  font-size: large;
 }
 
 .LogoutButton:hover {
@@ -155,6 +158,9 @@
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  width: auto;
+  height: 42px;
+  font-size: larger;
 }
 
 .UserButton:hover {
@@ -182,8 +188,8 @@
 }
 #SharingButton {
   position: absolute;
-  top: 50px;    
-  left: 10px;
+  top: 10px;    
+  right: 115px;
 
 }
 
@@ -257,24 +263,25 @@
   padding: 10px; /* Slightly reduced padding */
   margin-top: 5px; /* Space between the input field and this box */
   background: #fff;
-  top: 110px;
-  left: 10px;
+  top: 60px;
+  right: 115px;
 }
 
 .copiedMessage{
   display: flex;
   flex-direction: row;
-  margin-left: 50px;
+  margin-left: 7cqh;
 }
 
 .copiedMessage h1{
+  font-size: x-large;
   margin-top: 5px;
   margin-left: -5px;
 }
 
 .checkmark{
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   margin-top: 8px;
 
 }

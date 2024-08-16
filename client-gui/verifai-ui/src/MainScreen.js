@@ -347,10 +347,11 @@ class MainScreen extends Component {
     shareOnLinkedIn()
     {
         const linkedinShareLink = `https://www.linkedin.com/sharing/share-offsite/?url=`;
+        //const testLink = "https://verifai-project.com/";
         navigator.clipboard.readText().then(
             text => {
                // alert(text);
-                const shareLink = linkedinShareLink + text;
+                const shareLink = linkedinShareLink + text; //+ testLink;
                 window.open(shareLink, '_blank');
             }
         ).catch(error => { alert("Error")});
@@ -361,10 +362,11 @@ class MainScreen extends Component {
     {
             
         const facebookShareLink = 'https://www.facebook.com/sharer/sharer.php?u='
+       // const testLink = "https://verifai-project.com/";
         navigator.clipboard.readText().then(
             text => {
                // alert(text);
-                const shareLink = facebookShareLink + text;
+                const shareLink = facebookShareLink + text; //+ testLink;
                 window.open(shareLink, '_blank');
             }
         ).catch(error => { alert("Error")});
