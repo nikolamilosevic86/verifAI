@@ -89,7 +89,10 @@ class MainScreen extends Component {
         this.modalRef = React.createRef(); // Create a ref for the modal
         this.setWrapperRef = this.setWrapperRef.bind(this);             
         this.handleClickOutside = this.handleClickOutside.bind(this);
+       
         this.handleTooltip = this.handleTooltip.bind(this);
+
+        this.sharingModalRef = this.sharingModalRef.bind(this);
         
     }
 
@@ -129,11 +132,11 @@ class MainScreen extends Component {
         this.props.navigate('/login');
       };
 
-   /*   handleSharingModalToggle = () => {
+      handleSharingModalToggle = () => {
         this.setState(prevState => ({
             sharingModalOpen: !prevState.sharingModalOpen
         }));
-    };*/
+    };
 
     handleModalToggle = () => {
         this.setState(prevState => ({
@@ -333,9 +336,10 @@ class MainScreen extends Component {
     openSharingModal()
     {
         this.saveSession();
-        this.setState(prevState => ({
+        /*this.setState(prevState => ({
             sharingModalOpen: !prevState.sharingModalOpen
-        }));
+        }));*/
+        this.handleSharingModalToggle();
     }
 
     copyLink() {
@@ -704,21 +708,34 @@ class MainScreen extends Component {
     setWrapperRef(node) {
         this.wrapperRef = node;
       }
+
+    sharingModalRef(node)
+    {
+        this.sharingModal = node;
+    }
+
+  
+        
       
     handleClickOutside(event) {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
         this.setState({ modalOpen: false });
         }
+    if (this.sharingModal && !this.sharingModal.contains(event.target)) {
+            this.setState({ sharingModalOpen: false });
+            }
+        
     }
     
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+       
       }
       
     componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
+    
     }
-
 
     handleTooltip(index) {
 
@@ -779,7 +796,7 @@ class MainScreen extends Component {
                             </div>
                         </button>
                         {this.state.sharingModalOpen && (
-                            <div className="SharingModalContent">
+                            <div  className="SharingModalContent" ref={this.sharingModalRef}>
                             <div className="copiedMessage">
                             <img className="checkmark" src={checkmark}/>
                             <h1>Link copied</h1>
