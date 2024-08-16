@@ -738,9 +738,12 @@ class MainScreen extends Component {
                 {({ user, logout }) => {
                     
                     if (!user) {
+
+                        const currentPath = window.location.pathname.substring(1);
              
                         const handleLogin = () => {                     
-                          this.props.navigate("/login");              
+                          this.props.navigate("/login/?redirection=" + currentPath);
+                                       
 
                         }
             
