@@ -64,7 +64,13 @@ class MainScreen extends Component {
         this.componentRef = createRef();
         this.captureStateAndHTML = this.captureStateAndHTML.bind(this)
         this.postVerification = this.postVerification.bind(this)
-        this.saveSession = this.saveSession.bind(this)
+        this.saveSession = this.saveSession.bind(this);
+        this.shareOnLinkedIn = this.shareOnLinkedIn.bind(this);
+        this.shareOnFacebook = this.shareOnFacebook.bind(this);
+        this.shareOnTwitter = this.shareOnTwitter.bind(this);
+        
+        this.openSharingModal = this.openSharingModal.bind(this);
+        this.copyLink = this.copyLink.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setOutput = this.setOutput.bind(this);  
@@ -318,14 +324,67 @@ class MainScreen extends Component {
            // window.open(`/get_session/${data.session_id}`, '_blank');
            const baseUrl = window.location.protocol + '//' + window.location.host; 
             navigator.clipboard.writeText(baseUrl + `/get_session/${data.session_id}`).then(()=>{
-                this.setState(prevState => ({
-                    sharingModalOpen: !prevState.sharingModalOpen
-                }));
+               
             }).catch(error => alert("Failed to copy link"));
         })
         .catch(error => console.error('Error saving session:', error));
     }
 
+    openSharingModal()
+    {
+        this.saveSession();
+        this.setState(prevState => ({
+            sharingModalOpen: !prevState.sharingModalOpen
+        }));
+    }
+
+    copyLink() {
+        
+        this.saveSession();
+        alert("Link copied");
+    }
+    
+    shareOnLinkedIn()
+    {
+        const linkedinShareLink = `https://www.linkedin.com/sharing/share-offsite/?url=`;
+        navigator.clipboard.readText().then(
+            text => {
+               // alert(text);
+                const shareLink = linkedinShareLink + text;
+                window.open(shareLink, '_blank');
+            }
+        ).catch(error => { alert("Error")});
+
+    }
+
+    shareOnFacebook()
+    {
+            
+        const facebookShareLink = 'https://www.facebook.com/sharer/sharer.php?u='
+        navigator.clipboard.readText().then(
+            text => {
+               // alert(text);
+                const shareLink = facebookShareLink + text;
+                window.open(shareLink, '_blank');
+            }
+        ).catch(error => { alert("Error")});
+      
+
+    }
+
+    shareOnTwitter()
+    {
+        const twitterShareLink = 'https://twitter.com/intent/tweet?url=';
+        navigator.clipboard.readText().then(
+            text => {
+               // alert(text);
+                const shareLink = twitterShareLink + text;
+                window.open(shareLink, '_blank');
+            }
+        ).catch(error => { alert("Error")});
+
+
+    }
 
 
     postVerification(completeText) {
@@ -708,7 +767,7 @@ class MainScreen extends Component {
                             <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
                             <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                             
-                        <button className="BlueButton" id="SharingButton" onClick={this.saveSession}>
+                        <button className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
                                 <p>Share</p>
@@ -725,14 +784,14 @@ class MainScreen extends Component {
                             <h1 id="share-header">Share</h1>
                             <div className='sharing-options'>
                             
-                            <button className="BlueButton" id="CopyLinkButton" onClick={this.saveSession}>
+                            <button className="BlueButton" id="CopyLinkButton" onClick={this.copyLink}>
                                 <div className="button-content">
                                     <img className="Share-logo" src={link}  />
                                     <p>Copy link</p>
                                 </div>
                             </button>
 
-                            <button className="BlueButton" id="LinkedInButton" onClick={this.saveSession}>
+                            <button className="BlueButton" id="LinkedInButton" onClick={this.shareOnLinkedIn}>
                                 <div className="button-content">
                                     <img className="Share-logo" src={linkedin}  />
                                     <p>LinkedIn</p>
@@ -740,13 +799,13 @@ class MainScreen extends Component {
                             </button>
                           
                            
-                            <button className="BlueButton" id="FacebookButton" onClick={this.saveSession}>
+                            <button className="BlueButton" id="FacebookButton" onClick={this.shareOnFacebook}>
                                 <div className="button-content">
                                     <img className="Share-logo" src={facebook}  />
                                     <p>Facebook</p>
                                 </div>
                             </button>
-                            <button className="BlueButton" id="TwitterButton" onClick={this.saveSession}>
+                            <button className="BlueButton" id="TwitterButton" onClick={this.shareOnTwitter}>
                                 <div className="button-content">
                                     <img className="Share-logo" src={twitter}  />
                                     <p>Twitter</p>
