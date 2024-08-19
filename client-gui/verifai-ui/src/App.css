@@ -273,6 +273,7 @@
   background: #fff;
   top: 65px;
   right: 120px;
+  z-index: 1;
 }
 
 .copiedMessage{

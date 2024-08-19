@@ -12,6 +12,7 @@ import {BACKEND} from './App.js'
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
+import { Helmet } from 'react-helmet';
 
 
 function NavigateWrapper(props) {
@@ -350,15 +351,38 @@ class MainScreen extends Component {
     
     shareOnLinkedIn()
     {
-        const linkedinShareLink = `https://www.linkedin.com/sharing/share-offsite/?url=`;
+        const linkedinShareLink = `https://www.linkedin.com/shareArticle?mini=true&url=`;
         //const testLink = "https://verifai-project.com/";
+        
+      /*  let title = null;
+        let summary = null;
+        
+        if(this.state.questions.length != 0)
+
+          {  title = this.state.questions[0].question; 
+             summary = this.state.questions[0].result.substring(0, 100) + "... Check more at:"
+          }*/
+      
+        
         navigator.clipboard.readText().then(
             text => {
                // alert(text);
-                const shareLink = linkedinShareLink + text; //+ testLink;
-                window.open(shareLink, '_blank');
+                let shareLink = linkedinShareLink + text; //+ testLink;   
+                
+              /*  if(title)
+                  {  shareLink += "&title=" + encodeURIComponent(title); }
+                if(summary)
+                  {  shareLink += "&summary=" + encodeURIComponent(summary); }
+
+                alert(shareLink);*/
+        
+                window.open(shareLink, '_blank');  
+                      
             }
         ).catch(error => { alert("Error")});
+      
+        
+       
 
     }
 
@@ -380,11 +404,27 @@ class MainScreen extends Component {
 
     shareOnTwitter()
     {
+        
         const twitterShareLink = 'https://twitter.com/intent/tweet?url=';
+        let title = null;
+        let summary = null;
+        
+        if(this.state.questions.length != 0)
+
+          {  title = this.state.questions[0].question; 
+             summary = this.state.questions[0].result.substring(0, 100) + "... Check more at:"
+          }
+
         navigator.clipboard.readText().then(
             text => {
                // alert(text);
-                const shareLink = twitterShareLink + text;
+                let shareLink = twitterShareLink + text;
+
+                if(title && summary)
+                {
+                    shareLink += "&text=" + title + " " + summary;
+                }
+
                 window.open(shareLink, '_blank');
             }
         ).catch(error => { alert("Error")});
@@ -783,6 +823,13 @@ class MainScreen extends Component {
                     
                     return (
                         <div className='App' ref={this.componentRef}>
+                            <Helmet>
+                            <meta property="og:title" content="Your Custom Title" />
+                            <meta property="og:description" content="Your custom message here." />
+                            <meta property="og:image" content="https://example.com/your-image.jpg" />
+                            <meta property="og:url" content="https://example.com/your-page-url" />
+
+                            </Helmet>
                             
                             
                             
