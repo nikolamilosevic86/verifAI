@@ -12,7 +12,7 @@ import {BACKEND} from './App.js'
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
-import { Helmet } from 'react-helmet';
+//import { Helmet } from 'react-helmet';
 
 
 function NavigateWrapper(props) {
@@ -354,27 +354,10 @@ class MainScreen extends Component {
         const linkedinShareLink = `https://www.linkedin.com/shareArticle?mini=true&url=`;
         //const testLink = "https://verifai-project.com/";
         
-      /*  let title = null;
-        let summary = null;
-        
-        if(this.state.questions.length != 0)
-
-          {  title = this.state.questions[0].question; 
-             summary = this.state.questions[0].result.substring(0, 100) + "... Check more at:"
-          }*/
-      
-        
         navigator.clipboard.readText().then(
             text => {
                // alert(text);
                 let shareLink = linkedinShareLink + text; //+ testLink;   
-                
-              /*  if(title)
-                  {  shareLink += "&title=" + encodeURIComponent(title); }
-                if(summary)
-                  {  shareLink += "&summary=" + encodeURIComponent(summary); }
-
-                alert(shareLink);*/
         
                 window.open(shareLink, '_blank');  
                       
@@ -819,17 +802,19 @@ class MainScreen extends Component {
                         );
                     } 
                     
+                    const hasQuestions = this.state.questions && this.state.questions.length > 0;
+                    const questionContent = hasQuestions ? this.state.questions[0] : '';
+                    const description = hasQuestions ? questionContent.result.substring(0, 100) : '';
                     
                     
                     return (
-                        <div className='App' ref={this.componentRef}>
-                            <Helmet>
-                            <meta property="og:title" content="Your Custom Title" />
-                            <meta property="og:description" content="Your custom message here." />
-                            <meta property="og:image" content="https://example.com/your-image.jpg" />
-                            <meta property="og:url" content="https://example.com/your-page-url" />
+                      <div className='App' ref={this.componentRef}>
+                         {/*  <Helmet>
+                            <meta property="og:title" content={ questionContent } />
+                            <meta property="og:description" content={ description } />
+                        
 
-                            </Helmet>
+                            </Helmet> */}
                             
                             
                             
