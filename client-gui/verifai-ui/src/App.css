@@ -74,31 +74,15 @@
 }
 
 .AskButton {
-  backface-visibility: hidden;
-  
+  backface-visibility: hidden; 
   background: #0058b7;
-  height: 40px;
-  border: 0;
-  border-radius: .375rem;
-  box-sizing: border-box;
   color: #fff;
   cursor: pointer;
-  display: inline-block;
   font-family: Circular,Helvetica,sans-serif;
-  font-size: 1.125rem;
   font-weight: 700;
-  letter-spacing: -.01em;
-  line-height: 1.2;
-  padding: 0.2rem 1.25rem;
-  position: relative;
-  left: 10px;
-  text-align: left;
   text-decoration: none;
-  transform: translateZ(0) scale(1);
-  transition: transform .2s;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+ 
+ 
 }
 
 .LogoutButton {
@@ -869,4 +853,152 @@ h3 {
   flex-direction: column; /* Ensures form elements stack vertically */
   align-items: center; /* Aligns form elements to the center horizontally */
   padding:40px;
+}
+
+
+
+@media (max-width: 480px) {
+  .AskButton {
+   
+    backface-visibility: hidden;
+        height: 25px; /* Adjusted height for small screens */
+        width: 40px;  /* Adjusted width for small screens */
+        border: 0;
+        border-radius: .25rem; /* Slightly smaller border radius */
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: 0.7rem; /* Smaller font size for smaller screens */
+        letter-spacing: -.015em; /* Adjusted letter spacing */
+        line-height: 1.1; /* Slightly tighter line height */
+        position: relative;
+        left: 5px; /* Adjusted left position */
+        text-align: center;
+        text-decoration: none;
+        transform: translateZ(0) scale(1);
+        transition: transform .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        padding: 0.1rem 0.5rem; 
+  }
+
+  
+}
+
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .AskButton {
+    backface-visibility: hidden;
+        height: 28px; /* Slightly taller than mobile */
+        width: 45px;  /* Slightly wider than mobile */
+        border: 0;
+        border-radius: .3rem; /* Slightly larger border radius */
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: 0.75rem; /* Adjusted font size */
+        letter-spacing: -.012em; /* Adjusted letter spacing */
+        line-height: 1.15; /* Slightly increased line height */
+        position: relative;
+        left: 7px; /* Adjusted left position */
+        text-align: center;
+        text-decoration: none;
+        transform: translateZ(0) scale(1);
+        transition: transform .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        padding: 0.15rem 0.75rem;
+  }
+
+  
+}
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .AskButton {
+    backface-visibility: hidden;
+    height: 30px;
+    width: 50px;
+    border: 0;
+    border-radius: .375rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: 0.8rem;
+    letter-spacing: -.01em;
+    line-height: 1.2;
+    position: relative;
+    left: 10px;
+    text-align: center;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    padding: 0.2rem 0.8rem;
+  }
+
+  
+  
+}
+
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+
+  .AskButton {
+    backface-visibility: hidden;
+    height: 35px;
+    width: 60px;
+    border: 0;
+    border-radius: .4rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: 0.85rem;
+    letter-spacing: -.008em;
+    line-height: 1.25;
+    position: relative;
+    left: 12px;
+    text-align: left;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    padding: 0.25rem 1.1rem;
+  }
+
+  
+}
+
+
+@media (min-width: 1281px) {
+
+  .AskButton {
+    backface-visibility: hidden;
+        height: 35px;
+        width: 60px;
+        border: 0;
+        border-radius: .4rem;
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: 0.85rem;
+        letter-spacing: -.008em;
+        line-height: 1.25;
+        position: relative;
+        left: 12px;
+        text-align: left;
+        text-decoration: none;
+        transform: translateZ(0) scale(1);
+        transition: transform .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        padding: 0.25rem 1.7rem;
+  }
+
+
+
+
+  
 }
