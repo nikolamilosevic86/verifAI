@@ -12,7 +12,7 @@ import {BACKEND} from './App.js'
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
-//import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet';
 
 
 function NavigateWrapper(props) {
@@ -809,12 +809,13 @@ class MainScreen extends Component {
                     
                     return (
                       <div className='App' ref={this.componentRef}>
-                         {/*  <Helmet>
+                      <Helmet>
                             <meta property="og:title" content={ questionContent } />
                             <meta property="og:description" content={ description } />
+                            <meta property="og:image" content={logo} />
                         
 
-                            </Helmet> */}
+                      </Helmet> 
                             
                             
                             
