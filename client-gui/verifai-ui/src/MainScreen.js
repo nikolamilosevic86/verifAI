@@ -1,12 +1,18 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
-import share from './share.png';
+import share from './share.svg';
+import link from './link.svg';
+import facebook from './facebook.svg';
+import linkedin from './linkedin.svg';
+import twitter from './twitter.svg';
+import checkmark from './checkmark.svg';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import {BACKEND} from './App.js'
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
+import { Helmet } from 'react-helmet';
 
 
 function NavigateWrapper(props) {
@@ -39,6 +45,7 @@ class MainScreen extends Component {
             this.state = {
                 
                 modalOpen: false,
+                sharingModalOpen: false,
                 value: "",
                 temperature: 0,
                 lex_parameter:0.7,
@@ -58,7 +65,13 @@ class MainScreen extends Component {
         this.componentRef = createRef();
         this.captureStateAndHTML = this.captureStateAndHTML.bind(this)
         this.postVerification = this.postVerification.bind(this)
-        this.saveSession = this.saveSession.bind(this)
+        this.saveSession = this.saveSession.bind(this);
+        this.shareOnLinkedIn = this.shareOnLinkedIn.bind(this);
+        this.shareOnFacebook = this.shareOnFacebook.bind(this);
+        this.shareOnTwitter = this.shareOnTwitter.bind(this);
+        
+        this.openSharingModal = this.openSharingModal.bind(this);
+        this.copyLink = this.copyLink.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.setOutput = this.setOutput.bind(this);  
@@ -77,7 +90,10 @@ class MainScreen extends Component {
         this.modalRef = React.createRef(); // Create a ref for the modal
         this.setWrapperRef = this.setWrapperRef.bind(this);             
         this.handleClickOutside = this.handleClickOutside.bind(this);
+       
         this.handleTooltip = this.handleTooltip.bind(this);
+
+        this.sharingModalRef = this.sharingModalRef.bind(this);
         
     }
 
@@ -86,6 +102,7 @@ class MainScreen extends Component {
         
         return {
             modalOpen: this.state.modalOpen,
+            sharingModalOpen: this.state.sharingModalOpen,
             value: this.state.value,
             temperature: this.state.temperature,
             lex_parameter: this.state.lex_parameter,
@@ -100,6 +117,7 @@ class MainScreen extends Component {
         };
     }
     
+ 
 
     handleStreamChange(event) {
         this.setState({ stream: event.target.value === "true" });
@@ -115,6 +133,11 @@ class MainScreen extends Component {
         this.props.navigate('/login');
       };
 
+      handleSharingModalToggle = () => {
+        this.setState(prevState => ({
+            sharingModalOpen: !prevState.sharingModalOpen
+        }));
+    };
 
     handleModalToggle = () => {
         this.setState(prevState => ({
@@ -302,12 +325,96 @@ class MainScreen extends Component {
         .then(data => {
             console.log('Session saved with ID:', data.session_id);
             //this.props.navigate(`/get_session/${data.session_id}`);
-            window.open(`/get_session/${data.session_id}`, '_blank');
+           // window.open(`/get_session/${data.session_id}`, '_blank');
+           const baseUrl = window.location.protocol + '//' + window.location.host; 
+            navigator.clipboard.writeText(baseUrl + `/get_session/${data.session_id}`).then(()=>{
+               
+            }).catch(error => alert("Failed to copy link"));
         })
         .catch(error => console.error('Error saving session:', error));
     }
 
-   
+    openSharingModal()
+    {
+        this.saveSession();
+        /*this.setState(prevState => ({
+            sharingModalOpen: !prevState.sharingModalOpen
+        }));*/
+        this.handleSharingModalToggle();
+    }
+
+    copyLink() {
+        
+        this.saveSession();
+        alert("Link copied");
+    }
+    
+    shareOnLinkedIn()
+    {
+        const linkedinShareLink = `https://www.linkedin.com/shareArticle?mini=true&url=`;
+        //const testLink = "https://verifai-project.com/";
+        
+        navigator.clipboard.readText().then(
+            text => {
+               // alert(text);
+                let shareLink = linkedinShareLink + text; //+ testLink;   
+        
+                window.open(shareLink, '_blank');  
+                      
+            }
+        ).catch(error => { alert("Error")});
+      
+        
+       
+
+    }
+
+    shareOnFacebook()
+    {
+            
+        const facebookShareLink = 'https://www.facebook.com/sharer/sharer.php?u='
+       // const testLink = "https://verifai-project.com/";
+        navigator.clipboard.readText().then(
+            text => {
+               // alert(text);
+                const shareLink = facebookShareLink + text; //+ testLink;
+                window.open(shareLink, '_blank');
+            }
+        ).catch(error => { alert("Error")});
+      
+
+    }
+
+    shareOnTwitter()
+    {
+        
+        const twitterShareLink = 'https://twitter.com/intent/tweet?url=';
+        let title = null;
+        let summary = null;
+        
+        if(this.state.questions.length != 0)
+
+          {  title = this.state.questions[0].question; 
+             summary = this.state.questions[0].result.substring(0, 100) + "... Check more at:"
+          }
+
+        navigator.clipboard.readText().then(
+            text => {
+               // alert(text);
+                let shareLink = twitterShareLink + text;
+
+                if(title && summary)
+                {
+                    shareLink += "&text=" + title + " " + summary;
+                }
+
+                window.open(shareLink, '_blank');
+            }
+        ).catch(error => { alert("Error")});
+
+
+    }
+
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -624,21 +731,34 @@ class MainScreen extends Component {
     setWrapperRef(node) {
         this.wrapperRef = node;
       }
+
+    sharingModalRef(node)
+    {
+        this.sharingModal = node;
+    }
+
+  
+        
       
     handleClickOutside(event) {
     if (this.wrapperRef && !this.wrapperRef.contains(event.target)) {
         this.setState({ modalOpen: false });
         }
+    if (this.sharingModal && !this.sharingModal.contains(event.target)) {
+            this.setState({ sharingModalOpen: false });
+            }
+        
     }
     
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
+       
       }
       
     componentWillUnmount() {
     document.removeEventListener('mousedown', this.handleClickOutside);
+    
     }
-
 
     handleTooltip(index) {
 
@@ -660,9 +780,12 @@ class MainScreen extends Component {
                 {({ user, logout }) => {
                     
                     if (!user) {
+
+                        const currentPath = window.location.pathname.substring(1);
              
                         const handleLogin = () => {                     
-                          this.props.navigate("/login");              
+                          this.props.navigate("/login/?redirection=" + currentPath);
+                                       
 
                         }
             
@@ -679,20 +802,75 @@ class MainScreen extends Component {
                         );
                     } 
                     
+                    const hasQuestions = this.state.questions && this.state.questions.length > 0;
+                    const questionContent = hasQuestions ? this.state.questions[0] : '';
+                    const description = hasQuestions ? questionContent.result.substring(0, 100) : '';
                     
                     
                     return (
-                        <div className='App' ref={this.componentRef}>
+                      <div className='App' ref={this.componentRef}>
+                      <Helmet>
+                            <meta property="og:title" content={ questionContent } />
+                            <meta property="og:description" content={ description } />
+                            <meta property="og:image" content={logo} />
+                        
+
+                      </Helmet> 
                             
                             
                             
                             <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
                             <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
                             
-                        <button className="SharingButton" onClick={this.saveSession}>
-                            <img className="Share-logo" src={share}  />
-                          
+                        <button className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
+                            <div className="button-content">
+                                <img className="Share-logo" src={share}  />
+                                <p>Share</p>
+                            </div>
                         </button>
+                        {this.state.sharingModalOpen && (
+                            <div  className="SharingModalContent" ref={this.sharingModalRef}>
+                            <div className="copiedMessage">
+                            <img className="checkmark" src={checkmark}/>
+                            <h1>Link copied</h1>
+
+                            </div>
+                           
+                            <h1 id="share-header">Share</h1>
+                            <div className='sharing-options'>
+                            
+                            <button className="BlueButton" id="CopyLinkButton" onClick={this.copyLink}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={link}  />
+                                    <p>Copy link</p>
+                                </div>
+                            </button>
+
+                            <button className="BlueButton" id="LinkedInButton" onClick={this.shareOnLinkedIn}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={linkedin}  />
+                                    <p>LinkedIn</p>
+                                </div>
+                            </button>
+                          
+                           
+                            <button className="BlueButton" id="FacebookButton" onClick={this.shareOnFacebook}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={facebook}  />
+                                    <p>Facebook</p>
+                                </div>
+                            </button>
+                            <button className="BlueButton" id="TwitterButton" onClick={this.shareOnTwitter}>
+                                <div className="button-content">
+                                    <img className="Share-logo" src={twitter}  />
+                                    <p>Twitter</p>
+                                </div>
+                            </button>
+                                
+                            </div>
+                        </div>
+                        )}
+                        
                             <div className="router-reset">
                                 
                                 <img className="App-logo" src={logo} alt="Logo" />
