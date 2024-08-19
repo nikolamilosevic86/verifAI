@@ -329,7 +329,7 @@ class MainScreen extends Component {
            const baseUrl = window.location.protocol + '//' + window.location.host; 
             navigator.clipboard.writeText(baseUrl + `/get_session/${data.session_id}`).then(()=>{
                
-            }).catch(error => alert("Failed to copy link"));
+            }).catch(error => console.error('Error copying link', error));
         })
         .catch(error => console.error('Error saving session:', error));
     }
@@ -346,7 +346,6 @@ class MainScreen extends Component {
     copyLink() {
         
         this.saveSession();
-        alert("Link copied");
     }
     
     shareOnLinkedIn()
@@ -396,6 +395,9 @@ class MainScreen extends Component {
 
           {  title = this.state.questions[0].question; 
              summary = this.state.questions[0].result.substring(0, 100) + "... Check more at:"
+             summary = summary.replace(/<[^>]*>/g, '');
+           
+            
           }
 
         navigator.clipboard.readText().then(
