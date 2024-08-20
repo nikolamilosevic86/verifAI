@@ -882,6 +882,72 @@ h3 {
         padding: 0.1rem 0.5rem; 
   }
 
+  .BlueButton{
+    width: 30px;
+    height: 30px;
+  }
+  .BlueButton p{
+    visibility: collapse;
+
+  }
+
+  .BlueButton img{
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+
+  }
+
+  .LogoutButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  .UserButton{
+    width: auto;
+    height: 30px;
+  }
+
+  #CopyLinkButton{
+    width: 30px;
+    height: 30px;
+  }
+  #TwitterButton{
+    width:30px;
+    height: 30px;
+  }
+
+  #LinkedInButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #FacebookButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton img {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #TwitterButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #LinkedInButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #FacebookButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
   
 }
 
@@ -908,6 +974,67 @@ h3 {
         -webkit-user-select: none;
         touch-action: manipulation;
         padding: 0.15rem 0.75rem;
+  }
+
+  .BlueButton{
+    width: 30px;
+    height: 30px;
+  }
+  .BlueButton p{
+    visibility: collapse;
+
+  }
+
+  .BlueButton img{
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 3px;
+
+  }
+
+  .LogoutButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton{
+    width: 30px;
+    height: 30px;
+  }
+  #TwitterButton{
+    width:30px;
+    height: 30px;
+  }
+
+  #LinkedInButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #FacebookButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton img {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #TwitterButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #LinkedInButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #FacebookButton img{
+    margin-top: 5px;
+    margin-left: 5px;
   }
 
   
@@ -953,7 +1080,7 @@ h3 {
     border-radius: .4rem;
     box-sizing: border-box;
     display: inline-block;
-    font-size: 0.85rem;
+    font-size: 1.2rem;
     letter-spacing: -.008em;
     line-height: 1.25;
     position: relative;
@@ -965,7 +1092,7 @@ h3 {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    padding: 0.25rem 1.1rem;
+    padding: 0.25rem 0.8rem;
   }
 
   
@@ -982,7 +1109,7 @@ h3 {
         border-radius: .4rem;
         box-sizing: border-box;
         display: inline-block;
-        font-size: 0.85rem;
+        font-size: 1.2rem;
         letter-spacing: -.008em;
         line-height: 1.25;
         position: relative;
@@ -994,7 +1121,7 @@ h3 {
         user-select: none;
         -webkit-user-select: none;
         touch-action: manipulation;
-        padding: 0.25rem 1.7rem;
+        padding: 0.25rem 1.5rem;
   }
 
 
