@@ -115,6 +115,14 @@
   font-size: large;
 }
 
+.LogoutButton p{
+  color:white;
+  font-size: large;
+  font-weight: 700;
+  margin-left: -25px;
+  margin-top: 7px;
+}
+
 .LogoutButton:hover {
   background-color: #000000; /* Darker shade on hover */
   cursor: pointer;
@@ -904,6 +912,18 @@ h3 {
     height: 30px;
   }
 
+  .LogoutButton p{
+    visibility: collapse;
+  }
+
+  .LogoutButton img {
+    height: 20px;
+    width: 20px;
+    margin-left: -7px;
+    margin-top: 2px;
+  }
+
+
   .UserButton{
     width: auto;
     height: 30px;
@@ -1012,6 +1032,18 @@ h3 {
     height: 30px;
   }
 
+  .LogoutButton p{
+    visibility: collapse;
+  }
+
+  .LogoutButton img {
+    height: 20px;
+    width: 20px;
+    margin-left: -7px;
+    margin-top: 2px;
+  }
+
+
   #CopyLinkButton{
     width: 30px;
     height: 30px;
@@ -1092,6 +1124,11 @@ h3 {
     padding: 0.2rem 0.8rem;
   }
 
+  .LogoutButton img {
+   visibility: collapse;
+    
+  }
+
   
   
 }
@@ -1121,6 +1158,11 @@ h3 {
     touch-action: manipulation;
     padding: 0.25rem 0.8rem;
   }
+  
+  .LogoutButton img {
+    visibility: collapse;
+     
+   }
 
   
 }
@@ -1150,6 +1192,12 @@ h3 {
         touch-action: manipulation;
         padding: 0.25rem 1.5rem;
   }
+
+  
+  .LogoutButton img {
+    visibility: collapse;
+     
+   }
 
 
 

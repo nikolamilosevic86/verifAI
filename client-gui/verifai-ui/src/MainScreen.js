@@ -6,6 +6,7 @@ import facebook from './facebook.svg';
 import linkedin from './linkedin.svg';
 import twitter from './twitter.svg';
 import checkmark from './checkmark.svg';
+import logout_img from './logout.svg';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import {BACKEND} from './App.js'
@@ -822,7 +823,10 @@ class MainScreen extends Component {
                             
                             
                             <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
-                            <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
+                            <button className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
+                                <img className="Share-logo" src={logout_img}  />
+                                <p>Logout</p>
+                            </div></button>
                             
                         <button className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
