@@ -186,7 +186,8 @@
 #SharingButton {
   position: absolute;
   top: 10px;    
-  right: 120px;
+  right: 14%;
+  
 
 }
 
@@ -255,46 +256,49 @@
 
 .SharingModalContent{
   position: absolute;
-  width: 80%; /* Reduced width percentage */
-  max-width: 320px; /* Reduced maximum width */
+  width: 20%; /* Reduced width percentage */
+  /* Reduced maximum width */
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px; /* Slightly reduced padding */
   margin-top: 5px; /* Space between the input field and this box */
   background: #fff;
-  top: 65px;
-  right: 120px;
+  top: 2%;
+  right: 18.5%;
   z-index: 1;
+  height: 25%;
 }
 
 .copiedMessage{
   display: flex;
   flex-direction: row;
-  margin-left: 7cqh;
+  margin-left: 25%;
 }
 
 .copiedMessage h1{
-  font-size: x-large;
+  font-size: large;
   margin-top: 5px;
   margin-left: -5px;
 }
 
 .checkmark{
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   margin-top: 8px;
 
 }
 .sharing-options{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  margin-left: 12px;
+  margin-left: 5%;
+  margin-top: -4%;
+  
   
 }
 
 #share-header{
-  font-size: larger;
+  font-size: small;
   margin-left: 5px;
   margin-top: 5px;
   margin-bottom: 2px;
@@ -304,25 +308,34 @@
 
 
 #FacebookButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
+}
+
+#FacebookButton p{
+  font-size: 0.9rem;
 }
 
 #CopyLinkButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
   
 }
 
 #TwitterButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
 }
 
 #TwitterButton img{
   margin-left: 20px;
+  
 
 }
 
 #TwitterButton p{
   margin-left: 10px;
+  font-size: 0.9rem;
 }
 #CopyLinkButton img {
   margin-left: 10px;
@@ -331,10 +344,12 @@
 
 #CopyLinkButton p {
   margin-left: 10px;
+  font-size: 0.9rem;
 }
 
 #LinkedInButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
 }
 
 #LinkedInButton img {
@@ -345,6 +360,7 @@
 
 #LinkedInButton p {
   margin-left: 12px;
+  font-size: 0.9rem;
 }
 
 
@@ -973,6 +989,13 @@ h3 {
     height: 30px;
   }
 
+  #SharingButton {
+    position: absolute;
+    top: 10px;    
+    right: 15%;
+  
+  }
+
   .InputQuestion{
     margin-left: 15%;
   }
@@ -981,7 +1004,61 @@ h3 {
     margin-left: 5%;
   }
   
+  .InputQuestion label{
+    font-size: x-small;
+    margin-left: -20px;
+  }
 
+  .QuestionClassForm input{
+    font-size: xx-small;
+  }
+
+
+  .copiedMessage{
+    display: flex;
+    flex-direction: row;
+    margin-left: 25%;
+  }
+  
+  .copiedMessage h1{
+    font-size: large;
+    margin-top: 5px;
+    margin-left: -5px;
+  }
+  
+  .checkmark{
+    width: 20px;
+    height: 20px;
+    margin-top: 8px;
+  
+  }
+  .sharing-options{
+    display: flex;
+    flex-direction: row;
+    margin-left: 23%;
+    margin-top: -4%;
+    gap: 5%;
+    
+    
+  }
+
+  .SharingModalContent{
+    width: 90%;
+    right: 0;
+    left: 2%;
+    top: 80%;
+    height: 15%;
+  }
+
+  #share-header{
+    margin-left: 40%;
+    margin-top: -2%;
+    margin-bottom: 3%;
+  }
+
+  
+
+  
   
 }
 
@@ -1009,6 +1086,14 @@ h3 {
         touch-action: manipulation;
         padding: 0.15rem 0.75rem;
   }
+
+  #SharingButton {
+    position: absolute;
+    top: 10px;    
+    right: 10%;
+  
+  }
+  
 
   .BlueButton{
     width: 30px;
@@ -1058,6 +1143,8 @@ h3 {
     height: 30px;
   }
 
+ 
+
   #FacebookButton{
     width: 30px;
     height: 30px;
@@ -1096,6 +1183,55 @@ h3 {
     margin-left: 5%;
   }
 
+  .QuestionClassForm input{
+    font-size: xx-small;
+  }
+
+  .copiedMessage{
+    display: flex;
+    flex-direction: row;
+    margin-left: 15%;
+  }
+  
+  .copiedMessage h1{
+    font-size: small;
+    margin-top: 0px;
+    margin-left: -5px;
+  }
+  
+  .checkmark{
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+  
+  }
+  .sharing-options{
+    display: flex;
+    flex-direction: row;
+    margin-left: 2%;
+    margin-top: -5%;
+    gap: 5%;
+    
+    
+  }
+
+  .SharingModalContent{
+    width: 20%;
+    right: 0;
+    left: 68%;
+    top: 8%;
+    height: 10%;
+  }
+
+  #share-header{
+    margin-left: 0%;
+    margin-top: -5%;
+    margin-bottom: 3%;
+    font-size: x-small;
+  }
+
+
+
   
 }
 
@@ -1124,10 +1260,13 @@ h3 {
     padding: 0.2rem 0.8rem;
   }
 
+  
+
   .LogoutButton img {
    visibility: collapse;
     
   }
+  
 
   
   
@@ -1163,6 +1302,13 @@ h3 {
     visibility: collapse;
      
    }
+
+   #SharingButton {
+    position: absolute;
+    top: 10px;    
+    right: 10%;
+  
+  }
 
   
 }
