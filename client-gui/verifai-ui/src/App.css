@@ -383,7 +383,7 @@
 
 .InputQuestion{
   text-align: left;
-  margin-left: 30%;
+  margin-left: 23%;
   margin-top: 2%;
 }
 
@@ -618,7 +618,7 @@ p {
   border-radius: 4px;
   padding: 10px;
   margin: 20px;
-  max-width: 770px;
+  max-width: 65%;
 
 }
 
@@ -751,7 +751,7 @@ h1 {
   gap: 10px;
   margin-left: 20px;
   margin-top: 10px;
-  width: 700px;
+  width: 70%;
 }
 
 .document-square {
@@ -948,6 +948,20 @@ h3 {
     margin-left: 5px;
   }
 
+  #settings-btn{
+    width: 30px;
+    height: 30px;
+  }
+
+  .InputQuestion{
+    margin-left: 15%;
+  }
+
+  .output-section{
+    margin-left: 5%;
+  }
+  
+
   
 }
 
@@ -1035,6 +1049,19 @@ h3 {
   #FacebookButton img{
     margin-top: 5px;
     margin-left: 5px;
+  }
+
+  #settings-btn{
+    width: 30px;
+    height: 30px;
+  }
+
+  .InputQuestion{
+    margin-left: 15%;
+  }
+
+  .output-section{
+    margin-left: 5%;
   }
 
   
