@@ -448,61 +448,65 @@
 
 
 .ModalContent {
-  width: 80%; /* Reduced width percentage */
-  max-width: 400px; /* Reduced maximum width */
+  width: 27%; /* Reduced width percentage */
+  
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px; /* Slightly reduced padding */
-  margin-top: 5px; /* Space between the input field and this box */
+  /*padding: 10px;*/ /* Slightly reduced padding */
+  margin-top: 20%; /* Space between the input field and this box */
   background: #fff;
  
-  
+  bottom: 50;
 
   position: absolute;
-  bottom: 50;
-  left: -40%; /* Positions the modal to the left of the button */
+ 
+  left: -28%; /* Positions the modal to the left of the button */
   
   z-index: 10;
 }
 
 .ModalContent h2 {
   color: #333;
-  font-size: 10px;
+  font-size: smaller;
+  margin-top: 5%;
 }
 
 .ModalContent label {
-  font-size: 16px;
+  font-size: small;
   color: #666;
   display: block;
   margin: 20px 0;
+  margin-left: 5%;
+  margin-top: 1%;
 }
 
 .ModalContent select {
-  width: 100%;
-  padding: 8px;
+  width: 90%;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-  margin-top: 5px;
+  margin-top: 5%;
+ 
 }
 /* Styling for the range input (slider) */
 input[type=range] {
   -webkit-appearance: none;
-  width: 100%;
-  height: 10px;
+  width: 90%;
+  height: 10%;
   background: #ddd;
   border-radius: 5px;
   outline: none;
+ 
 }
 
 /* Styling for the slider thumb for Webkit (Chrome, Safari, etc.) */
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background:#0058b7;
   cursor: pointer;
@@ -510,8 +514,8 @@ input[type=range]::-webkit-slider-thumb {
 
 /* Styling for the slider thumb for Mozilla (Firefox) */
 input[type=range]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: #0058b7;
   cursor: pointer;
@@ -555,16 +559,17 @@ input[type=range]::-moz-range-thumb {
   cursor: pointer;
   user-select: none; /* Prevent text selection */
   transition: color 0.3s; /* Smooth transition for color changes */
+  font-size: smaller;
  
 }
 
 /* Position each button */
 .temperature-labels button.start {
-  left: 0; /* Align to the left */
+  left: 5; /* Align to the left */
 }
 
 .temperature-labels button.middle {
-  left: 45%; /* Align to the center */
+  left: 48%; /* Align to the center */
   transform: translateX(-45%); /* Center the button */
 }
 
@@ -588,7 +593,9 @@ p {
 
 .date-picker-group {
   display: inline-block;
-  margin-right: 20px; /* Adds some space between the two date groups */
+  margin-left: 7%; /* Adds some space between the two date groups */
+  margin-top: -4%;
+  margin-bottom: 3%;
 }
 
 /* Optional: Align the text of the label with the input */
@@ -1053,6 +1060,43 @@ h3 {
     margin-bottom: 3%;
   }
 
+  .ModalContent {
+    width: 117%; /* Reduced width percentage */
+   
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*padding: 10px;*/ /* Slightly reduced padding */
+    margin-top: 17%; /* Space between the input field and this box */
+    background: #fff;
+   
+    
+  
+    position: absolute;
+   
+    left: -17%; /* Positions the modal to the left of the button */
+    top: 50%;
+    
+    z-index: 10;
+  }
+
+  .ModalContent h2 {
+    color: #333;
+    font-size: smaller;
+    margin-bottom: 2%;
+   
+  }
+  
+  .ModalContent label {
+    font-size: small;
+    color: #666;
+    display: block;
+    margin: 20px 0;
+    margin-left: 5%;
+    margin-top: -2%;
+  }
+  
+
   
 
   
@@ -1226,6 +1270,40 @@ h3 {
     font-size: x-small;
   }
 
+  .ModalContent {
+    width: 70%; /* Reduced width percentage */
+   
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*padding: 10px;*/ /* Slightly reduced padding */
+    margin-top: 7%; /* Space between the input field and this box */
+    background: #fff;  
+    position: absolute;  
+    left: -17%; /* Positions the modal to the left of the button */
+    top: 50%;
+    
+    z-index: 10;
+  }
+
+  .ModalContent h2 {
+    color: #333;
+    font-size: smaller;
+    margin-bottom: 3%;
+   
+  }
+  
+  .ModalContent label {
+    font-size: small;
+    color: #666;
+    display: block;
+    margin: 20px 0;
+    margin-left: 5%;
+    margin-top: -3%;
+  }
+
+
+
 
 
   
@@ -1346,6 +1424,38 @@ h3 {
 
   #SharingButton{
     right: 15%;
+  }
+
+  .ModalContent {
+    width: 70%; /* Reduced width percentage */
+   
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*padding: 10px;*/ /* Slightly reduced padding */
+    margin-top: 4%; /* Space between the input field and this box */
+    background: #fff;  
+    position: absolute;  
+    left: -28%; /* Positions the modal to the left of the button */
+    top: 40%;
+    
+    z-index: 10;
+  }
+
+  .ModalContent h2 {
+    color: #333;
+    font-size: smaller;
+    margin-bottom: 3%;
+   
+  }
+  
+  .ModalContent label {
+    font-size: small;
+    color: #666;
+    display: block;
+    margin: 20px 0;
+    margin-left: 5%;
+    margin-top: -4%;
   }
 
   
