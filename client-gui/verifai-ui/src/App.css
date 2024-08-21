@@ -1164,6 +1164,8 @@ h3 {
     margin-left: 5px;
   }
 
+
+
   #settings-btn{
     width: 30px;
     height: 30px;
@@ -1257,6 +1259,95 @@ h3 {
    visibility: collapse;
     
   }
+
+  #CopyLinkButton{
+    width: 30px;
+    height: 30px;
+  }
+  #TwitterButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #LinkedInButton{
+    width: 30px;
+    height: 30px;
+  }
+
+ 
+
+  #FacebookButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton img {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #TwitterButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #LinkedInButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #FacebookButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  .copiedMessage{
+    display: flex;
+    flex-direction: row;
+    margin-left: 15%;
+  }
+  
+  .copiedMessage h1{
+    font-size: small;
+    margin-top: 0px;
+    margin-left: -5px;
+  }
+  
+  .checkmark{
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+  
+  }
+  .sharing-options{
+    display: flex;
+    flex-direction: row;
+    margin-left: 2%;
+    margin-top: -5%;
+    gap: 5%;
+    
+    
+  }
+
+  .SharingModalContent{
+    width: 20%;
+    right: 0;
+    left: 62%;
+    top: 10%;
+    height: 10%;
+  }
+
+  #share-header{
+    margin-left: 0%;
+    margin-top: -5%;
+    margin-bottom: 3%;
+    font-size: x-small;
+  }
+
+  #SharingButton{
+    right: 15%;
+  }
+
   
 
   
