@@ -1,5 +1,12 @@
+@font-face {
+    font-family: 'BebasNeue';
+    src: url('./BebasNeue.woff');
+    font-weight: normal;
+    font-style: normal;
+}
 .App{
     text-align: center;
+    background-color: #f8f8f8;
 
 }
 
@@ -11,13 +18,15 @@
     height: 5vh;
     justify-content: space-between;
     position: fixed;
+    background-color: #27292b;
+    z-index: 1;
     
 }
 
 .MenuButtonsSection{
     display: flex;
-    flex-direction: row;
-    gap: 1vh;
+    flex-direction: row;   
+    padding-bottom: 1vh;
 }
 
 
@@ -26,7 +35,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-  
     gap: 0.8vh
 }
 
@@ -35,19 +43,63 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: large;
+    font-size: x-large;
     margin-left:1vh;
-    text-align: center;
     width: auto;
+    background-color: #27292b;
+    font-family: 'BebasNeue', sans-serif;
+    font-weight: bold;
+    margin-bottom: 1vh;
+    border-radius: 0%;
+    
+   
 
 }
+
+/*.UserButton:hover{
+  
+    background-color: #9bb9d5;
+
+}*/
+
+.username:hover{
+    background: white; 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    
+}
+.username{
+    background: linear-gradient(to right, #23a1ee 5%, #9ddeec 95%); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+  
+
+}
+
 
 .BlueButton{
   display: flex;
   flex-direction: row;
   align-items: center;
   width: auto;
+  background-color: #27292b;
+  font-family: 'BebasNeue', sans-serif;
+  font-weight: bold;
+  font-size: xx-large;
+
 }
+
+.Share-logo:hover{
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+  
+}
+
+.Logout-logo:hover{
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+
+}
+
+
 
 .LogoutButton{
     display: flex;
@@ -55,28 +107,32 @@
     align-items: center;
     width: auto;
     margin-right: 1vh;
-}
-
-
-.button-content p{
+    background-color: #27292b;
    
-    font-size: large;
+
 }
+
+
 .Share-logo{
-    height: 2.2vh;
+    height: 3.7vh;
+  
+}
+
+.Logout-logo{
+    height: 3.7vh;
 }
 
 .LogoContainer{
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    
+    justify-content: center;  
 }
 
 .App-logo{
     height: 20vh;
     border-radius: 50%;
     box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+    margin-top: 7vh;
 
 }
 

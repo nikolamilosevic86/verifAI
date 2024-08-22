@@ -1,12 +1,12 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
-import share from './share.svg';
+import share from './new_share.svg';
 import link from './link.svg';
 import facebook from './facebook.svg';
 import linkedin from './linkedin.svg';
 import twitter from './twitter.svg';
 import checkmark from './checkmark.svg';
-import logout_img from './logout.svg';
+import logout_img from './new_logout.svg';
 import { useNavigate } from 'react-router-dom';
 import './MainScreen.css';
 import {BACKEND} from './App.js'
@@ -823,19 +823,19 @@ class MainScreen extends Component {
                           
                         
                           <div className='MenuButtons'>
-                            <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
+                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username'>{user.username}</p></div></button>
                             
                             <div className='MenuButtonsSection'>
                                   
-                        <button className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
+                        <button title="Share" className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
-                                <p>Share</p>
+                            
                             </div>
                         </button>
-                            <button className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
-                                <img className="Share-logo" src={logout_img}  />
-                                <p>Logout</p>
+                            <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
+                                <img className="Logout-logo" src={logout_img}  />
+                               
                             </div></button>
                             
                       
