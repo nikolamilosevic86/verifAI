@@ -30,8 +30,13 @@
 
 .UserButton{
    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     font-size: large;
-    margin-left: 1vh;
+    margin-left:1vh;
+    text-align: center;
+    width: auto;
 
 }
 
@@ -39,13 +44,17 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  width: auto;
 }
 
 .LogoutButton{
     display: flex;
     flex-direction: row;
     align-items: center;
+    width: auto;
+    margin-right: 1vh;
 }
+
 
 .button-content p{
    
@@ -55,9 +64,221 @@
     height: 2.2vh;
 }
 
+.LogoContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    
+}
+
+.App-logo{
+    height: 20vh;
+    border-radius: 50%;
+    box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+
+}
+
+.tabbed{
+    display: flex;
+    margin-top: 2vh;
+    flex-direction: row;
+    justify-content: center;
+}
+.InputQuestion{
+    display: flex;
+    flex-direction: column;
+}
+
+.QuestionClassForm{
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+    width: 60%;
+}
+
+.QuestionClassForm input{
+    text-align: left;
+}
+
+.QuestionSection{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1vh;
+}
+
+.AnswerContainer{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    
+    
+}
+
+.Answer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+}
+
+  
+.document-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-left: 20px;
+    margin-top: 10px;
+    width: 70%;
+  }
+  
+  .document-square {
+    width: 15vh;  /* Reduced width */
+    height: 9vh;  /* Reduced height */
+    border: 0.3vh solid #ccc;
+    padding: 0.5vh;  /* Reduced padding */
+    overflow: hidden;
+    background-color: #f9f9f9;
+    box-shadow: 1vh 0.8vh 1vh rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .document-title {
+    font-size: 14px;  /* Reduced font size */
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: black;
+    font-size: small;
+    text-align: left;
+  }
+  
+  .no-underline-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit the color from the parent */
+  }
+  
+  .no-underline-link:hover {
+    text-decoration: none; /* Remove underline on hover */
+    color: inherit; /* Inherit the color from the parent */
+  }
+  
+  
+  .document-square.center {
+    justify-content: center;  /* Center content vertically */
+    align-items: center;      /* Center content horizontally */
+    text-align: center;       /* Center text */
+  }
+  
+  .document-section:hover {
+    cursor: pointer; /* Change cursor to hand on hover */
+  }
+  
+  .sources-section h2{
+   text-align: left;
+   margin-left: 1vh;
+    
+  }
+
+.StatusMessage{
+    text-align: left;
+    margin-left: 1vh;
 
 
+}
 
+.output-section{
+    text-align: justify;
+    background-color: #f1f1f1;
+    padding: 3.5vh;
+    
+}
+.output-verification {
+    background-color: #fafafa;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 20px;
+    max-width: 770px;
+  
+  }
+  
+  .output-tokens {
+    white-space: pre-line; /* Ensures that line breaks are respected */
+    color: #333;
+    font-size: large;
+    line-height: 3.5vh;
+   
+  }
 
-
+  .spinner {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 1vh; 
+    width: 1.5vh;
+    height: 1.5vh;
+    border: 0.5vh solid rgba(0, 0, 0, .3);
+    border-radius: 50%;
+    border-top: 0.5vh solid blue;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .green-ball, .red-ball, .gray-ball,.orange-ball {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  .green-ball {
+    background-color: #00ff00; /* Green color */
+  }
+  
+  .red-ball {
+    background-color: #ff0000; /* Red color */
+  }
+  
+  .gray-ball{
+    background-color: gray;
+  }
+  
+  .orange-ball{
+    background-color:orange;
+  }
+  
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 280px;
+    background-color: #f9f9f9;
+    color: #000;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 10px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -140px; /* Use half of the width to center it. */
+    box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
+    /* Fade in tooltip - animation */
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
 

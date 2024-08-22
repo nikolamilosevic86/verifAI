@@ -8,7 +8,7 @@ import twitter from './twitter.svg';
 import checkmark from './checkmark.svg';
 import logout_img from './logout.svg';
 import { useNavigate } from 'react-router-dom';
-import './App.css';
+import './MainScreen.css';
 import {BACKEND} from './App.js'
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
@@ -891,10 +891,13 @@ class MainScreen extends Component {
                         )}
                         
                             <div className="router-reset">
-                                
-                                <img className="App-logo" src={logo} alt="Logo" />
+
+                              <div className="LogoContainer">
+                              <img className="App-logo" src={logo} alt="Logo" />
                                 
 
+                                </div>  
+                              
                                 <div className="InputQuestion">
                                     <div className='tabbed'>
                                         <label htmlFor="question">
@@ -902,101 +905,11 @@ class MainScreen extends Component {
                                         </label>
                                         <br/>
                                     </div>
-                                    <div className="search-area">
-                                        <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings">&#9881;</button>
-                                        {this.state.modalOpen && (
-                                            <div className="ModalContent" ref={this.setWrapperRef}>
-                                                <h2>Search Configuration</h2>
-                                                <label>Type of Search: 
-                                                    <select value={this.state.search_type} onChange={this.handleSearchTypeChange}>
-                                                        <option value="hybrid">Hybrid</option>
-                                                        <option value="lexical">Lexical</option>
-                                                        <option value="semantic">Semantic</option>
-                                                    </select>
-                                                </label>
-                                                {this.state.search_type === 'hybrid' && (
-                                                    <div className="temperature-labels">
-                                                        <label>
-                                                            Lexical Weights: {this.state.lex_parameter.toFixed(3)}, Semantic Weights: {(1 - this.state.lex_parameter).toFixed(3)}
-                                                            <input 
-                                                                type="range" 
-                                                                min="0" 
-                                                                max="1" 
-                                                                value={this.state.lex_parameter}
-                                                                step="0.01"
-                                                                onChange={this.handleLexParamChange}
-                                                            />
-                                                            <button className="temperature-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
-                                                            <button className="temperature-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
-                                                            <button className="temperature-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
-                                                        </label>
-                                                    </div>
-                                                )}
-                                                <label>Number of Documents:
-                                                    <select
-                                                        value={this.state.numDocuments}
-                                                        onChange={this.handleNumDocumentsChange}
-                                                        title="Please select the number of documents"
-                                                    >
-                                                        <option value="10">Normal - 10 documents</option>
-                                                        <option value="5">Small - 5 documents</option>
-                                                        <option value="15">Large - 15 documents</option>
-                                                        <option value="20">Extra Large - 20 documents</option>
-                                                    </select>
-                                                </label>
-                                                <div className="date-picker-group">
-                                                    <label htmlFor="start">From:</label>
-                                                    <input
-                                                        type="date"
-                                                        id="start"
-                                                        name="trip-start"
-                                                        value={this.state.startDate}
-                                                        onChange={this.handleStartDateChange}
-                                                        min="1940-01-01"
-                                                        max={this.state.endDate}
-                                                    />
-                                                </div>
-                                                <div className="date-picker-group">
-                                                    <label htmlFor="end">To:</label>
-                                                    <input
-                                                        type="date"
-                                                        id="end"
-                                                        name="trip-end"
-                                                        value={this.state.endDate}
-                                                        onChange={this.handleEndDateChange}
-                                                        min={this.state.startDate}
-                                                        max="2030-01-01"
-                                                    />
-                                                </div>
-                                                <div className="temperature-labels">
-                                                <label>Temperature: {this.state.temperature}:
-                                                    <p>The higher the temperature, the less accurate answers will be.</p>
-                                                    <input
-                                                        type="range"
-                                                        value={this.state.temperature}
-                                                        min="0"
-                                                        max="1"
-                                                        step="0.01"
-                                                        onChange={this.handleTemperatureChange}
-                                                    />
-                                                    <button className="temperature-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
-                                                    <button className="temperature-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
-                                                    <button className="temperature-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
-                                                </label>
-                                            </div>
-                                                
-                                            <label>Stream:
-                                                <select
-                                                    value={this.state.stream}
-                                                    onChange={this.handleStreamChange}
-                                                    title="Please select the stream option"
-                                                >
-                                                    <option value="true">Stream</option>
-                                                    <option value="false">Not Stream</option>
-                                                </select>
-                                            </label>
-                                            </div>
-                                    )}
+                                   
+
+                                   <div className='QuestionSection'>
+                                   <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings">&#9881;</button>
+                                  
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
                                         <input
@@ -1012,13 +925,117 @@ class MainScreen extends Component {
                                         </button>
                                     </form>
                                 </div>
+                                </div>
+                                <div className="search-area">
+                                       
+                                       {this.state.modalOpen && (
+                                           <div className="ModalContent" ref={this.setWrapperRef}>
+                                               <h2>Search Configuration</h2>
+                                               <label>Type of Search: 
+                                                   <select value={this.state.search_type} onChange={this.handleSearchTypeChange}>
+                                                       <option value="hybrid">Hybrid</option>
+                                                       <option value="lexical">Lexical</option>
+                                                       <option value="semantic">Semantic</option>
+                                                   </select>
+                                               </label>
+                                               {this.state.search_type === 'hybrid' && (
+                                                   <div className="temperature-labels">
+                                                       <label>
+                                                           Lexical Weights: {this.state.lex_parameter.toFixed(3)}, Semantic Weights: {(1 - this.state.lex_parameter).toFixed(3)}
+                                                           <input 
+                                                               type="range" 
+                                                               min="0" 
+                                                               max="1" 
+                                                               value={this.state.lex_parameter}
+                                                               step="0.01"
+                                                               onChange={this.handleLexParamChange}
+                                                           />
+                                                           <button className="temperature-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
+                                                           <button className="temperature-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
+                                                           <button className="temperature-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
+                                                       </label>
+                                                   </div>
+                                               )}
+                                               <label>Number of Documents:
+                                                   <select
+                                                       value={this.state.numDocuments}
+                                                       onChange={this.handleNumDocumentsChange}
+                                                       title="Please select the number of documents"
+                                                   >
+                                                       <option value="10">Normal - 10 documents</option>
+                                                       <option value="5">Small - 5 documents</option>
+                                                       <option value="15">Large - 15 documents</option>
+                                                       <option value="20">Extra Large - 20 documents</option>
+                                                   </select>
+                                               </label>
+                                               <div className="date-picker-group">
+                                                   <label htmlFor="start">From:</label>
+                                                   <input
+                                                       type="date"
+                                                       id="start"
+                                                       name="trip-start"
+                                                       value={this.state.startDate}
+                                                       onChange={this.handleStartDateChange}
+                                                       min="1940-01-01"
+                                                       max={this.state.endDate}
+                                                   />
+                                               </div>
+                                               <div className="date-picker-group">
+                                                   <label htmlFor="end">To:</label>
+                                                   <input
+                                                       type="date"
+                                                       id="end"
+                                                       name="trip-end"
+                                                       value={this.state.endDate}
+                                                       onChange={this.handleEndDateChange}
+                                                       min={this.state.startDate}
+                                                       max="2030-01-01"
+                                                   />
+                                               </div>
+                                               <div className="temperature-labels">
+                                               <label>Temperature: {this.state.temperature}:
+                                                   <p>The higher the temperature, the less accurate answers will be.</p>
+                                                   <input
+                                                       type="range"
+                                                       value={this.state.temperature}
+                                                       min="0"
+                                                       max="1"
+                                                       step="0.01"
+                                                       onChange={this.handleTemperatureChange}
+                                                   />
+                                                   <button className="temperature-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
+                                                   <button className="temperature-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
+                                                   <button className="temperature-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
+                                               </label>
+                                           </div>
+                                               
+                                           <label>Stream:
+                                               <select
+                                                   value={this.state.stream}
+                                                   onChange={this.handleStreamChange}
+                                                   title="Please select the stream option"
+                                               >
+                                                   <option value="true">Stream</option>
+                                                   <option value="false">Not Stream</option>
+                                               </select>
+                                           </label>
+                                           </div>
+                                   )}
                                 <br></br>
                                 {this.state.questions.slice().reverse().map((q, index) => (
-                                <div key={index}>
-                                    <h1>{q.question}</h1>
+                                
+                            <div className="Answer">
+                                <div className="AnswerContainer" key={index}>
+                                <h1>{q.question}</h1>
+                                   
+                                    
                                     <br></br>
+                                    
+                                   
+                                   
+                                    <div className="sources-section">
                                     <h2>Sources:</h2>
-                                    <div className="document-section">
+                                        <div className="document-section">
                                         {q.document_found && Object.keys(q.document_found)
                                             .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 4)
                                             .map((i) => {
@@ -1047,27 +1064,34 @@ class MainScreen extends Component {
                                             </h3>
                                         </div>
                                     )}
-                                   
-                                    
                                     </div>
+                                    </div>
+                                    
+                                  
+                                    
                                     <br></br>
+
+                                  
                                     {Object.keys(q.document_found).length > 0 && (
-                                    <h2>
+                                    <h2 className="StatusMessage">
                                         {q.status === "fetching_query" && "Answering"}
                                         {q.status === "fetching_verification" && "Verification"}
                                         
                                         {q.loading && <div className="spinner" />}
                                     </h2>
                                     )}
+                                  
                             
                                 <div className="output-section">
                                     <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
                                 </div>
                             </div>
+                            </div>
                                 ))}
                             </div>
                         </div>
-                    </div>
+                        </div>
+                    
                 );
             }}
         </AuthContext.Consumer>
