@@ -1,5 +1,6 @@
 .App{
     text-align: center;
+
 }
 
 
@@ -9,6 +10,7 @@
     width: 100%;
     height: 5vh;
     justify-content: space-between;
+    position: fixed;
     
 }
 
@@ -192,6 +194,7 @@
     text-align: justify;
     background-color: #f1f1f1;
     padding: 3.5vh;
+    margin-bottom: 2vh;
     
 }
 .output-verification {
@@ -260,21 +263,21 @@
   
   .tooltip .tooltiptext {
     visibility: hidden;
-    width: 280px;
+    width: 35%;
     background-color: #f9f9f9;
     color: #000;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 10px;
+    text-align: justify;
+    border-radius: 1vh;
+    padding: 1.5vh;
     position: absolute;
     z-index: 1;
     bottom: 100%;
     left: 50%;
-    margin-left: -140px; /* Use half of the width to center it. */
-    box-shadow: 0px 5px 10px rgba(0,0,0,0.1);
-    /* Fade in tooltip - animation */
+    box-shadow: 0vh 1vh 3vh rgba(0,0,0,0.1);
     opacity: 0;
     transition: opacity 0.3s;
+    font-size: small;
+    
   }
   
   .tooltip:hover .tooltiptext {
