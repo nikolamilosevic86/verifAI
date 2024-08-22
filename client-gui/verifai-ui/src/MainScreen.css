@@ -4,11 +4,32 @@
     font-weight: normal;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url('./Montserrat-VariableFont_wght.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
 .App{
     text-align: center;
     background-color: #f8f8f8;
 
 }
+
+h1{
+    font-family: 'BebasNeue', sans-serif;
+
+}
+
+h2{
+    font-family: 'BebasNeue', sans-serif;
+}
+
+
 
 
 .MenuButtons{
@@ -174,7 +195,7 @@
     text-align: left;
     outline: 0.3vh solid #27292b;
     transition: outline 0.1s ease-out;
-  
+    
   
     
   }
@@ -240,12 +261,12 @@
   }
   
   .document-title {
-    font-size: 14px;  /* Reduced font size */
-    font-weight: bold;
-    margin-bottom: 5px;
+    font-size: large;  /* Reduced font size */
     color: black;
-    font-size: small;
     text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 0vh;
+    
   }
   
   .no-underline-link {
@@ -288,6 +309,7 @@
     padding: 3.5vh;
     margin-bottom: 2vh;
     
+    
 }
 .output-verification {
     background-color: #fafafa;
@@ -303,6 +325,7 @@
     color: #333;
     font-size: large;
     line-height: 3.5vh;
+ 
    
   }
 
