@@ -902,7 +902,7 @@ class MainScreen extends Component {
                               
                                 <div className="InputQuestion">
                                     <div className='tabbed'>
-                                        <label htmlFor="question">
+                                        <label id="inputMessage" htmlFor="question">
                                             Input your question in natural language:
                                         </label>
                                         <br/>

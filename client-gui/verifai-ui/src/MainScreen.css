@@ -5,12 +5,12 @@
     font-style: normal;
 }
 
-@font-face {
+/*@font-face {
     font-family: 'Montserrat';
     src: url('./Montserrat-VariableFont_wght.woff');
     font-weight: normal;
     font-style: normal;
-}
+}*/
 
 
 
@@ -187,7 +187,7 @@ h2{
 
 
 .QuestionClass{
-    font-size: large;
+    font-size: x-large;
     border-top-left-radius: 3vh;
 	border-bottom-left-radius: 3vh;
     border-top-right-radius: 3vh;
@@ -195,6 +195,7 @@ h2{
     text-align: left;
     outline: 0.3vh solid #27292b;
     transition: outline 0.1s ease-out;
+    font-family: 'Montserrat', sans-serif;
     
   
     
@@ -262,10 +263,11 @@ h2{
   
   .document-title {
     font-size: large;  /* Reduced font size */
-    color: black;
+  
     text-align: left;
     font-family: 'Montserrat', sans-serif;
     margin-top: 0vh;
+    font-weight: 500;
     
   }
   
@@ -323,8 +325,10 @@ h2{
   .output-tokens {
     white-space: pre-line; /* Ensures that line breaks are respected */
     color: #333;
-    font-size: large;
+    font-size: larger;
     line-height: 3.5vh;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
  
    
   }
@@ -448,3 +452,11 @@ h2{
     transition: transform .2s;
   }
 
+#inputMessage{
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+}
+
+body{
+    background-color: #f8f8f8;
+}
