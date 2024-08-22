@@ -914,7 +914,8 @@ class MainScreen extends Component {
                                   
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
-                                        <input
+                                  
+                                    <input
                                             id="question"
                                             name="question"
                                             className="QuestionClass"
@@ -922,6 +923,9 @@ class MainScreen extends Component {
                                             value={this.state.value}
                                             onChange={this.handleChange}
                                         />
+
+                                    
+                                      
                                         <button className='AskButton' onClick={this.handleSubmit}>
                                             <div className="circleButtonContent">
                                                 <img className="AskLogo" src={ask}/>

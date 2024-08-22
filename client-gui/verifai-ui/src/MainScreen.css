@@ -164,9 +164,35 @@
     width: 60%;
 }
 
-.QuestionClassForm input{
+
+.QuestionClass{
+    font-size: large;
+    border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
     text-align: left;
-}
+    outline: 0.3vh solid #27292b;
+    transition: outline 0.1s ease-out;
+  
+  
+    
+  }
+
+  .QuestionClass:hover{
+    outline: 0.3vh solid #9bb9d5;
+    border: 0.3vh solid transparent;
+    transition: outline 0.1s ease-in;
+   
+  }
+
+  .QuestionClass:focus{
+    outline:  0.3vh solid #6fa4bf;
+    border: 0.3vh solid transparent;
+  }
+
+
+  
 
 .QuestionSection{
     display: flex;
@@ -398,3 +424,4 @@
     transform: translateZ(0) scale(1);
     transition: transform .2s;
   }
+
