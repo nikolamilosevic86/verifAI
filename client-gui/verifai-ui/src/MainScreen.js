@@ -820,20 +820,33 @@ class MainScreen extends Component {
 
                       </Helmet> 
                             
-                            
-                            
+                          
+                        
+                          <div className='MenuButtons'>
                             <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
-                            <button className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
-                                <img className="Share-logo" src={logout_img}  />
-                                <p>Logout</p>
-                            </div></button>
                             
+                            <div className='MenuButtonsSection'>
+                                  
                         <button className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
                                 <p>Share</p>
                             </div>
                         </button>
+                            <button className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
+                                <img className="Share-logo" src={logout_img}  />
+                                <p>Logout</p>
+                            </div></button>
+                            
+                      
+
+                            </div>
+                          
+
+                        </div>
+                       
+                            
+                           
                         {this.state.sharingModalOpen && (
                             <div  className="SharingModalContent" ref={this.sharingModalRef}>
                             <div className="copiedMessage">

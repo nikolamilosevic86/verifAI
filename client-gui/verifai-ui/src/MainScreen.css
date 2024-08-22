@@ -1,0 +1,63 @@
+.App{
+    text-align: center;
+}
+
+
+.MenuButtons{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 5vh;
+    justify-content: space-between;
+    
+}
+
+.MenuButtonsSection{
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+}
+
+
+
+.button-content{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  
+    gap: 0.8vh
+}
+
+.UserButton{
+   
+    font-size: large;
+    margin-left: 1vh;
+
+}
+
+.BlueButton{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.LogoutButton{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.button-content p{
+   
+    font-size: large;
+}
+.Share-logo{
+    height: 2.2vh;
+}
+
+
+
+
+
+
+
