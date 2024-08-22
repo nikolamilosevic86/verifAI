@@ -66,12 +66,15 @@
     background: white; 
     -webkit-background-clip: text; 
     -webkit-text-fill-color: transparent; 
+    transform: scale(1.05);
     
 }
 .username{
     background: linear-gradient(to right, #23a1ee 5%, #9ddeec 95%); 
     -webkit-background-clip: text; 
     -webkit-text-fill-color: transparent; 
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
   
 
 }
@@ -86,17 +89,20 @@
   font-family: 'BebasNeue', sans-serif;
   font-weight: bold;
   font-size: xx-large;
+  
 
 }
 
+
+
 .Share-logo:hover{
     filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
-  
+    transform: scale(1.05);
 }
 
 .Logout-logo:hover{
     filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
-
+    transform: scale(1.05);
 }
 
 
@@ -115,11 +121,15 @@
 
 .Share-logo{
     height: 3.7vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
   
 }
 
 .Logout-logo{
     height: 3.7vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
 }
 
 .LogoContainer{
@@ -341,3 +351,50 @@
     opacity: 1;
   }
 
+
+  #settings-btn{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: #f8f8f8;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    
+    
+    
+  }
+
+  #settings-btn:hover{
+    transform: scale(1.05);
+
+  }
+
+  .AskButton{
+    background-color: #f8f8f8;
+   
+  }
+
+ 
+  .AskLogo:hover{  
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+  }
+
+  .SettingsLogo:hover{  
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+  }
+
+  .SettingsLogo{
+    height: 3.7vh;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    
+  }
+
+  .AskLogo{
+    height: 3.7vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+  }

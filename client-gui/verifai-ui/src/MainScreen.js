@@ -1,5 +1,7 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
+import ask from './new_ask.svg';
+import new_settings from './new_settings.svg';
 import share from './new_share.svg';
 import link from './link.svg';
 import facebook from './facebook.svg';
@@ -908,7 +910,7 @@ class MainScreen extends Component {
                                    
 
                                    <div className='QuestionSection'>
-                                   <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings">&#9881;</button>
+                                   <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings"><div className="circleButtonContent"><img className="SettingsLogo" src={new_settings}/></div></button>
                                   
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
@@ -921,7 +923,9 @@ class MainScreen extends Component {
                                             onChange={this.handleChange}
                                         />
                                         <button className='AskButton' onClick={this.handleSubmit}>
-                                            Ask
+                                            <div className="circleButtonContent">
+                                                <img className="AskLogo" src={ask}/>
+                                            </div>
                                         </button>
                                     </form>
                                 </div>
