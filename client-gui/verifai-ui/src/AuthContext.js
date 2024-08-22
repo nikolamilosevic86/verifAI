@@ -21,15 +21,15 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     
 
-    const syncTokenFromSessionStorage = () => {
-      const token = sessionStorage.getItem("token");
-      const username = sessionStorage.getItem("username");
+    const syncTokenFromLocalStorage = () => {
+      const token = localStorage.getItem("token");
+      const username = localStorage.getItem("username");
       
       if (token && token != "" && token != undefined) setUser({token: token, username: username});
     }
 
     useEffect(() => {
-      syncTokenFromSessionStorage();
+      syncTokenFromLocalStorage();
     }, []);
 
    
@@ -49,8 +49,8 @@ export const AuthProvider = ({ children }) => {
 
         if (response.ok) {
             const data = await response.json(); 
-            sessionStorage.setItem("token",data.token);
-            sessionStorage.setItem("username",username);
+            localStorage.setItem("token",data.token);
+            localStorage.setItem("username",username);
             setUser({ token: data.token, username: username}); 
             const redirectionPath = getRedirectionPath();
             navigate(redirectionPath);
@@ -66,8 +66,8 @@ export const AuthProvider = ({ children }) => {
   
 
   const logout = async () => {
-      sessionStorage.removeItem("token");
-      sessionStorage.removeItem("username");
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
       setUser({token:null});
 };
 

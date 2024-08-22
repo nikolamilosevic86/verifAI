@@ -74,30 +74,15 @@
 }
 
 .AskButton {
-  backface-visibility: hidden;
-  
+  backface-visibility: hidden; 
   background: #0058b7;
-  height: 40px;
-  border: 0;
-  border-radius: .375rem;
-  box-sizing: border-box;
   color: #fff;
   cursor: pointer;
-  display: inline-block;
   font-family: Circular,Helvetica,sans-serif;
-  font-size: 1.125rem;
   font-weight: 700;
-  letter-spacing: -.01em;
-  line-height: 1.2;
-  padding: 0.2rem 1.25rem;
-  position: relative;
-  text-align: left;
   text-decoration: none;
-  transform: translateZ(0) scale(1);
-  transition: transform .2s;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
+ 
+ 
 }
 
 .LogoutButton {
@@ -120,15 +105,20 @@
   padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
   text-align: center;  /* Changed to center to align text properly */
   text-decoration: none;
+  transform: translateZ(0) scale(1);
   transition: transform .2s;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  width: 100px;
+  height: 42px;
+  font-size: large;
 }
 
 .LogoutButton:hover {
   background-color: #000000; /* Darker shade on hover */
   cursor: pointer;
+  transform: scale(1.05);
 }
 
 .UserButton {
@@ -151,37 +141,205 @@
   padding: 0.2rem 0.75rem;  /* Reduced padding to decrease width */
   text-align: center;  /* Changed to center to align text properly */
   text-decoration: none;
+  transform: translateZ(0) scale(1);
   transition: transform .2s;
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  width: auto;
+  height: 42px;
+  font-size: larger;
 }
 
 .UserButton:hover {
   background-color: #8e0303; /* Darker shade on hover */
   cursor: pointer;
+  transform: scale(1.05);
 }
 
-
-.SharingButton {
-  position: absolute;
-  top: 40px;    
-  left: 10px;
+.BlueButton{
   background: none;
   height: auto;  /* Let the image determine the height */
   border: none;
   padding: 0;
   cursor: pointer;
-  display: inline-block;  /* Display as inline-block for proper alignment */
+  display: inline-block; /* Display as inline-block for proper alignment */
   user-select: none;
   -webkit-user-select: none;
   touch-action: manipulation;
+  background-color:  #0058b7;
+  width: 100px;
+  height: 42px;
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
+  border-radius: .375rem;
+
+}
+#SharingButton {
+  position: absolute;
+  top: 10px;    
+  right: 120px;
+
 }
 
-.SharingButton:hover {
-  background: none;
-  cursor: pointer;
+.BlueButton p {
+  color: white;
+  font-weight: bold;
+  font-size: large;
+  margin-left: 7px;
+  margin-top: 11px;
+  
+
 }
+
+.BlueButton img {
+  width: 23px;
+  height: 23px;
+  margin-left: 8px;
+  margin-top: 9px;
+
+}
+
+.button-content{
+  display: flex;
+  flex-direction: row;
+  margin-top: 0px;
+}
+
+.BlueButton:disabled {
+  color: #787878;
+  cursor: auto;
+}
+
+.BlueButton:not(:disabled):hover {
+  background-color: #013e80;
+  transform: scale(1.05);
+}
+
+.BlueButton:not(:disabled):hover:active {
+  transform: scale(1.05) translateY(.125rem);
+  background-color: #013e80;
+}
+
+
+.BlueButton:focus {
+  outline: 0 solid transparent;
+}
+
+.BlueButton:focus:before {
+  border-width: .125rem;
+  content: "";
+  left: calc(-1*.375rem);
+  pointer-events: none;
+  position: absolute;
+  top: calc(-1*.375rem);
+  transition: border-radius;
+  user-select: none;
+}
+
+.BlueButton:not(:focus-visible) {
+  outline: 0 solid transparent;
+}
+
+.BlueButton:not(:disabled):active {
+  transform: translateY(.125rem);
+}
+
+.SharingModalContent{
+  position: absolute;
+  width: 80%; /* Reduced width percentage */
+  max-width: 320px; /* Reduced maximum width */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 10px; /* Slightly reduced padding */
+  margin-top: 5px; /* Space between the input field and this box */
+  background: #fff;
+  top: 65px;
+  right: 120px;
+  z-index: 1;
+}
+
+.copiedMessage{
+  display: flex;
+  flex-direction: row;
+  margin-left: 7cqh;
+}
+
+.copiedMessage h1{
+  font-size: x-large;
+  margin-top: 5px;
+  margin-left: -5px;
+}
+
+.checkmark{
+  width: 30px;
+  height: 30px;
+  margin-top: 8px;
+
+}
+.sharing-options{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin-left: 12px;
+  
+}
+
+#share-header{
+  font-size: larger;
+  margin-left: 5px;
+  margin-top: 5px;
+  margin-bottom: 2px;
+  
+}
+
+
+
+#FacebookButton{
+  width: 140px;
+}
+
+#CopyLinkButton{
+  width: 140px;
+  
+}
+
+#TwitterButton{
+  width: 140px;
+}
+
+#TwitterButton img{
+  margin-left: 20px;
+
+}
+
+#TwitterButton p{
+  margin-left: 10px;
+}
+#CopyLinkButton img {
+  margin-left: 10px;
+  
+}
+
+#CopyLinkButton p {
+  margin-left: 10px;
+}
+
+#LinkedInButton{
+  width: 140px;
+}
+
+#LinkedInButton img {
+  margin-top: 10px;
+  margin-left: 10px;
+  
+}
+
+#LinkedInButton p {
+  margin-left: 12px;
+}
+
+
 
 .AskButton:disabled {
   color: #787878;
@@ -190,10 +348,14 @@
 
 .AskButton:not(:disabled):hover {
   transform: scale(1.05);
+  background-color: #013e80;
+
 }
 
 .AskButton:not(:disabled):hover:active {
   transform: scale(1.05) translateY(.125rem);
+  background-color: #013e80;
+  
 }
 
 .AskButton:focus {
@@ -429,12 +591,16 @@ p {
   display: flex;
   align-items: center; /* This will center the icon vertically */
   justify-content: center; /* This will center the icon horizontally */
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
  
 }
 
 /* Optional: add some visual feedback on hover */
 #settings-btn:hover {
-  color: #464646; /* Change color on hover */
+  /*color: #464646;*/ /* Change color on hover */
+  background-color: #013e80;
+  transform: scale(1.05);
 }
 
 .search-config {
@@ -687,4 +853,152 @@ h3 {
   flex-direction: column; /* Ensures form elements stack vertically */
   align-items: center; /* Aligns form elements to the center horizontally */
   padding:40px;
+}
+
+
+
+@media (max-width: 480px) {
+  .AskButton {
+   
+    backface-visibility: hidden;
+        height: 25px; /* Adjusted height for small screens */
+        width: 40px;  /* Adjusted width for small screens */
+        border: 0;
+        border-radius: .25rem; /* Slightly smaller border radius */
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: 0.7rem; /* Smaller font size for smaller screens */
+        letter-spacing: -.015em; /* Adjusted letter spacing */
+        line-height: 1.1; /* Slightly tighter line height */
+        position: relative;
+        left: 5px; /* Adjusted left position */
+        text-align: center;
+        text-decoration: none;
+        transform: translateZ(0) scale(1);
+        transition: transform .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        padding: 0.1rem 0.5rem; 
+  }
+
+  
+}
+
+
+@media (min-width: 481px) and (max-width: 768px) {
+  .AskButton {
+    backface-visibility: hidden;
+        height: 28px; /* Slightly taller than mobile */
+        width: 45px;  /* Slightly wider than mobile */
+        border: 0;
+        border-radius: .3rem; /* Slightly larger border radius */
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: 0.75rem; /* Adjusted font size */
+        letter-spacing: -.012em; /* Adjusted letter spacing */
+        line-height: 1.15; /* Slightly increased line height */
+        position: relative;
+        left: 7px; /* Adjusted left position */
+        text-align: center;
+        text-decoration: none;
+        transform: translateZ(0) scale(1);
+        transition: transform .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        padding: 0.15rem 0.75rem;
+  }
+
+  
+}
+
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .AskButton {
+    backface-visibility: hidden;
+    height: 30px;
+    width: 50px;
+    border: 0;
+    border-radius: .375rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: 0.8rem;
+    letter-spacing: -.01em;
+    line-height: 1.2;
+    position: relative;
+    left: 10px;
+    text-align: center;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    padding: 0.2rem 0.8rem;
+  }
+
+  
+  
+}
+
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+
+  .AskButton {
+    backface-visibility: hidden;
+    height: 35px;
+    width: 60px;
+    border: 0;
+    border-radius: .4rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: 0.85rem;
+    letter-spacing: -.008em;
+    line-height: 1.25;
+    position: relative;
+    left: 12px;
+    text-align: left;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    padding: 0.25rem 1.1rem;
+  }
+
+  
+}
+
+
+@media (min-width: 1281px) {
+
+  .AskButton {
+    backface-visibility: hidden;
+        height: 35px;
+        width: 60px;
+        border: 0;
+        border-radius: .4rem;
+        box-sizing: border-box;
+        display: inline-block;
+        font-size: 0.85rem;
+        letter-spacing: -.008em;
+        line-height: 1.25;
+        position: relative;
+        left: 12px;
+        text-align: left;
+        text-decoration: none;
+        transform: translateZ(0) scale(1);
+        transition: transform .2s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        padding: 0.25rem 1.7rem;
+  }
+
+
+
+
+  
 }
