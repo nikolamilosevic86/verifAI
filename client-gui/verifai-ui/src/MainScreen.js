@@ -1084,7 +1084,7 @@ class MainScreen extends Component {
                                     <h2 className="StatusMessage">
                                         {q.status === "fetching_query" && "Answering"}
                                         {q.status === "fetching_verification" && "Verification"}
-                                        
+                                        {q.status !== "fetching_verification" && q.status !== "fetching_query" && "Answer:"}
                                         {q.loading && <div className="spinner" />}
                                     </h2>
                                     )}
