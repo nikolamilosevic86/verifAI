@@ -856,39 +856,44 @@ class MainScreen extends Component {
                             <h1>Link copied</h1>
 
                             </div>
-                           
-                            <h1 id="share-header">Share</h1>
+                            <div className='heading-container'>
+                            <h1 id="share-heading">Share:</h1>
+                            </div>
+
+                            <div className='sharingContainer'>
                             <div className='sharing-options'>
                             
-                            <button className="BlueButton" id="CopyLinkButton" onClick={this.copyLink}>
+                            <button className="OptionButton" id="CopyLinkButton" onClick={this.copyLink}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={link}  />
+                                    <img className="Option-logo" src={link}  />
                                     <p>Copy link</p>
                                 </div>
                             </button>
 
-                            <button className="BlueButton" id="LinkedInButton" onClick={this.shareOnLinkedIn}>
+                            <button className="OptionButton" id="LinkedInButton" onClick={this.shareOnLinkedIn}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={linkedin}  />
+                                    <img className="Option-logo" src={linkedin}  />
                                     <p>LinkedIn</p>
                                 </div>
                             </button>
+                        
                           
                            
-                            <button className="BlueButton" id="FacebookButton" onClick={this.shareOnFacebook}>
+                            <button className="OptionButton" id="FacebookButton" onClick={this.shareOnFacebook}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={facebook}  />
+                                    <img className="Option-logo" src={facebook}  />
                                     <p>Facebook</p>
                                 </div>
                             </button>
-                            <button className="BlueButton" id="TwitterButton" onClick={this.shareOnTwitter}>
+                            <button className="OptionButton" id="TwitterButton" onClick={this.shareOnTwitter}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={twitter}  />
+                                    <img className="Option-logo" src={twitter}  />
                                     <p>Twitter</p>
                                 </div>
                             </button>
                                 
                             </div>
+                        </div>
                         </div>
                         )}
                         

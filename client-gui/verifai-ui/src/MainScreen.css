@@ -460,3 +460,91 @@ h2{
 body{
     background-color: #f8f8f8;
 }
+
+.OptionButton{
+    background-color: #27292b;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: small;
+    width: 100%;
+    height: 5vh;
+    border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+}
+
+.OptionButton:hover{
+    background-color: #9bb9d5;
+    transform: scale(1.05);
+}
+
+
+.Option-logo{
+    height: 2vh;
+}
+
+.SharingModalContent{
+    position: absolute;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    width: 15%;
+    box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.1);
+    margin-top: 20%;
+    margin-left: 2%;
+}
+
+.copiedMessage{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+
+}
+
+.checkmark{
+    height: 2.5vh;
+}
+.copiedMessage h1{
+    font-family: 'BebasNeue', sans-serif;
+    font-size: x-large;
+    
+}
+
+.sharingContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 2%;
+    
+
+}
+
+.sharing-options{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 0.5vh;
+    row-gap: 0;
+    
+   
+}
+
+#share-heading{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: larger;
+    margin-left: 3%;
+    margin-bottom: 0%;
+
+
+}
+
+
+
