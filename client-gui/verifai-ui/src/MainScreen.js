@@ -850,6 +850,7 @@ class MainScreen extends Component {
                             
                            
                         {this.state.sharingModalOpen && (
+                            <div className="SharingModalOverlay">
                             <div  className="SharingModalContent" ref={this.sharingModalRef}>
                             <div className="copiedMessage">
                             <img className="checkmark" src={checkmark}/>
@@ -893,6 +894,7 @@ class MainScreen extends Component {
                             </button>
                                 
                             </div>
+                        </div>
                         </div>
                         </div>
                         )}
