@@ -1045,7 +1045,7 @@ class MainScreen extends Component {
                                     <h2>Sources:</h2>
                                         <div className="document-section">
                                         {q.document_found && Object.keys(q.document_found)
-                                            .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 4)
+                                            .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 5)
                                             .map((i) => {
                                                 const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
                                                 const doc = q.document_found[i];

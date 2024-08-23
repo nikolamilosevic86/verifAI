@@ -242,14 +242,14 @@ h2{
 .document-section {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-left: 20px;
-    margin-top: 10px;
-    width: 70%;
+    gap: 2vh;
+    margin-left: 1%;
+    margin-top: 4vh;
+    width: 200vh;
   }
   
   .document-square {
-    width: 15vh;  /* Reduced width */
+    width: 17.3vh;  /* Reduced width */
     height: 9vh;  /* Reduced height */
     border: 0.3vh solid #ccc;
     padding: 0.5vh;  /* Reduced padding */
