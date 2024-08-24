@@ -1002,9 +1002,10 @@ class MainScreen extends Component {
                                                        <option value="20">Extra Large - 20 documents</option>
                                                    </select>
                                                </div>
+                                               <div className='DateConfiguration'>
                                                <div className="date-picker-group">
                                                    <label htmlFor="start">From:</label>
-                                                   <input
+                                                   <input className='datepicker'
                                                        type="date"
                                                        id="start"
                                                        name="trip-start"
@@ -1016,7 +1017,7 @@ class MainScreen extends Component {
                                                </div>
                                                <div className="date-picker-group">
                                                    <label htmlFor="end">To:</label>
-                                                   <input
+                                                   <input className="datepicker"
                                                        type="date"
                                                        id="end"
                                                        name="trip-end"
@@ -1026,10 +1027,13 @@ class MainScreen extends Component {
                                                        max="2030-01-01"
                                                    />
                                                </div>
+                                               </div>
+                                               <div className='WeightsConfiguration'>
                                                <div className="weight-labels">
                                                <label>Temperature: {this.state.temperature}:
-                                                   <p>The higher the temperature, the less accurate answers will be.</p>
-                                                   <input className='slider'
+                                                  <div className='temperature-desc'> <p>The higher the temperature, the less accurate answers will be.</p></div>
+                                                   <div className='weightSliderContainer'>
+                                                   <input id="tempSlider" className='slider'
                                                        type="range"
                                                        value={this.state.temperature}
                                                        min="0"
@@ -1037,14 +1041,20 @@ class MainScreen extends Component {
                                                        step="0.01"
                                                        onChange={this.handleTemperatureChange}
                                                    />
+                                                   </div>
+                                                   <div className='weight-btn-container'>
+                                                   <div className='weight-buttons'>
                                                    <button className="weight-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
                                                    <button className="weight-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
                                                    <button className="weight-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
+                                                   </div>
+                                                   </div>
                                                </label>
+                                           </div>
                                            </div>
                                                
                                            <label>Stream:
-                                               <select
+                                               <select className='combobox'
                                                    value={this.state.stream}
                                                    onChange={this.handleStreamChange}
                                                    title="Please select the stream option"
