@@ -946,18 +946,27 @@ class MainScreen extends Component {
                                        {this.state.modalOpen && (
                                            <div className="ModalContent" ref={this.setWrapperRef}>
                                                <h2>Search Configuration</h2>
-                                               <label>Type of Search: 
-                                                   <select value={this.state.search_type} onChange={this.handleSearchTypeChange}>
+                                               <div className='SearchConfiguration'>
+                                                <div className='search-section'>
+                                               <label>Type of Search:
+                                                 
+                                                 
+                                               </label>
+                                               <select id="search-options" value={this.state.search_type} onChange={this.handleSearchTypeChange}>
                                                        <option value="hybrid">Hybrid</option>
                                                        <option value="lexical">Lexical</option>
                                                        <option value="semantic">Semantic</option>
                                                    </select>
-                                               </label>
+                                                   </div>
+                                               </div>
                                                {this.state.search_type === 'hybrid' && (
-                                                   <div className="temperature-labels">
+                                                <div className="WeightsConfiguration">
+                                                   <div className="weight-labels">
                                                        <label>
                                                            Lexical Weights: {this.state.lex_parameter.toFixed(3)}, Semantic Weights: {(1 - this.state.lex_parameter).toFixed(3)}
-                                                           <input 
+                                                           <div className="weight-input">
+                                                           <div className='weightSliderContainer'>
+                                                           <input className='slider'
                                                                type="range" 
                                                                min="0" 
                                                                max="1" 
@@ -965,12 +974,20 @@ class MainScreen extends Component {
                                                                step="0.01"
                                                                onChange={this.handleLexParamChange}
                                                            />
-                                                           <button className="temperature-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
-                                                           <button className="temperature-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
-                                                           <button className="temperature-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
+                                                           </div>
+                                                           <div className='weight-btn-container'>
+                                                           <div className='weight-buttons'>
+                                                           <button className="weight-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
+                                                           <button className="weight-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
+                                                           <button className="weight-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
+                                                           </div>
+                                                           </div>
+                                                           </div>
                                                        </label>
                                                    </div>
+                                                   </div>
                                                )}
+                                               
                                                <label>Number of Documents:
                                                    <select
                                                        value={this.state.numDocuments}
@@ -1007,10 +1024,10 @@ class MainScreen extends Component {
                                                        max="2030-01-01"
                                                    />
                                                </div>
-                                               <div className="temperature-labels">
+                                               <div className="weight-labels">
                                                <label>Temperature: {this.state.temperature}:
                                                    <p>The higher the temperature, the less accurate answers will be.</p>
-                                                   <input
+                                                   <input className='slider'
                                                        type="range"
                                                        value={this.state.temperature}
                                                        min="0"
@@ -1018,9 +1035,9 @@ class MainScreen extends Component {
                                                        step="0.01"
                                                        onChange={this.handleTemperatureChange}
                                                    />
-                                                   <button className="temperature-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
-                                                   <button className="temperature-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
-                                                   <button className="temperature-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
+                                                   <button className="weight-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
+                                                   <button className="weight-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
+                                                   <button className="weight-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
                                                </label>
                                            </div>
                                                

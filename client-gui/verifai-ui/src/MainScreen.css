@@ -183,6 +183,7 @@ h2{
     flex-direction: row;
     gap: 1vh;
     width: 60%;
+    
 }
 
 
@@ -492,7 +493,7 @@ body{
 
 
 .SharingModalContent{
-    position: absolute;
+    position: fixed;
    /* border: 1px solid #ccc;*/
    border: 0.25vh solid #9bb9d5;
     border-radius: 2vh;
@@ -555,3 +556,107 @@ body{
 
 
 
+.search-area{
+    display: flex;
+    flex-direction: row;
+}
+
+.ModalContent{
+    position: fixed;
+    background-color: white;
+    border: 0.25vh solid #9bb9d5;
+    border-radius: 2vh;
+    width: 17%;
+    margin-left: 1%;
+    margin-top: -15%;
+
+
+}
+
+.ModalContent label, option{
+    font-family: 'Montserrat', sans-serif;
+    font-size: small;
+}
+
+.SearchConfiguration{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+       
+}
+
+.SearchConfiguration label{
+    font-size: large;
+    font-weight: 400;
+}
+
+.search-section{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+}
+
+
+
+.WeightsConfiguration{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    margin-top: 5%;
+    margin-left: 8%;
+}
+.weight-labels{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    
+}
+
+.weight-labels label{
+    font-size: large;
+    text-align: left;
+}
+
+
+
+.weight-buttons{
+
+    display: flex;
+    flex-direction: row;
+    width: 120%;
+    justify-content: space-between;
+    margin-top: -10%;
+  
+     
+
+}
+
+.slider{
+  accent-color: #9bb9d5;
+  
+}
+
+.weight-btn-container{
+    display: flex;
+ 
+    flex-direction: row;
+    align-items: center;
+}
+
+.weightSliderContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.weight-buttons button{
+    font-size: large;
+    text-align: center;
+    background-color: transparent;
+    color:#27292b;
+    font-family: 'BebasNeue', sans-serif;
+    font-weight: bold;
+}
+
+
+  
