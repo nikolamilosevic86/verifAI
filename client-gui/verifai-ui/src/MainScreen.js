@@ -1053,8 +1053,11 @@ class MainScreen extends Component {
                                            </div>
                                            </div>
                                                
+                                           <div id="StreamConfiguration" className='SearchConfiguration'>
+                                           <div className='search-section'>
                                            <label>Stream:
-                                               <select className='combobox'
+                                           </label>
+                                           <select className='combobox'
                                                    value={this.state.stream}
                                                    onChange={this.handleStreamChange}
                                                    title="Please select the stream option"
@@ -1062,7 +1065,8 @@ class MainScreen extends Component {
                                                    <option value="true">Stream</option>
                                                    <option value="false">Not Stream</option>
                                                </select>
-                                           </label>
+                                           </div>
+                                           </div>
                                            </div>
                                    )}
                                 <br></br>
