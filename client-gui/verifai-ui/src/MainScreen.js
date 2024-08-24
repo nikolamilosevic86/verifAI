@@ -952,7 +952,7 @@ class MainScreen extends Component {
                                                  
                                                  
                                                </label>
-                                               <select id="search-options" value={this.state.search_type} onChange={this.handleSearchTypeChange}>
+                                               <select className='combobox' id="search-options" value={this.state.search_type} onChange={this.handleSearchTypeChange}>
                                                        <option value="hybrid">Hybrid</option>
                                                        <option value="lexical">Lexical</option>
                                                        <option value="semantic">Semantic</option>
@@ -988,8 +988,10 @@ class MainScreen extends Component {
                                                    </div>
                                                )}
                                                
-                                               <label>Number of Documents:
-                                                   <select
+                                               <div className='DocumentNumConfiguration'>
+                                               <label>Number of Documents: 
+                                               </label>
+                                               <select className='combobox'
                                                        value={this.state.numDocuments}
                                                        onChange={this.handleNumDocumentsChange}
                                                        title="Please select the number of documents"
@@ -999,7 +1001,7 @@ class MainScreen extends Component {
                                                        <option value="15">Large - 15 documents</option>
                                                        <option value="20">Extra Large - 20 documents</option>
                                                    </select>
-                                               </label>
+                                               </div>
                                                <div className="date-picker-group">
                                                    <label htmlFor="start">From:</label>
                                                    <input

@@ -658,5 +658,33 @@ body{
     font-weight: bold;
 }
 
+.DocumentNumConfiguration{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.DocumentNumConfiguration label{
+  font-size: large;
+}
+
+.combobox{
+  width: 24%;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  background-color: #f8f8f8;
+  border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+  
+}
+
+.combobox:hover{
+  background-color: #27292b;
+  color: white;
+}
+
+
 
   
