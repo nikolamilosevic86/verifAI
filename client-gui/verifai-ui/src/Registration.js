@@ -44,12 +44,12 @@ function Registration() {
             <h1>Registration</h1>
         </div>
     
-        <form onSubmit={handleLogin}>
-            <input type="text" placeholder="Name" onChange={e => setName(e.target.value)}/>
-            <input type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)}/>
-            <input type="text" placeholder="E-mail" onChange={e => setEmail(e.target.value)}/>
-            <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
-            <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
+        <form className="formClass" onSubmit={handleLogin}>
+            <input className="formInput" type="text" placeholder="Name" onChange={e => setName(e.target.value)}/>
+            <input className="formInput" type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)}/>
+            <input className="formInput" type="text" placeholder="E-mail" onChange={e => setEmail(e.target.value)}/>
+            <input className="formInput" type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
+            <input className="formInput" type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
             <button class="center-button" onClick={handleLogin}>Submit</button>
         </form>
         </div>

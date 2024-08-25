@@ -9,66 +9,82 @@
 
 .login-logo {
     width: auto; /* Adjust the width as necessary */
-    height: 30vmin; /* Adjust the height as necessary */
-    margin-bottom: 1rem; /* Adds space between the logo and the form */
+    height: 25vh;
+    border-radius: 50%;
+    box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+
+    
 }
 
 .login-form {
     background-color: white;
-    padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    width: 300px; /* Adjust width as necessary */
+    width: 15%; /* Adjust width as necessary */
     display: flex;
     flex-direction: column; /* Ensures form elements stack vertically */
     align-items: center; /* Aligns form elements to the center horizontally */
-    padding:40px;
+    padding: 2.5%;
+    margin-top: 2%;
+    
 }
 
 .center-button {
     display: block; /* Allows margin auto to work for horizontal centering */
-    width: 100px; /* Small width for the button */
-    padding: 8px 10px; /* Small padding to keep the button compact */
-    background-color: #007bff; /* Blue background color */
+    width: 65%; /* Small width for the button */
+    background: linear-gradient(to right, #005d97, #9ddeec 95%); /* Blue background color */
     color: white; /* Text color */
     text-align: center; /* Center text inside the button */
     border: none; /* No borders */
     border-radius: 5px; /* Slight rounding of corners */
-    margin: 20px auto; /* Top and bottom margin for spacing, auto for horizontal centering */
     cursor: pointer; /* Pointer cursor on hover */
+    font-family: 'BebasNeue', sans-serif;
+    font-size: x-large;
+    border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    margin-top: 7%;
+
 }
 
+.center-button:hover{
+    background: #27292b;
+    transform: scale(1.05);
+   
+
+}
+
+.formClass{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+
+}
 .login-form h2, input {
     width: 100%; /* Ensures form elements take full width of the form */
     text-align: center; /* Center text for inputs and buttons */
 }
 
 input, button {
-    padding: 10px;
-    margin-top: 10px; /* Spacing between form elements */
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 1vh;
+    margin-top: 1vh; /* Spacing between form elements */
+    border: 0.1vh solid #ccc;
+    border-radius: 0.5vh;
 }
 
-.login-form h2 {
-    text-align: left;  /* Aligns the text to the left */
-    padding-left: 180px; /* Adds padding to create some space from the edge of the form */
-}
-
-.login-form .special-h2 h2 {
-    text-align: left; 
-    margin-left: 0px;
-    padding-left: 20px; /* Example of a different padding */
-}
 
 
 button {
     background-color: #007bff;  /* Primary blue color */
     color: white;
     border: none;
-    padding: 10px 20px; /* Provides padding inside the button, adjust as needed */
+    padding: 1vh 2vh; /* Provides padding inside the button, adjust as needed */
     width: auto; /* Adjust width based on content, ensures it doesn't take full width of the form */
-    border-radius: 20px; /* This creates the pill effect */
+    border-radius: 2vh; /* This creates the pill effect */
     cursor: pointer;
     text-align: left; /* Aligns text to the left */
     display: block; /* Ensures button uses block layout for better control over width and padding */
@@ -83,14 +99,117 @@ button:focus {
 button::after {
    
     position: absolute;
-    left: 20px; /* Distance from the left edge */
+    left: 2vh; /* Distance from the left edge */
     top: 50%; /* Centers vertically */
     transform: translateY(-50%); /* Adjusts the position to truly center it vertically */
     white-space: nowrap; /* Ensures the text doesn't wrap */
 }
 
-h1 {
-    text-align: left;
-    transform: translateX(10px); 
-    /* Other styles... */
+
+.formInput{
+
+    font-size: large;
+    border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+    outline: 0.2vh solid #27292b;
+    transition: outline 0.1s ease-out;
+    font-family: 'Montserrat', sans-serif;
+    
+}
+
+.formInput:hover{
+    outline: 0.3vh solid #9bb9d5;
+    border: 0.3vh solid transparent;
+    transition: outline 0.1s ease-in;
+   
   }
+
+  .formInput:focus{
+    outline:  0.3vh solid #6fa4bf;
+    border: 0.3vh solid transparent;
+  }
+
+  .MenuButtons{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 5%;
+    justify-content: space-between;
+    position: fixed;
+    background-color: #27292b;
+    z-index: 1;
+    
+}
+
+.button-content{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8vh
+}
+
+.UserButton{
+   
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: x-large;
+    margin-left:1vh;
+    width: auto;
+    background-color: transparent;
+    font-family: 'BebasNeue', sans-serif;
+    font-weight: bold;
+    margin-bottom: 1vh;
+    border-radius: 0%;
+    
+}
+
+.username:hover{
+    background: white; 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    transform: scale(1.05);
+    
+}
+.username{
+    background: linear-gradient(to right, #23a1ee 5%, #9ddeec 95%); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+  
+
+}
+
+.Logout-logo:hover{
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+}
+
+
+
+.LogoutButton{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    margin-right: 1vh;
+    background-color: transparent;
+   
+
+}
+
+.Logout-logo{
+    height: 3.7vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+}
+
+.MenuButtonSection{
+    display: flex;
+    flex-direction: row;   
+    padding-bottom: 1vh;
+}
+
