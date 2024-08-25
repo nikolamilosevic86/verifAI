@@ -36,7 +36,7 @@ h2{
     display: flex;
     flex-direction: row;
     width: 100%;
-    height: 5vh;
+    height: 5%;
     justify-content: space-between;
     position: fixed;
     background-color: #27292b;
@@ -72,6 +72,7 @@ h2{
     font-weight: bold;
     margin-bottom: 1vh;
     border-radius: 0%;
+    
     
    
 
@@ -242,7 +243,7 @@ h2{
   
 .document-section {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: row;
     gap: 2vh;
     margin-left: 1%;
     margin-top: 4vh;
@@ -465,10 +466,10 @@ body{
 .OptionButton{
     background-color: #27292b;
     font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    font-size: small;
-    width: 100%;
-    height: 5vh;
+    font-weight: 700;
+    font-size: x-small;
+    width: 98%;
+    height: 3.5vh;
     border-top-left-radius: 3vh;
 	border-bottom-left-radius: 3vh;
     border-top-right-radius: 3vh;
@@ -514,6 +515,7 @@ body{
     align-items: center;
     justify-content: center;
     gap: 0;
+    font-size: small;
 
 }
 
@@ -538,7 +540,7 @@ body{
 .sharing-options{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    column-gap: 0.5vh;
+    column-gap: 0.2vh;
     row-gap: 0;
     
    
@@ -547,7 +549,7 @@ body{
 #share-heading{
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
-    font-size: larger;
+    font-size: small;
     margin-left: 3%;
     margin-bottom: 0%;
 
@@ -556,10 +558,6 @@ body{
 
 
 
-.search-area{
-    display: flex;
-    flex-direction: row;
-}
 
 .ModalContent{
     position: fixed;
@@ -569,14 +567,20 @@ body{
     width: 17%;
     margin-left: 1%;
     margin-top: -15%;
+    z-index: 1;
 
+}
 
+.ModalContent h2 {
+  font-size: larger;
 }
 
 .ModalContent label, option{
     font-family: 'Montserrat', sans-serif;
-    font-size: small;
+   
 }
+
+
 
 .SearchConfiguration{
     display: flex;
@@ -586,7 +590,7 @@ body{
 }
 
 .SearchConfiguration label{
-    font-size: large;
+    font-size: small;
     font-weight: 400;
 }
 
@@ -604,7 +608,7 @@ body{
     flex-direction: row;
     justify-content: left;
     margin-top: 5%;
-    margin-left: 8%;
+    margin-left: 10%;
 }
 .weight-labels{
     display: flex;
@@ -614,7 +618,7 @@ body{
 }
 
 .weight-labels label{
-    font-size: large;
+    font-size: small;
     text-align: left;
 }
 
@@ -624,16 +628,18 @@ body{
 
     display: flex;
     flex-direction: row;
-    width: 120%;
+    width: 110%;
     justify-content: space-between;
     margin-top: -10%;
-  
+    margin-left: -3%;
+    
      
 
 }
 
 .slider{
   accent-color: #9bb9d5;
+  cursor: pointer;
   
 }
 
@@ -648,13 +654,14 @@ body{
     display: flex;
     flex-direction: column;
     justify-content: center;
+    margin-top: -5%;
 }
 .weight-buttons button{
-    font-size: large;
+    font-size: smaller;
     text-align: center;
     background-color: transparent;
     color:#27292b;
-    font-family: 'BebasNeue', sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bold;
 }
 
@@ -665,18 +672,20 @@ body{
 }
 
 .DocumentNumConfiguration label{
-  font-size: large;
+  font-size: small;
 }
 
 .combobox{
-  width: 24%;
+  width: 25%;
   font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
   background-color: #9bb9d5;
   border-top-left-radius: 3vh;
 	border-bottom-left-radius: 3vh;
     border-top-right-radius: 3vh;
 	border-bottom-right-radius: 3vh;
+  font-size: x-small;
+  
   
 }
 
@@ -699,19 +708,21 @@ body{
 
 .date-picker-group label{
   font-family: 'Montserrat', sans-serif;
-  font-size: large;
+  font-size: small;
 }
 
 .date-picker-group input{
   height: 10%;
   margin-top: 2%;
   font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
+  font-weight: 700;
+  font-size: x-small;
   background-color: #9bb9d5;
   border-top-left-radius: 3vh;
 	border-bottom-left-radius: 3vh;
     border-top-right-radius: 3vh;
 	border-bottom-right-radius: 3vh;
+  width: 65%;
 }
 
 .date-picker-group:hover input{
@@ -742,10 +753,14 @@ body{
 }
 
 #tempSlider{
-  margin-top: -5%;
+  margin-top: 0%;
 
 }
 
 #StreamConfiguration{
   margin-bottom: 3%;
+}
+
+@media (max-width: 1700px){
+ 
 }
