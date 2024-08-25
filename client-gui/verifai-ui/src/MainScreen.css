@@ -851,3 +851,65 @@ body{
 }
 
 
+.login-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+  height: 100vh;
+}
+
+.login-message img {
+  height: 25vh;
+  margin-top: 2%;
+}
+
+.message-container {
+  background-color: white;
+  padding: 2vh;
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+  border-radius: 1vh;
+  width: 30vh; /* Adjust width as necessary */
+  display: flex;
+  flex-direction: column; /* Ensures form elements stack vertically */
+  align-items: center; /* Aligns form elements to the center horizontally */
+  padding:4vh;
+  margin-top: 2%;
+}
+
+.message-container h1{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+
+.message-container button {
+  display: block; /* Allows margin auto to work for horizontal centering */
+  width: 35%; /* Small width for the button */
+  background: linear-gradient(to right, #005d97, #9ddeec 95%); /* Blue background color */
+  color: white; /* Text color */
+  text-align: center; /* Center text inside the button */
+  border: none; /* No borders */
+  border-radius: 5px; /* Slight rounding of corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-family: 'BebasNeue', sans-serif;
+  font-size: x-large;
+  border-top-left-radius: 3vh;
+border-bottom-left-radius: 3vh;
+  border-top-right-radius: 3vh;
+border-bottom-right-radius: 3vh;
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
+  margin-top: 7%;
+}
+
+.message-container button:hover{
+  background: #27292b;
+  transform: scale(1.05);
+ 
+
+}
+
+.AnswerContainer h1{
+  text-align: left;
+
+}
