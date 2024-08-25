@@ -16,6 +16,7 @@ import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
 import { Helmet } from 'react-helmet';
+import close from './close.svg';
 
 
 function NavigateWrapper(props) {
@@ -97,6 +98,9 @@ class MainScreen extends Component {
         this.handleTooltip = this.handleTooltip.bind(this);
 
         this.sharingModalRef = this.sharingModalRef.bind(this);
+
+        this.handleCloseModal = this.handleCloseModal.bind(this);
+        this.handleCloseSharingModal = this.hancleCloseSharingModal.bind(this);
         
     }
 
@@ -754,6 +758,15 @@ class MainScreen extends Component {
             }
         
     }
+
+    handleCloseModal(event)
+    {
+        this.setState({ modalOpen: false });
+    }
+    hancleCloseSharingModal(event)
+    {
+        this.setState({ sharingModalOpen: false });
+    }
     
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
@@ -852,6 +865,7 @@ class MainScreen extends Component {
                         {this.state.sharingModalOpen && (
                             <div className="SharingModalOverlay">
                             <div  className="SharingModalContent" ref={this.sharingModalRef}>
+                            <div className='icon-container-share'><img className='close-icon' onClick={this.handleCloseSharingModal} src={close}/></div>
                             <div className="copiedMessage">
                             <img className="checkmark" src={checkmark}/>
                             <h1>Link copied</h1>
@@ -945,10 +959,11 @@ class MainScreen extends Component {
                                        
                                        {this.state.modalOpen && (
                                            <div className="ModalContent" ref={this.setWrapperRef}>
-                                               <h2>Search Configuration</h2>
+                                            <div className='icon-container'><img className='close-icon' onClick={this.handleCloseModal} src={close}/></div>
+                                               <div className='modal-title'><h2>Search Configuration</h2></div>
                                                <div className='SearchConfiguration'>
                                                 <div className='search-section'>
-                                               <label>Type of Search:
+                                               <label id="type-search">Type of Search:
                                                  
                                                  
                                                </label>

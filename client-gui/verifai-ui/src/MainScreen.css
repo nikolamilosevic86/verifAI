@@ -775,6 +775,15 @@ body{
     width: 50%;
   }
 
+  .SharingModalContent{
+    width: 40%;
+    margin-top: 8%;
+    margin-left: 58%;
+    z-index: 1;   
+
+  }
+  
+
 }
 
 @media (max-width: 700px){
@@ -784,4 +793,61 @@ body{
     width: 100%;
   }
 
+  .SharingModalContent{
+    width: 100%;
+    margin-left: 0;
+    margin-top: 145%;
+    height: 20%;
+    z-index: 1;
+
+  }
+
+  #share-heading{
+    text-align: center;
+
+  }
+
+  .sharing-options{
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+  }
+
+  .OptionButton{
+    width: 13%;
+  }
+
+  .OptionButton p{
+    visibility: collapse;
+  }
+
+
 }
+.close-icon{
+    height: 1.5vh;
+    width: 1.5vh;
+    cursor: pointer;
+}
+
+.close-icon:hover{
+  filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+
+}
+
+.icon-container{
+  display: flex;
+  justify-content: right;
+  margin-top: 2%;
+  margin-right: 2.5%;
+  
+}
+
+.icon-container-share{
+  display: flex;
+  justify-content: right;
+  margin-top: 2.5%;
+  margin-right: 3%;
+  
+}
+
+
