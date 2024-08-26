@@ -80,7 +80,7 @@ function UserCredential() {
     return (
         <div>
         <div className='MenuButtons'>
-        <button  className='UserButton' onClick={handleMain}><div><p className='username'>Menu</p></div></button>
+        <button  className='UserButton' onClick={handleMain}><div><p className='username'>HOME</p></div></button>
            
       <div className='MenuButtonSection'>  <button title="Log out" className='LogoutButton' onClick={handleLogout}> <div className="button-content">
             <img className="Logout-logo" src={logout_img}  />
