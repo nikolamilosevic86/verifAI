@@ -1107,7 +1107,7 @@ class MainScreen extends Component {
                                                 const pmid = doc.pmid;
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
-                                                const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
+                                                const truncatedContent = content.length > 100 ? content.substring(0, 30) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
                                                 const docUrl = baseUrl + pmid;
 
