@@ -252,7 +252,7 @@ h2{
   
   .document-square {
     width: 17.5vh;  /* Reduced width */
-    height: 9vh;  /* Reduced height */
+    height: 17.5vh;  /* Reduced height */
     border: 0.3vh solid #ccc;
     padding: 0.5vh;  /* Reduced padding */
     overflow: hidden;
