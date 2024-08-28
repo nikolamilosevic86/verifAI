@@ -441,7 +441,7 @@ h2{
   }
 
   .SettingsLogo{
-    height: 3.7vh;
+    height: 4.5vh;
     position: relative;
     transform: translateZ(0) scale(1);
     transition: transform .2s;
@@ -449,7 +449,7 @@ h2{
   }
 
   .AskLogo{
-    height: 3.7vh;
+    height: 4.5vh;
     transform: translateZ(0) scale(1);
     transition: transform .2s;
   }
