@@ -213,3 +213,36 @@ button::after {
     padding-bottom: 1vh;
 }
 
+@media (max-width: 800px){
+
+  .login-form{
+    width: 40%;
+    
+  }
+
+  .formClass{
+    width: 90%;
+
+}
+
+
+}
+
+@media (max-width: 400px){
+
+    .login-form{
+      width: 80%;     
+      
+    }
+
+    
+    .formClass{
+        width: 80%;
+
+    }
+
+    .message{
+        font-size: small;
+    }
+  
+  }
