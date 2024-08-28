@@ -1,18 +1,22 @@
 import React, { Component,createRef,useContext} from 'react';
 import logo from './verifai-logo.png';
-import share from './share.svg';
+import ask from './new_ask.svg';
+import new_settings from './new_settings.svg';
+import share from './new_share.svg';
 import link from './link.svg';
 import facebook from './facebook.svg';
 import linkedin from './linkedin.svg';
 import twitter from './twitter.svg';
 import checkmark from './checkmark.svg';
+import logout_img from './new_logout.svg';
 import { useNavigate } from 'react-router-dom';
-import './App.css';
+import './MainScreen.css';
 import {BACKEND} from './App.js'
 import { AuthContext} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
 import { Helmet } from 'react-helmet';
+import close from './close.svg';
 
 
 function NavigateWrapper(props) {
@@ -94,6 +98,9 @@ class MainScreen extends Component {
         this.handleTooltip = this.handleTooltip.bind(this);
 
         this.sharingModalRef = this.sharingModalRef.bind(this);
+
+        this.handleCloseModal = this.handleCloseModal.bind(this);
+        this.handleCloseSharingModal = this.hancleCloseSharingModal.bind(this);
         
     }
 
@@ -751,6 +758,15 @@ class MainScreen extends Component {
             }
         
     }
+
+    handleCloseModal(event)
+    {
+        this.setState({ modalOpen: false });
+    }
+    hancleCloseSharingModal(event)
+    {
+        this.setState({ sharingModalOpen: false });
+    }
     
     componentDidMount() {
         document.addEventListener('mousedown', this.handleClickOutside);
@@ -819,170 +835,108 @@ class MainScreen extends Component {
 
                       </Helmet> 
                             
+                          
+                        
+                          <div className='MenuButtons'>
+                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username'>{user.username}</p></div></button>
                             
-                            
-                            <button className='UserButton' onClick={this.handleUserCredential}>{user.username}</button>
-                            <button className='LogoutButton' onClick={this.handleLogout}>Logout</button>
-                            
-                        <button className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
+                            <div className='MenuButtonsSection'>
+                                  
+                        <button title="Share" className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
-                                <p>Share</p>
+                            
                             </div>
                         </button>
+                            <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
+                                <img className="Logout-logo" src={logout_img}  />
+                               
+                            </div></button>
+                            
+                      
+
+                            </div>
+                          
+
+                        </div>
+                       
+                            
+                           
                         {this.state.sharingModalOpen && (
+                            <div className="SharingModalOverlay">
                             <div  className="SharingModalContent" ref={this.sharingModalRef}>
+                            <div className='icon-container-share'><img className='close-icon' onClick={this.handleCloseSharingModal} src={close}/></div>
                             <div className="copiedMessage">
                             <img className="checkmark" src={checkmark}/>
                             <h1>Link copied</h1>
 
                             </div>
-                           
-                            <h1 id="share-header">Share</h1>
+                            <div className='heading-container'>
+                            <h1 id="share-heading">Share:</h1>
+                            </div>
+
+                            <div className='sharingContainer'>
                             <div className='sharing-options'>
                             
-                            <button className="BlueButton" id="CopyLinkButton" onClick={this.copyLink}>
+                            <button className="OptionButton" id="CopyLinkButton" onClick={this.copyLink}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={link}  />
+                                    <img className="Option-logo" src={link}  />
                                     <p>Copy link</p>
                                 </div>
                             </button>
 
-                            <button className="BlueButton" id="LinkedInButton" onClick={this.shareOnLinkedIn}>
+                            <button className="OptionButton" id="LinkedInButton" onClick={this.shareOnLinkedIn}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={linkedin}  />
+                                    <img className="Option-logo" src={linkedin}  />
                                     <p>LinkedIn</p>
                                 </div>
                             </button>
+                        
                           
                            
-                            <button className="BlueButton" id="FacebookButton" onClick={this.shareOnFacebook}>
+                            <button className="OptionButton" id="FacebookButton" onClick={this.shareOnFacebook}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={facebook}  />
+                                    <img className="Option-logo" src={facebook}  />
                                     <p>Facebook</p>
                                 </div>
                             </button>
-                            <button className="BlueButton" id="TwitterButton" onClick={this.shareOnTwitter}>
+                            <button className="OptionButton" id="TwitterButton" onClick={this.shareOnTwitter}>
                                 <div className="button-content">
-                                    <img className="Share-logo" src={twitter}  />
+                                    <img className="Option-logo" src={twitter}  />
                                     <p>Twitter</p>
                                 </div>
                             </button>
                                 
                             </div>
                         </div>
+                        </div>
+                        </div>
                         )}
                         
                             <div className="router-reset">
-                                
-                                <img className="App-logo" src={logo} alt="Logo" />
+
+                              <div className="LogoContainer">
+                              <img className="App-logo" src={logo} alt="Logo" />
                                 
 
+                                </div>  
+                              
                                 <div className="InputQuestion">
                                     <div className='tabbed'>
-                                        <label htmlFor="question">
+                                        <label id="inputMessage" htmlFor="question">
                                             Input your question in natural language:
                                         </label>
                                         <br/>
                                     </div>
-                                    <div className="search-area">
-                                        <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings">&#9881;</button>
-                                        {this.state.modalOpen && (
-                                            <div className="ModalContent" ref={this.setWrapperRef}>
-                                                <h2>Search Configuration</h2>
-                                                <label>Type of Search: 
-                                                    <select value={this.state.search_type} onChange={this.handleSearchTypeChange}>
-                                                        <option value="hybrid">Hybrid</option>
-                                                        <option value="lexical">Lexical</option>
-                                                        <option value="semantic">Semantic</option>
-                                                    </select>
-                                                </label>
-                                                {this.state.search_type === 'hybrid' && (
-                                                    <div className="temperature-labels">
-                                                        <label>
-                                                            Lexical Weights: {this.state.lex_parameter.toFixed(3)}, Semantic Weights: {(1 - this.state.lex_parameter).toFixed(3)}
-                                                            <input 
-                                                                type="range" 
-                                                                min="0" 
-                                                                max="1" 
-                                                                value={this.state.lex_parameter}
-                                                                step="0.01"
-                                                                onChange={this.handleLexParamChange}
-                                                            />
-                                                            <button className="temperature-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
-                                                            <button className="temperature-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
-                                                            <button className="temperature-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
-                                                        </label>
-                                                    </div>
-                                                )}
-                                                <label>Number of Documents:
-                                                    <select
-                                                        value={this.state.numDocuments}
-                                                        onChange={this.handleNumDocumentsChange}
-                                                        title="Please select the number of documents"
-                                                    >
-                                                        <option value="10">Normal - 10 documents</option>
-                                                        <option value="5">Small - 5 documents</option>
-                                                        <option value="15">Large - 15 documents</option>
-                                                        <option value="20">Extra Large - 20 documents</option>
-                                                    </select>
-                                                </label>
-                                                <div className="date-picker-group">
-                                                    <label htmlFor="start">From:</label>
-                                                    <input
-                                                        type="date"
-                                                        id="start"
-                                                        name="trip-start"
-                                                        value={this.state.startDate}
-                                                        onChange={this.handleStartDateChange}
-                                                        min="1940-01-01"
-                                                        max={this.state.endDate}
-                                                    />
-                                                </div>
-                                                <div className="date-picker-group">
-                                                    <label htmlFor="end">To:</label>
-                                                    <input
-                                                        type="date"
-                                                        id="end"
-                                                        name="trip-end"
-                                                        value={this.state.endDate}
-                                                        onChange={this.handleEndDateChange}
-                                                        min={this.state.startDate}
-                                                        max="2030-01-01"
-                                                    />
-                                                </div>
-                                                <div className="temperature-labels">
-                                                <label>Temperature: {this.state.temperature}:
-                                                    <p>The higher the temperature, the less accurate answers will be.</p>
-                                                    <input
-                                                        type="range"
-                                                        value={this.state.temperature}
-                                                        min="0"
-                                                        max="1"
-                                                        step="0.01"
-                                                        onChange={this.handleTemperatureChange}
-                                                    />
-                                                    <button className="temperature-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
-                                                    <button className="temperature-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
-                                                    <button className="temperature-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
-                                                </label>
-                                            </div>
-                                                
-                                            <label>Stream:
-                                                <select
-                                                    value={this.state.stream}
-                                                    onChange={this.handleStreamChange}
-                                                    title="Please select the stream option"
-                                                >
-                                                    <option value="true">Stream</option>
-                                                    <option value="false">Not Stream</option>
-                                                </select>
-                                            </label>
-                                            </div>
-                                    )}
+                                   
+
+                                   <div className='QuestionSection'>
+                                   <button id="settings-btn" onClick={this.handleModalToggle} aria-label="Settings"><div className="circleButtonContent"><img className="SettingsLogo" src={new_settings}/></div></button>
+                                  
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
-                                        <input
+                                  
+                                    <input
                                             id="question"
                                             name="question"
                                             className="QuestionClass"
@@ -990,27 +944,170 @@ class MainScreen extends Component {
                                             value={this.state.value}
                                             onChange={this.handleChange}
                                         />
+
+                                    
+                                      
                                         <button className='AskButton' onClick={this.handleSubmit}>
-                                            Ask
+                                            <div className="circleButtonContent">
+                                                <img className="AskLogo" src={ask}/>
+                                            </div>
                                         </button>
                                     </form>
                                 </div>
+                                </div>
+                                <div className="search-area">
+                                       
+                                       {this.state.modalOpen && (
+                                           <div className="ModalContent" ref={this.setWrapperRef}>
+                                            <div className='icon-container'><img className='close-icon' onClick={this.handleCloseModal} src={close}/></div>
+                                               <div className='modal-title'><h2>Search Configuration</h2></div>
+                                               <div className='SearchConfiguration'>
+                                                <div className='search-section'>
+                                               <label id="type-search">Type of Search:
+                                                 
+                                                 
+                                               </label>
+                                               <select className='combobox' id="search-options" value={this.state.search_type} onChange={this.handleSearchTypeChange}>
+                                                       <option value="hybrid">Hybrid</option>
+                                                       <option value="lexical">Lexical</option>
+                                                       <option value="semantic">Semantic</option>
+                                                   </select>
+                                                   </div>
+                                               </div>
+                                               {this.state.search_type === 'hybrid' && (
+                                                <div className="WeightsConfiguration">
+                                                   <div className="weight-labels">
+                                                       <label>
+                                                           Lexical Weights: {this.state.lex_parameter.toFixed(3)}, Semantic Weights: {(1 - this.state.lex_parameter).toFixed(3)}
+                                                           <div className="weight-input">
+                                                           <div className='weightSliderContainer'>
+                                                           <input className='slider'
+                                                               type="range" 
+                                                               min="0" 
+                                                               max="1" 
+                                                               value={this.state.lex_parameter}
+                                                               step="0.01"
+                                                               onChange={this.handleLexParamChange}
+                                                           />
+                                                           </div>
+                                                           <div className='weight-btn-container'>
+                                                           <div className='weight-buttons'>
+                                                           <button className="weight-label start" onClick={() => this.setState({ lex_parameter: 0.3, sem_parameter: 0.7 })}>SEMANTIC</button>
+                                                           <button className="weight-label middle" onClick={() => this.setState({ lex_parameter: 0.5, sem_parameter: 0.5 })}>NEUTRAL</button>
+                                                           <button className="weight-label end" onClick={() => this.setState({ lex_parameter: 0.7, sem_parameter: 0.3 })}>LEXICAL</button>
+                                                           </div>
+                                                           </div>
+                                                           </div>
+                                                       </label>
+                                                   </div>
+                                                   </div>
+                                               )}
+                                               
+                                               <div className='DocumentNumConfiguration'>
+                                               <label>Number of Documents: 
+                                               </label>
+                                               <select className='combobox'
+                                                       value={this.state.numDocuments}
+                                                       onChange={this.handleNumDocumentsChange}
+                                                       title="Please select the number of documents"
+                                                   >
+                                                       <option value="10">Normal - 10 documents</option>
+                                                       <option value="5">Small - 5 documents</option>
+                                                       <option value="15">Large - 15 documents</option>
+                                                       <option value="20">Extra Large - 20 documents</option>
+                                                   </select>
+                                               </div>
+                                               <div className='DateConfiguration'>
+                                               <div className="date-picker-group">
+                                                   <label htmlFor="start">From:</label>
+                                                   <input className='datepicker'
+                                                       type="date"
+                                                       id="start"
+                                                       name="trip-start"
+                                                       value={this.state.startDate}
+                                                       onChange={this.handleStartDateChange}
+                                                       min="1940-01-01"
+                                                       max={this.state.endDate}
+                                                   />
+                                               </div>
+                                               <div className="date-picker-group">
+                                                   <label htmlFor="end">To:</label>
+                                                   <input className="datepicker"
+                                                       type="date"
+                                                       id="end"
+                                                       name="trip-end"
+                                                       value={this.state.endDate}
+                                                       onChange={this.handleEndDateChange}
+                                                       min={this.state.startDate}
+                                                       max="2030-01-01"
+                                                   />
+                                               </div>
+                                               </div>
+                                               <div className='WeightsConfiguration'>
+                                               <div className="weight-labels">
+                                               <label>Temperature: {this.state.temperature}:
+                                                  <div className='temperature-desc'> <p>The higher the temperature, the less accurate answers will be.</p></div>
+                                                   <div className='weightSliderContainer'>
+                                                   <input id="tempSlider" className='slider'
+                                                       type="range"
+                                                       value={this.state.temperature}
+                                                       min="0"
+                                                       max="1"
+                                                       step="0.01"
+                                                       onChange={this.handleTemperatureChange}
+                                                   />
+                                                   </div>
+                                                   <div className='weight-btn-container'>
+                                                   <div className='weight-buttons'>
+                                                   <button className="weight-label start" onClick={() => this.setState({ temperature: '0' })}>PRECISE</button>
+                                                   <button className="weight-label middle" onClick={() => this.setState({ temperature: '0.5' })}>NEUTRAL</button>
+                                                   <button className="weight-label end" onClick={() => this.setState({ temperature: '1' })}>CREATIVE</button>
+                                                   </div>
+                                                   </div>
+                                               </label>
+                                           </div>
+                                           </div>
+                                               
+                                           <div id="StreamConfiguration" className='SearchConfiguration'>
+                                           <div className='search-section'>
+                                           <label>Stream:
+                                           </label>
+                                           <select className='combobox'
+                                                   value={this.state.stream}
+                                                   onChange={this.handleStreamChange}
+                                                   title="Please select the stream option"
+                                               >
+                                                   <option value="true">Stream</option>
+                                                   <option value="false">Not Stream</option>
+                                               </select>
+                                           </div>
+                                           </div>
+                                           </div>
+                                   )}
                                 <br></br>
                                 {this.state.questions.slice().reverse().map((q, index) => (
-                                <div key={index}>
-                                    <h1>{q.question}</h1>
+                                
+                            <div className="Answer">
+                                <div className="AnswerContainer" key={index}>
+                                <h1>{q.question}</h1>
+                                   
+                                    
                                     <br></br>
+                                    
+                                   
+                                   
+                                    <div className="sources-section">
                                     <h2>Sources:</h2>
-                                    <div className="document-section">
+                                        <div className="document-section">
                                         {q.document_found && Object.keys(q.document_found)
-                                            .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 4)
+                                            .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 5)
                                             .map((i) => {
                                                 const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
                                                 const doc = q.document_found[i];
                                                 const pmid = doc.pmid;
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
-                                                const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
+                                                const truncatedContent = content.length > 100 ? content.substring(0, 28) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
                                                 const docUrl = baseUrl + pmid;
 
@@ -1030,27 +1127,34 @@ class MainScreen extends Component {
                                             </h3>
                                         </div>
                                     )}
-                                   
-                                    
                                     </div>
+                                    </div>
+                                    
+                                  
+                                    
                                     <br></br>
+
+                                  
                                     {Object.keys(q.document_found).length > 0 && (
-                                    <h2>
+                                    <h2 className="StatusMessage">
                                         {q.status === "fetching_query" && "Answering"}
                                         {q.status === "fetching_verification" && "Verification"}
-                                        
+                                        {q.status !== "fetching_verification" && q.status !== "fetching_query" && "Answer:"}
                                         {q.loading && <div className="spinner" />}
                                     </h2>
                                     )}
+                                  
                             
                                 <div className="output-section">
                                     <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
                                 </div>
                             </div>
+                            </div>
                                 ))}
                             </div>
                         </div>
-                    </div>
+                        </div>
+                    
                 );
             }}
         </AuthContext.Consumer>
