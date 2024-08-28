@@ -12,6 +12,11 @@ function Registration() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
+    
+    const navigateLogin = () => {
+        navigate('/login'); 
+    };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -54,6 +59,7 @@ function Registration() {
         </form>
         </div>
         <br></br>
+        <p>Already have an account? Log in <targe><span onClick={navigateLogin} style={{ color: '#23a1ee', cursor: 'pointer' }}>here</span></targe>.</p>
        
     </div>
     
