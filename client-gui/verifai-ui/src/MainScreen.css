@@ -786,7 +786,16 @@ body{
 
 }
 
-@media (max-width: 360px){
+@media (max-width: 1000px){
+  .ModalContent{
+    margin-top: -20vh;
+    margin-left: 1vh;
+    
+  }
+}
+
+@media (max-width: 500px)
+{
 
   .ModalContent{
     margin-top: -6vh;
@@ -918,3 +927,6 @@ border-bottom-right-radius: 3vh;
   text-align: left;
 
 }
+
+
+
