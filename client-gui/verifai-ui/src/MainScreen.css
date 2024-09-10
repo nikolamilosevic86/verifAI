@@ -794,6 +794,76 @@ body{
   }
 }
 
+@media (max-height: 500px){
+  .ModalContent{
+    margin-top: -43vh;
+    margin-left: 1vh;
+    width: 35%;
+  
+    
+  }
+
+  .ModalContent h2{
+    font-size: small;
+  }
+
+  .combobox{
+    font-size: xx-small;
+  }
+
+  .search-section label{
+    font-size: xx-small;
+  }
+
+  .weight-labels label{
+    font-size: xx-small;
+  }
+
+  .DocumentNumConfiguration label{
+    font-size: xx-small;
+  }
+
+  .SharingModalContent{
+    width: 25%;
+    margin-left: 120vh;
+  }
+
+
+
+}
+
+@media (min-height: 501px) and (max-height: 1000px){
+  .ModalContent{
+    margin-top: -30vh;
+    margin-left: 1vh;
+    width: 40%;
+  
+    
+  }
+
+ /* .ModalContent h2{
+    font-size: small;
+  }
+
+  .combobox{
+    font-size: xx-small;
+  }
+
+  .search-section label{
+    font-size: xx-small;
+  }
+
+  .weight-labels label{
+    font-size: xx-small;
+  }
+
+  .DocumentNumConfiguration label{
+    font-size: xx-small;
+  }*/
+
+
+
+}
 @media (max-width: 500px)
 {
 
