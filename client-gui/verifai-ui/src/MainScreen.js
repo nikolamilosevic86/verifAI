@@ -696,6 +696,7 @@ class MainScreen extends Component {
         event.preventDefault();
         
         // First setState call with callback to execute after state is set
+      
         this.setState(prevState => ({
             submitted: true,
             questions: [...prevState.questions, { 
@@ -709,8 +710,11 @@ class MainScreen extends Component {
             }]
         }), () => {
             // Call sendMessage function and use callback to update state
+           
             this.sendMessage();
         });
+
+      
     }
 
     
@@ -789,6 +793,7 @@ class MainScreen extends Component {
         this.setState({questions})
         
     }
+    
     
     render() {
         
@@ -1094,7 +1099,7 @@ class MainScreen extends Component {
                                     
                                     <br></br>
                                     
-                                   
+                                
                                    
                                     <div className="sources-section">
                                     <h2>Sources:</h2>
@@ -1104,13 +1109,17 @@ class MainScreen extends Component {
                                             .map((i) => {
                                                 const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
                                                 const doc = q.document_found[i];
+                                                
+                                                try {
                                                 const pmid = doc.pmid;
+                                             
+
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
                                                 const truncatedContent = content.length > 100 ? content.substring(0, 28) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
                                                 const docUrl = baseUrl + pmid;
-
+                                                
                                                 return (
                                                     <a href={docUrl} target="_blank" rel="noopener noreferrer" key={i} className="no-underline-link">
                                                         <div className="document-square">
@@ -1119,6 +1128,13 @@ class MainScreen extends Component {
                                                         </div>
                                                     </a>
                                                 );
+                                            } catch(error)
+                                            {
+                                        
+                                                alert("An error occurred, please try again later.");
+                                                window.location.reload();
+                                              
+                                            }
                                             })}
                                         {!q.showAllDocuments && Object.keys(q.document_found).length > 3 && (
                                         <div className="document-square center" onClick={() => this.handleTooltip(this.state.questions.length - 1 - index)}>  
