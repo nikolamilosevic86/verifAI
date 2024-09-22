@@ -12,6 +12,11 @@ function Registration() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
+    
+    const navigateLogin = () => {
+        navigate('/login'); 
+    };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -44,16 +49,17 @@ function Registration() {
             <h1>Registration</h1>
         </div>
     
-        <form onSubmit={handleLogin}>
-            <input type="text" placeholder="Name" onChange={e => setName(e.target.value)}/>
-            <input type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)}/>
-            <input type="text" placeholder="E-mail" onChange={e => setEmail(e.target.value)}/>
-            <input type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
-            <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
+        <form className="formClass" onSubmit={handleLogin}>
+            <input className="formInput" type="text" placeholder="Name" onChange={e => setName(e.target.value)}/>
+            <input className="formInput" type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)}/>
+            <input className="formInput" type="text" placeholder="E-mail" onChange={e => setEmail(e.target.value)}/>
+            <input className="formInput" type="text" placeholder="Username" onChange={e => setUsername(e.target.value)}/>
+            <input className="formInput" type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
             <button class="center-button" onClick={handleLogin}>Submit</button>
         </form>
         </div>
         <br></br>
+        <p className='message'>Already have an account? Log in <targe><span onClick={navigateLogin} style={{ color: '#23a1ee', cursor: 'pointer' }}>here</span></targe>.</p>
        
     </div>
     

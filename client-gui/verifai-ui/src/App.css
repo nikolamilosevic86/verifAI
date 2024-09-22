@@ -115,6 +115,14 @@
   font-size: large;
 }
 
+.LogoutButton p{
+  color:white;
+  font-size: large;
+  font-weight: 700;
+  margin-left: -25px;
+  margin-top: 7px;
+}
+
 .LogoutButton:hover {
   background-color: #000000; /* Darker shade on hover */
   cursor: pointer;
@@ -178,7 +186,8 @@
 #SharingButton {
   position: absolute;
   top: 10px;    
-  right: 120px;
+  right: 14%;
+  
 
 }
 
@@ -247,46 +256,49 @@
 
 .SharingModalContent{
   position: absolute;
-  width: 80%; /* Reduced width percentage */
-  max-width: 320px; /* Reduced maximum width */
+  width: 20%; /* Reduced width percentage */
+  /* Reduced maximum width */
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   padding: 10px; /* Slightly reduced padding */
   margin-top: 5px; /* Space between the input field and this box */
   background: #fff;
-  top: 65px;
-  right: 120px;
+  top: 2%;
+  right: 18.5%;
   z-index: 1;
+  height: 25%;
 }
 
 .copiedMessage{
   display: flex;
   flex-direction: row;
-  margin-left: 7cqh;
+  margin-left: 25%;
 }
 
 .copiedMessage h1{
-  font-size: x-large;
+  font-size: large;
   margin-top: 5px;
   margin-left: -5px;
 }
 
 .checkmark{
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   margin-top: 8px;
 
 }
 .sharing-options{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  margin-left: 12px;
+  margin-left: 5%;
+  margin-top: -4%;
+  
   
 }
 
 #share-header{
-  font-size: larger;
+  font-size: small;
   margin-left: 5px;
   margin-top: 5px;
   margin-bottom: 2px;
@@ -296,25 +308,34 @@
 
 
 #FacebookButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
+}
+
+#FacebookButton p{
+  font-size: 0.9rem;
 }
 
 #CopyLinkButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
   
 }
 
 #TwitterButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
 }
 
 #TwitterButton img{
   margin-left: 20px;
+  
 
 }
 
 #TwitterButton p{
   margin-left: 10px;
+  font-size: 0.9rem;
 }
 #CopyLinkButton img {
   margin-left: 10px;
@@ -323,10 +344,12 @@
 
 #CopyLinkButton p {
   margin-left: 10px;
+  font-size: 0.9rem;
 }
 
 #LinkedInButton{
-  width: 140px;
+  width: 93%;
+  height: 73%;
 }
 
 #LinkedInButton img {
@@ -337,6 +360,7 @@
 
 #LinkedInButton p {
   margin-left: 12px;
+  font-size: 0.9rem;
 }
 
 
@@ -383,7 +407,7 @@
 
 .InputQuestion{
   text-align: left;
-  margin-left: 30%;
+  margin-left: 23%;
   margin-top: 2%;
 }
 
@@ -424,61 +448,65 @@
 
 
 .ModalContent {
-  width: 80%; /* Reduced width percentage */
-  max-width: 400px; /* Reduced maximum width */
+  width: 27%; /* Reduced width percentage */
+  
   border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 10px; /* Slightly reduced padding */
-  margin-top: 5px; /* Space between the input field and this box */
+  /*padding: 10px;*/ /* Slightly reduced padding */
+  margin-top: 20%; /* Space between the input field and this box */
   background: #fff;
  
-  
+  bottom: 50;
 
   position: absolute;
-  bottom: 50;
-  left: -40%; /* Positions the modal to the left of the button */
+ 
+  left: -28%; /* Positions the modal to the left of the button */
   
   z-index: 10;
 }
 
 .ModalContent h2 {
   color: #333;
-  font-size: 10px;
+  font-size: smaller;
+  margin-top: 5%;
 }
 
 .ModalContent label {
-  font-size: 16px;
+  font-size: small;
   color: #666;
   display: block;
   margin: 20px 0;
+  margin-left: 5%;
+  margin-top: 1%;
 }
 
 .ModalContent select {
-  width: 100%;
-  padding: 8px;
+  width: 90%;
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #fff;
   box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-  margin-top: 5px;
+  margin-top: 5%;
+ 
 }
 /* Styling for the range input (slider) */
 input[type=range] {
   -webkit-appearance: none;
-  width: 100%;
-  height: 10px;
+  width: 90%;
+  height: 10%;
   background: #ddd;
   border-radius: 5px;
   outline: none;
+ 
 }
 
 /* Styling for the slider thumb for Webkit (Chrome, Safari, etc.) */
 input[type=range]::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background:#0058b7;
   cursor: pointer;
@@ -486,8 +514,8 @@ input[type=range]::-webkit-slider-thumb {
 
 /* Styling for the slider thumb for Mozilla (Firefox) */
 input[type=range]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   background: #0058b7;
   cursor: pointer;
@@ -531,16 +559,17 @@ input[type=range]::-moz-range-thumb {
   cursor: pointer;
   user-select: none; /* Prevent text selection */
   transition: color 0.3s; /* Smooth transition for color changes */
+  font-size: smaller;
  
 }
 
 /* Position each button */
 .temperature-labels button.start {
-  left: 0; /* Align to the left */
+  left: 5; /* Align to the left */
 }
 
 .temperature-labels button.middle {
-  left: 45%; /* Align to the center */
+  left: 48%; /* Align to the center */
   transform: translateX(-45%); /* Center the button */
 }
 
@@ -564,7 +593,9 @@ p {
 
 .date-picker-group {
   display: inline-block;
-  margin-right: 20px; /* Adds some space between the two date groups */
+  margin-left: 7%; /* Adds some space between the two date groups */
+  margin-top: -4%;
+  margin-bottom: 3%;
 }
 
 /* Optional: Align the text of the label with the input */
@@ -618,7 +649,7 @@ p {
   border-radius: 4px;
   padding: 10px;
   margin: 20px;
-  max-width: 770px;
+  max-width: 65%;
 
 }
 
@@ -751,7 +782,7 @@ h1 {
   gap: 10px;
   margin-left: 20px;
   margin-top: 10px;
-  width: 700px;
+  width: 70%;
 }
 
 .document-square {
@@ -861,27 +892,214 @@ h3 {
   .AskButton {
    
     backface-visibility: hidden;
-        height: 25px; /* Adjusted height for small screens */
-        width: 40px;  /* Adjusted width for small screens */
-        border: 0;
-        border-radius: .25rem; /* Slightly smaller border radius */
-        box-sizing: border-box;
-        display: inline-block;
-        font-size: 0.7rem; /* Smaller font size for smaller screens */
-        letter-spacing: -.015em; /* Adjusted letter spacing */
-        line-height: 1.1; /* Slightly tighter line height */
-        position: relative;
-        left: 5px; /* Adjusted left position */
-        text-align: center;
-        text-decoration: none;
-        transform: translateZ(0) scale(1);
-        transition: transform .2s;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        padding: 0.1rem 0.5rem; 
+    height: 90%;
+    width: 15%;
+    border: 0;
+    border-radius: .4rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: small;
+    position: relative;
+    left: 1%;
+    text-align: center;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
 
+  .BlueButton{
+    width: 30px;
+    height: 30px;
+  }
+  .BlueButton p{
+    visibility: collapse;
+
+  }
+
+  .BlueButton img{
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+
+  }
+
+  .LogoutButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  .LogoutButton p{
+    visibility: collapse;
+  }
+
+  .LogoutButton img {
+    height: 20px;
+    width: 20px;
+    margin-left: -7px;
+    margin-top: 2px;
+  }
+
+
+  .UserButton{
+    width: auto;
+    height: 30px;
+  }
+
+  #CopyLinkButton{
+    width: 30px;
+    height: 30px;
+  }
+  #TwitterButton{
+    width:30px;
+    height: 30px;
+  }
+
+  #LinkedInButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #FacebookButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton img {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #TwitterButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #LinkedInButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #FacebookButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #settings-btn{
+    width: 30px;
+    height: 30px;
+  }
+
+  #SharingButton {
+    position: absolute;
+    top: 10px;    
+    right: 15%;
+  
+  }
+
+  .InputQuestion{
+    margin-left: 15%;
+  }
+
+  .output-section{
+    margin-left: 5%;
+  }
+  
+  .InputQuestion label{
+    font-size: x-small;
+    margin-left: -20px;
+  }
+
+  .QuestionClassForm input{
+    font-size: xx-small;
+  }
+
+
+  .copiedMessage{
+    display: flex;
+    flex-direction: row;
+    margin-left: 25%;
+  }
+  
+  .copiedMessage h1{
+    font-size: large;
+    margin-top: 5px;
+    margin-left: -5px;
+  }
+  
+  .checkmark{
+    width: 20px;
+    height: 20px;
+    margin-top: 8px;
+  
+  }
+  .sharing-options{
+    display: flex;
+    flex-direction: row;
+    margin-left: 23%;
+    margin-top: -4%;
+    gap: 5%;
+    
+    
+  }
+
+  .SharingModalContent{
+    width: 90%;
+    right: 0;
+    left: 2%;
+    top: 80%;
+    height: 15%;
+  }
+
+  #share-header{
+    margin-left: 40%;
+    margin-top: -2%;
+    margin-bottom: 3%;
+  }
+
+  .ModalContent {
+    width: 117%; /* Reduced width percentage */
+   
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*padding: 10px;*/ /* Slightly reduced padding */
+    margin-top: 17%; /* Space between the input field and this box */
+    background: #fff;
+   
+    
+  
+    position: absolute;
+   
+    left: -17%; /* Positions the modal to the left of the button */
+    top: 50%;
+    
+    z-index: 10;
+  }
+
+  .ModalContent h2 {
+    color: #333;
+    font-size: smaller;
+    margin-bottom: 2%;
+   
+  }
+  
+  .ModalContent label {
+    font-size: small;
+    color: #666;
+    display: block;
+    margin: 20px 0;
+    margin-left: 5%;
+    margin-top: -2%;
+  }
+  
+
+  
+
+  
   
 }
 
@@ -889,26 +1107,204 @@ h3 {
 @media (min-width: 481px) and (max-width: 768px) {
   .AskButton {
     backface-visibility: hidden;
-        height: 28px; /* Slightly taller than mobile */
-        width: 45px;  /* Slightly wider than mobile */
-        border: 0;
-        border-radius: .3rem; /* Slightly larger border radius */
-        box-sizing: border-box;
-        display: inline-block;
-        font-size: 0.75rem; /* Adjusted font size */
-        letter-spacing: -.012em; /* Adjusted letter spacing */
-        line-height: 1.15; /* Slightly increased line height */
-        position: relative;
-        left: 7px; /* Adjusted left position */
-        text-align: center;
-        text-decoration: none;
-        transform: translateZ(0) scale(1);
-        transition: transform .2s;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        padding: 0.15rem 0.75rem;
+    height: 100%;
+    width: 7%;
+    border: 0;
+    border-radius: .4rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: small;
+    position: relative;
+    left: 1%;
+    text-align: center;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
+
+  #SharingButton {
+    position: absolute;
+    top: 10px;    
+    right: 10%;
+  
+  }
+  
+
+  .BlueButton{
+    width: 30px;
+    height: 30px;
+  }
+  .BlueButton p{
+    visibility: collapse;
+
+  }
+
+  .BlueButton img{
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 3px;
+
+  }
+
+  .LogoutButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  .LogoutButton p{
+    visibility: collapse;
+  }
+
+  .LogoutButton img {
+    height: 20px;
+    width: 20px;
+    margin-left: -7px;
+    margin-top: 2px;
+  }
+
+
+  #CopyLinkButton{
+    width: 30px;
+    height: 30px;
+  }
+  #TwitterButton{
+    width:30px;
+    height: 30px;
+  }
+
+  #LinkedInButton{
+    width: 30px;
+    height: 30px;
+  }
+
+ 
+
+  #FacebookButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton img {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #TwitterButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #LinkedInButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #FacebookButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+
+
+  #settings-btn{
+    width: 30px;
+    height: 30px;
+  }
+
+  .InputQuestion{
+    margin-left: 15%;
+  }
+
+  .output-section{
+    margin-left: 5%;
+  }
+
+  .QuestionClassForm input{
+    font-size: xx-small;
+  }
+
+  .copiedMessage{
+    display: flex;
+    flex-direction: row;
+    margin-left: 15%;
+  }
+  
+  .copiedMessage h1{
+    font-size: small;
+    margin-top: 0px;
+    margin-left: -5px;
+  }
+  
+  .checkmark{
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+  
+  }
+  .sharing-options{
+    display: flex;
+    flex-direction: row;
+    margin-left: 2%;
+    margin-top: -5%;
+    gap: 5%;
+    
+    
+  }
+
+  .SharingModalContent{
+    width: 20%;
+    right: 0;
+    left: 68%;
+    top: 8%;
+    height: 10%;
+  }
+
+  #share-header{
+    margin-left: 0%;
+    margin-top: -5%;
+    margin-bottom: 3%;
+    font-size: x-small;
+  }
+
+  .ModalContent {
+    width: 70%; /* Reduced width percentage */
+   
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*padding: 10px;*/ /* Slightly reduced padding */
+    margin-top: 7%; /* Space between the input field and this box */
+    background: #fff;  
+    position: absolute;  
+    left: -17%; /* Positions the modal to the left of the button */
+    top: 50%;
+    
+    z-index: 10;
+  }
+
+  .ModalContent h2 {
+    color: #333;
+    font-size: smaller;
+    margin-bottom: 3%;
+   
+  }
+  
+  .ModalContent label {
+    font-size: small;
+    color: #666;
+    display: block;
+    margin: 20px 0;
+    margin-left: 5%;
+    margin-top: -3%;
+  }
+
+
+
+
 
   
 }
@@ -917,17 +1313,15 @@ h3 {
 @media (min-width: 769px) and (max-width: 1024px) {
   .AskButton {
     backface-visibility: hidden;
-    height: 30px;
-    width: 50px;
+    height: 100%;
+    width: 7%;
     border: 0;
-    border-radius: .375rem;
+    border-radius: .4rem;
     box-sizing: border-box;
     display: inline-block;
-    font-size: 0.8rem;
-    letter-spacing: -.01em;
-    line-height: 1.2;
+    font-size: small;
     position: relative;
-    left: 10px;
+    left: 1%;
     text-align: center;
     text-decoration: none;
     transform: translateZ(0) scale(1);
@@ -935,8 +1329,136 @@ h3 {
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    padding: 0.2rem 0.8rem;
   }
+
+  
+
+  .LogoutButton img {
+   visibility: collapse;
+    
+  }
+
+  #CopyLinkButton{
+    width: 30px;
+    height: 30px;
+  }
+  #TwitterButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #LinkedInButton{
+    width: 30px;
+    height: 30px;
+  }
+
+ 
+
+  #FacebookButton{
+    width: 30px;
+    height: 30px;
+  }
+
+  #CopyLinkButton img {
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #TwitterButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #LinkedInButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  #FacebookButton img{
+    margin-top: 5px;
+    margin-left: 5px;
+  }
+
+  .copiedMessage{
+    display: flex;
+    flex-direction: row;
+    margin-left: 15%;
+  }
+  
+  .copiedMessage h1{
+    font-size: small;
+    margin-top: 0px;
+    margin-left: -5px;
+  }
+  
+  .checkmark{
+    width: 15px;
+    height: 15px;
+    margin-top: 2px;
+  
+  }
+  .sharing-options{
+    display: flex;
+    flex-direction: row;
+    margin-left: 2%;
+    margin-top: -5%;
+    gap: 5%;
+    
+    
+  }
+
+  .SharingModalContent{
+    width: 20%;
+    right: 0;
+    left: 62%;
+    top: 10%;
+    height: 10%;
+  }
+
+  #share-header{
+    margin-left: 0%;
+    margin-top: -5%;
+    margin-bottom: 3%;
+    font-size: x-small;
+  }
+
+  #SharingButton{
+    right: 15%;
+  }
+
+  .ModalContent {
+    width: 70%; /* Reduced width percentage */
+   
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /*padding: 10px;*/ /* Slightly reduced padding */
+    margin-top: 4%; /* Space between the input field and this box */
+    background: #fff;  
+    position: absolute;  
+    left: -28%; /* Positions the modal to the left of the button */
+    top: 40%;
+    
+    z-index: 10;
+  }
+
+  .ModalContent h2 {
+    color: #333;
+    font-size: smaller;
+    margin-bottom: 3%;
+   
+  }
+  
+  .ModalContent label {
+    font-size: small;
+    color: #666;
+    display: block;
+    margin: 20px 0;
+    margin-left: 5%;
+    margin-top: -4%;
+  }
+
+  
 
   
   
@@ -947,25 +1469,35 @@ h3 {
 
   .AskButton {
     backface-visibility: hidden;
-    height: 35px;
-    width: 60px;
+    height: 100%;
+    width: 7%;
     border: 0;
     border-radius: .4rem;
     box-sizing: border-box;
     display: inline-block;
-    font-size: 0.85rem;
-    letter-spacing: -.008em;
-    line-height: 1.25;
+    font-size: large;
     position: relative;
-    left: 12px;
-    text-align: left;
+    left: 1%;
+    text-align: center;
     text-decoration: none;
     transform: translateZ(0) scale(1);
     transition: transform .2s;
     user-select: none;
     -webkit-user-select: none;
     touch-action: manipulation;
-    padding: 0.25rem 1.1rem;
+   
+  }
+  
+  .LogoutButton img {
+    visibility: collapse;
+     
+   }
+
+   #SharingButton {
+    position: absolute;
+    top: 10px;    
+    right: 10%;
+  
   }
 
   
@@ -976,26 +1508,29 @@ h3 {
 
   .AskButton {
     backface-visibility: hidden;
-        height: 35px;
-        width: 60px;
-        border: 0;
-        border-radius: .4rem;
-        box-sizing: border-box;
-        display: inline-block;
-        font-size: 0.85rem;
-        letter-spacing: -.008em;
-        line-height: 1.25;
-        position: relative;
-        left: 12px;
-        text-align: left;
-        text-decoration: none;
-        transform: translateZ(0) scale(1);
-        transition: transform .2s;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
-        padding: 0.25rem 1.7rem;
+    height: 100%;
+    width: 7%;
+    border: 0;
+    border-radius: .4rem;
+    box-sizing: border-box;
+    display: inline-block;
+    font-size: large;
+    position: relative;
+    left: 1%;
+    text-align: center;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
   }
+
+  
+  .LogoutButton img {
+    visibility: collapse;
+     
+   }
 
 
 

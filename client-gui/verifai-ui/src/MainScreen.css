@@ -1,0 +1,1002 @@
+@font-face {
+    font-family: 'BebasNeue';
+    src: url('./BebasNeue.woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*@font-face {
+    font-family: 'Montserrat';
+    src: url('./Montserrat-VariableFont_wght.woff');
+    font-weight: normal;
+    font-style: normal;
+}*/
+
+
+
+.App{
+    text-align: center;
+    background-color: #f8f8f8;
+
+}
+
+h1{
+    font-family: 'BebasNeue', sans-serif;
+
+}
+
+h2{
+    font-family: 'BebasNeue', sans-serif;
+}
+
+
+
+
+.MenuButtons{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 5%;
+    justify-content: space-between;
+    position: fixed;
+    background-color: #27292b;
+    z-index: 1;
+    
+}
+
+.MenuButtonsSection{
+    display: flex;
+    flex-direction: row;   
+    padding-bottom: 1vh;
+}
+
+
+
+.button-content{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.8vh
+}
+
+.UserButton{
+   
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: x-large;
+    margin-left:1vh;
+    width: auto;
+    background-color: transparent;
+    font-family: 'BebasNeue', sans-serif;
+    font-weight: bold;
+    margin-bottom: 1vh;
+    border-radius: 0%;
+    
+    
+   
+
+}
+
+/*.UserButton:hover{
+  
+    background-color: #9bb9d5;
+
+}*/
+
+.username:hover{
+    background: white; 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    transform: scale(1.05);
+    
+}
+.username{
+    background: linear-gradient(to right, #23a1ee 5%, #9ddeec 95%); 
+    -webkit-background-clip: text; 
+    -webkit-text-fill-color: transparent; 
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+  
+
+}
+
+
+.BlueButton{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: auto;
+  background-color: transparent;
+  font-family: 'BebasNeue', sans-serif;
+  font-weight: bold;
+  font-size: xx-large;
+  
+
+}
+
+
+
+.Share-logo:hover{
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+}
+
+.Logout-logo:hover{
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+}
+
+
+
+.LogoutButton{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: auto;
+    margin-right: 1vh;
+    background-color: transparent;
+   
+
+}
+
+
+.Share-logo{
+    height: 3.7vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+  
+}
+
+.Logout-logo{
+    height: 3.7vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+}
+
+.LogoContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;  
+}
+
+.App-logo{
+    height: 25vh;
+    border-radius: 50%;
+    box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
+    margin-top: 7vh;
+
+}
+
+.tabbed{
+    display: flex;
+    margin-top: 2vh;
+    flex-direction: row;
+    justify-content: center;
+}
+.InputQuestion{
+    display: flex;
+    flex-direction: column;
+}
+
+.QuestionClassForm{
+    display: flex;
+    flex-direction: row;
+    gap: 1vh;
+    width: 60%;
+    
+}
+
+
+.QuestionClass{
+    font-size: x-large;
+    border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+    text-align: left;
+    outline: 0.3vh solid #27292b;
+    transition: outline 0.1s ease-out;
+    font-family: 'Montserrat', sans-serif;
+    
+  
+    
+  }
+
+  .QuestionClass:hover{
+    outline: 0.3vh solid #9bb9d5;
+    border: 0.3vh solid transparent;
+    transition: outline 0.1s ease-in;
+   
+  }
+
+  .QuestionClass:focus{
+    outline:  0.3vh solid #6fa4bf;
+    border: 0.3vh solid transparent;
+  }
+
+
+  
+
+.QuestionSection{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 1vh;
+}
+
+.AnswerContainer{
+    display: flex;
+    flex-direction: column;
+    width: 60%;
+    
+    
+}
+
+.Answer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+}
+
+  
+.document-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2vh;
+    margin-left: 1%;
+    margin-top: 4vh;
+    width: 120%;
+  }
+  
+  .document-square {
+    width: 17.5vh;  /* Reduced width */
+    height: 17.5vh;  /* Reduced height */
+    border: 0.3vh solid #ccc;
+    padding: 0.5vh;  /* Reduced padding */
+    overflow: hidden;
+    background-color: #f9f9f9;
+    box-shadow: 1vh 0.8vh 1vh rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .document-title {
+    font-size: large;  /* Reduced font size */
+  
+    text-align: left;
+    font-family: 'Montserrat', sans-serif;
+    margin-top: 0vh;
+    font-weight: 500;
+    
+  }
+  
+  .no-underline-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit the color from the parent */
+  }
+  
+  .no-underline-link:hover {
+    text-decoration: none; /* Remove underline on hover */
+    color: inherit; /* Inherit the color from the parent */
+  }
+  
+  
+  .document-square.center {
+    justify-content: center;  /* Center content vertically */
+    align-items: center;      /* Center content horizontally */
+    text-align: center;       /* Center text */
+  }
+  
+  .document-section:hover {
+    cursor: pointer; /* Change cursor to hand on hover */
+  }
+  
+  .sources-section h2{
+   text-align: left;
+   margin-left: 1vh;
+    
+  }
+
+.StatusMessage{
+    text-align: left;
+    margin-left: 1vh;
+
+
+}
+
+.output-section{
+    text-align: justify;
+    background-color: #f1f1f1;
+    padding: 3.5vh;
+    margin-bottom: 2vh;
+    
+    
+}
+.output-verification {
+    background-color: #fafafa;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 20px;
+    max-width: 770px;
+  
+  }
+  
+  .output-tokens {
+    white-space: pre-line; /* Ensures that line breaks are respected */
+    color: #333;
+    font-size: larger;
+    line-height: 3.5vh;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+ 
+   
+  }
+
+  .spinner {
+    display: inline-block;
+    vertical-align: auto;
+    margin-left: 1vh; 
+    width: 1.25vh;
+    height: 1.25vh;
+    border: 0.5vh solid #9bb9d5;
+    border-radius: 50%;
+    border-top: 0.5vh solid #27292b;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .green-ball, .red-ball, .gray-ball,.orange-ball {
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 5px;
+  }
+  
+  .green-ball {
+    background-color: #00ff00; /* Green color */
+  }
+  
+  .red-ball {
+    background-color: #ff0000; /* Red color */
+  }
+  
+  .gray-ball{
+    background-color: gray;
+  }
+  
+  .orange-ball{
+    background-color:orange;
+  }
+  
+  .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 35%;
+    background-color: #f8f8f8;
+    color: #000;
+    text-align: justify;
+    border-radius: 1vh;
+    padding: 1.5vh;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    box-shadow: 0vh 1vh 3vh rgba(0,0,0,0.1);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: small;
+    
+  }
+  
+  .tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+  }
+
+
+  #settings-btn{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: transparent;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    
+    
+    
+  }
+
+  #settings-btn:hover{
+    transform: scale(1.05);
+
+  }
+
+  .AskButton{
+    background-color: transparent;
+   
+  }
+
+ 
+  .AskLogo:hover{  
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+  }
+
+  .SettingsLogo:hover{  
+    filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+    transform: scale(1.05);
+  }
+
+  .SettingsLogo{
+    height: 4.5vh;
+    position: relative;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    
+  }
+
+  .AskLogo{
+    height: 4.5vh;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+  }
+
+#inputMessage{
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+}
+
+body{
+    background-color: #f8f8f8;
+}
+
+.OptionButton{
+    background-color: #27292b;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: x-small;
+    width: 98%;
+    height: 3.5vh;
+    border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+}
+
+.OptionButton:hover{
+    background-color: #9bb9d5;
+    transform: scale(1.05);
+}
+
+
+.Option-logo{
+    height: 2vh;
+}
+
+
+
+.SharingModalContent{
+    position: fixed;
+   /* border: 1px solid #ccc;*/
+   border: 0.25vh solid #9bb9d5;
+    border-radius: 2vh;
+    width: 15%;
+   /* box-shadow: 0 0.5vh 1.5vh rgba(0, 0, 0, 0.1);*/
+    margin-top: 3%;
+    margin-left: 80%;
+    background-color: white;
+ 
+}
+
+
+
+.copiedMessage{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    font-size: small;
+
+}
+
+.checkmark{
+    height: 2.5vh;
+}
+.copiedMessage h1{
+    font-family: 'BebasNeue', sans-serif;
+    font-size: x-large;
+    
+}
+
+.sharingContainer{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 4%;
+    
+
+}
+
+.sharing-options{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    column-gap: 0.2vh;
+    row-gap: 0;
+    
+   
+}
+
+#share-heading{
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    font-size: small;
+    margin-left: 3%;
+    margin-bottom: 0%;
+
+
+}
+
+
+
+
+.ModalContent{
+    position: fixed;
+    background-color: white;
+    border: 0.25vh solid #9bb9d5;
+    border-radius: 2vh;
+    width: 17%;
+    margin-left: 1%;
+    margin-top: -15%;
+    z-index: 1;
+   
+
+}
+
+.ModalContent h2 {
+  font-size: larger;
+}
+
+.ModalContent label, option{
+    font-family: 'Montserrat', sans-serif;
+   
+}
+
+
+
+.SearchConfiguration{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+       
+}
+
+.SearchConfiguration label{
+    font-size: small;
+    font-weight: 400;
+}
+
+.search-section{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-around;
+}
+
+
+
+.WeightsConfiguration{
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    margin-top: 5%;
+    margin-left: 10%;
+}
+.weight-labels{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    
+}
+
+.weight-labels label{
+    font-size: small;
+    text-align: left;
+}
+
+
+
+.weight-buttons{
+
+    display: flex;
+    flex-direction: row;
+    width: 110%;
+    justify-content: space-between;
+    margin-top: -2.5vh;
+    margin-left: -3%;
+    
+     
+
+}
+
+.slider{
+  accent-color: #9bb9d5;
+  cursor: pointer;
+  
+}
+
+.weight-btn-container{
+    display: flex;
+ 
+    flex-direction: row;
+    align-items: center;
+}
+
+.weightSliderContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: -0.5vh;
+}
+.weight-buttons button{
+    font-size: smaller;
+    text-align: center;
+    background-color: transparent;
+    color:#27292b;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+}
+
+.DocumentNumConfiguration{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.DocumentNumConfiguration label{
+  font-size: small;
+}
+
+.combobox{
+  width: 25%;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  background-color: #9bb9d5;
+  border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+  font-size: x-small;
+  
+  
+}
+
+.combobox:hover{
+  background-color: #27292b;
+  color: white;
+}
+
+.combobox:focus{
+  background-color: #27292b;
+  color: white;
+}
+
+.date-picker-group{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 37%;
+}
+
+.date-picker-group label{
+  font-family: 'Montserrat', sans-serif;
+  font-size: small;
+}
+
+.date-picker-group input{
+  height: 10%;
+  margin-top: 1vh;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: x-small;
+  background-color: #9bb9d5;
+  border-top-left-radius: 3vh;
+	border-bottom-left-radius: 3vh;
+    border-top-right-radius: 3vh;
+	border-bottom-right-radius: 3vh;
+  width: 65%;
+}
+
+.date-picker-group:hover input{
+  
+  background-color: #27292b;
+  color: white;
+}
+
+.date-picker-group:focus{
+  
+  background-color: #27292b;
+  color: white;
+}
+.DateConfiguration{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  gap: 10%;
+  margin-top: 2vh;
+}
+
+.temperature-desc{
+  width: 110%;
+  font-size: smaller;
+  display: flex;
+  text-align: center;
+}
+
+#tempSlider{
+  margin-top: 0%;
+
+}
+
+#StreamConfiguration{
+  margin-bottom: 3%;
+}
+
+@media (max-width: 1520px){
+  .ModalContent{
+    width: 30%;
+    
+  }
+}
+@media (max-width: 1000px){
+
+  .ModalContent{
+    margin-top: 7vh;
+    width: 50%;
+  }
+
+  .SharingModalContent{
+    width: 40%;
+    margin-top: 7vh;
+    margin-left: 58%;
+    z-index: 1;   
+
+  }
+  
+
+}
+
+@media (max-width: 1000px){
+  .ModalContent{
+    margin-top: -20vh;
+    margin-left: 1vh;
+    
+  }
+}
+
+@media (max-height: 500px){
+  .ModalContent{
+    margin-top: -43vh;
+    margin-left: 1vh;
+    width: 35%;
+  
+    
+  }
+
+  .ModalContent h2{
+    font-size: small;
+  }
+
+  .combobox{
+    font-size: xx-small;
+  }
+
+  .search-section label{
+    font-size: xx-small;
+  }
+
+  .weight-labels label{
+    font-size: xx-small;
+  }
+
+  .DocumentNumConfiguration label{
+    font-size: xx-small;
+  }
+
+  .SharingModalContent{
+    width: 25%;
+    margin-left: 120vh;
+  }
+
+
+
+}
+
+@media (min-height: 501px) and (max-height: 1000px){
+  .ModalContent{
+    margin-top: -30vh;
+    margin-left: 1vh;
+    width: 40%;
+  
+    
+  }
+
+ /* .ModalContent h2{
+    font-size: small;
+  }
+
+  .combobox{
+    font-size: xx-small;
+  }
+
+  .search-section label{
+    font-size: xx-small;
+  }
+
+  .weight-labels label{
+    font-size: xx-small;
+  }
+
+  .DocumentNumConfiguration label{
+    font-size: xx-small;
+  }*/
+
+
+
+}
+@media (max-width: 500px)
+{
+
+  .ModalContent{
+    margin-top: -6vh;
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .SharingModalContent{
+    width: 100%;
+    margin-left: 0;
+    margin-top: 75vh;
+    height: 20%;
+    z-index: 1;
+
+  }
+
+  .QuestionClass{
+    font-size: small;
+  }
+
+  #share-heading{
+    text-align: center;
+
+  }
+
+  .sharing-options{
+    display: flex;
+    justify-content: center;
+    gap: 2%;
+  }
+
+  .OptionButton{
+    width: 13%;
+  }
+
+  .OptionButton p{
+    visibility: collapse;
+  }
+
+
+}
+.close-icon{
+    height: 1.5vh;
+    width: 1.5vh;
+    cursor: pointer;
+}
+
+.close-icon:hover{
+  filter: brightness(0) saturate(100%) invert(95%) sepia(12%) saturate(7450%) hue-rotate(178deg) brightness(102%) contrast(67%);
+
+}
+
+.icon-container{
+  display: flex;
+  justify-content: right;
+  margin-top: 2%;
+  margin-right: 2.5%;
+  
+}
+
+.icon-container-share{
+  display: flex;
+  justify-content: right;
+  margin-top: 2.5%;
+  margin-right: 3%;
+  
+}
+
+
+.login-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+  height: 100vh;
+}
+
+.login-message img {
+  height: 25vh;
+  margin-top: 2%;
+}
+
+.message-container {
+  background-color: white;
+  padding: 2vh;
+  box-shadow: 0 0 1vh rgba(0, 0, 0, 0.1);
+  border-radius: 1vh;
+  width: 30vh; /* Adjust width as necessary */
+  display: flex;
+  flex-direction: column; /* Ensures form elements stack vertically */
+  align-items: center; /* Aligns form elements to the center horizontally */
+  padding:4vh;
+  margin-top: 2%;
+}
+
+.message-container h1{
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+
+.message-container button {
+  display: block; /* Allows margin auto to work for horizontal centering */
+  width: 35%; /* Small width for the button */
+  background: linear-gradient(to right, #005d97, #9ddeec 95%); /* Blue background color */
+  color: white; /* Text color */
+  text-align: center; /* Center text inside the button */
+  border: none; /* No borders */
+  border-radius: 5px; /* Slight rounding of corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-family: 'BebasNeue', sans-serif;
+  font-size: x-large;
+  border-top-left-radius: 3vh;
+border-bottom-left-radius: 3vh;
+  border-top-right-radius: 3vh;
+border-bottom-right-radius: 3vh;
+  transform: translateZ(0) scale(1);
+  transition: transform .2s;
+  margin-top: 7%;
+}
+
+.message-container button:hover{
+  background: #27292b;
+  transform: scale(1.05);
+ 
+
+}
+
+.AnswerContainer h1{
+  text-align: left;
+
+}
+
+
+
