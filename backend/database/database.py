@@ -1,6 +1,5 @@
 import asyncpg
 import json
-import datetime
 
 class Database:
     """
@@ -62,8 +61,7 @@ class Database:
         await self.close()
         return result['id']
 
-    async def insert_question(self, username: str, question: str):
-        current_timestamp = datetime.datetime.now()
+    async def insert_question(self, username: str, question: str, current_timestamp: datetime):
         await self.open()
         await self.sql_database.execute(
             'INSERT INTO user_questions (username, question, question_date) VALUES ($1, $2, $3)', username, question, current_timestamp

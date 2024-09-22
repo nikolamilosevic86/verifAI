@@ -23,6 +23,8 @@ import asyncio
 import os, sys
 from dotenv import load_dotenv
 
+import datetime
+
 from utils import convert_documents, generate, hash_password, check_password
 from query_handler.query_parser import QueryProcessor
 from database.database import Database
@@ -253,6 +255,13 @@ async def startup_event():
     # Start the worker coroutine
     asyncio.create_task(worker())
 """
+
+@app.post("/main")
+async def save_question(user_question):
+    current_timestamp = datetime.datetime.now()
+    await users_db.insert_question(user_question.username, user_question.question, current_timestamp)
+    return {"message": "Question saved successfully."}
+    
 
 @app.post("/registration")  
 async def register_user(user: User):
