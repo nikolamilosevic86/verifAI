@@ -192,7 +192,7 @@ class MainScreen extends Component {
       
         const username = this.usernameRef.current.textContent;
         const question = this.questionRef.current.value;
-        const user_question = JSON.stringify({username, question})
+        
         
         try{
             
@@ -201,7 +201,7 @@ class MainScreen extends Component {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: user_question
+                body: JSON.stringify({username, question})
             });
 
             if(response.ok)

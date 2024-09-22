@@ -159,6 +159,10 @@ class User(BaseModel):
     email: str
     password: str
 
+class UserQuestion(BaseModel):
+    username: str = ""
+    question: str = ""
+
 
 
 # --------------------------------------------IR and Database Connection ---------------------------------------------------------
@@ -254,7 +258,7 @@ async def startup_event():
     asyncio.create_task(worker())
 """
 @app.post("/main")
-async def save_question(user_question):
+async def save_question(user_question: UserQuestion):
     
     current_timestamp = datetime.datetime.now()
     await users_db.insert_question(user_question.username, user_question.question, current_timestamp)
