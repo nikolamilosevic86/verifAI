@@ -253,6 +253,12 @@ async def startup_event():
     # Start the worker coroutine
     asyncio.create_task(worker())
 """
+@app.post("/main")
+async def save_question(user_question):
+    
+    current_timestamp = datetime.datetime.now()
+    await users_db.insert_question(user_question.username, user_question.question, current_timestamp)
+    return {"message": "Question saved successfully."}
 
 @app.post("/registration")  
 async def register_user(user: User):
