@@ -67,6 +67,8 @@ class MainScreen extends Component {
         }
         
         this.componentRef = createRef();
+        this.questionRef = createRef();
+        this.usernameRef = createRef();
         this.captureStateAndHTML = this.captureStateAndHTML.bind(this)
         this.postVerification = this.postVerification.bind(this)
         this.saveSession = this.saveSession.bind(this);
@@ -102,6 +104,7 @@ class MainScreen extends Component {
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.handleCloseSharingModal = this.hancleCloseSharingModal.bind(this);
         
+        this.handleSaveQuestion = this.handleSaveQuestion.bind(this);
     }
 
    
@@ -184,6 +187,36 @@ class MainScreen extends Component {
        
         this.setState({numDocuments: numDocuments});
       }
+
+    handleSaveQuestion = async (e) => {
+      
+        const username = this.usernameRef.current.textContent;
+        const question = this.questionRef.current.value;
+        const user_question = JSON.stringify({username, question})
+        
+        try{
+            
+            const response = await fetch(BACKEND + 'main', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: user_question
+            });
+
+            if(response.ok)
+                console.log("Question saved successfully");
+            else
+               console.error("Error while saving question");
+          
+
+        }
+        catch(error)
+        {
+            console.error("Error while saving question");
+        }
+
+    }
 
     
     clearOutput(){
@@ -693,8 +726,11 @@ class MainScreen extends Component {
     }
 
     handleSubmit(event) {
+        
+
         event.preventDefault();
         
+        this.handleSaveQuestion();
         // First setState call with callback to execute after state is set
       
         this.setState(prevState => ({
@@ -712,6 +748,7 @@ class MainScreen extends Component {
             // Call sendMessage function and use callback to update state
            
             this.sendMessage();
+          
         });
 
       
@@ -843,7 +880,7 @@ class MainScreen extends Component {
                           
                         
                           <div className='MenuButtons'>
-                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username'>{user.username}</p></div></button>
+                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username' ref={this.usernameRef}>{user.username}</p></div></button>
                             
                             <div className='MenuButtonsSection'>
                                   
@@ -948,6 +985,7 @@ class MainScreen extends Component {
                                             placeholder="e.g. What genes are promising targets for prostate cancer?"
                                             value={this.state.value}
                                             onChange={this.handleChange}
+                                            ref = {this.questionRef}
                                         />
 
                                     

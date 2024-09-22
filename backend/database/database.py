@@ -1,7 +1,6 @@
 import asyncpg
 import json
 
-
 class Database:
     """
     Singleton class to handle the database for user page Login and chat sessions.
@@ -61,6 +60,16 @@ class Database:
         print("Result = ",result)
         await self.close()
         return result['id']
+    
+    async def insert_question(self, username: str, question: str, current_timestamp: datetime):
+        await self.open()
+        await self.sql_database.execute(
+            'INSERT INTO user_questions (username, question, question_date) VALUES ($1, $2, $3)', username, question, current_timestamp
+        )
+        await.self_close()
+
+ 
+
 
     async def get_web_session(self, session_id):
         await self.open()
