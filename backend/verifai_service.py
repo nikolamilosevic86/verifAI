@@ -22,6 +22,7 @@ import json
 import asyncio
 import os, sys
 from dotenv import load_dotenv
+import datetime
 
 from utils import convert_documents, generate, hash_password, check_password
 from query_handler.query_parser import QueryProcessor
