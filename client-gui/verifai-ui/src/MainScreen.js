@@ -205,9 +205,9 @@ class MainScreen extends Component {
             });
 
             if(response.ok)
-                alert("Question saved successfully");
+                console.log("Question saved successfully");
             else
-               alert("Error while saving question");
+               console.log("Error while saving question");
           
 
         }
