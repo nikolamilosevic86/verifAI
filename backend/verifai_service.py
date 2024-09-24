@@ -22,6 +22,7 @@ import json
 import asyncio
 import os, sys
 from dotenv import load_dotenv
+import datetime
 
 from utils import convert_documents, generate, hash_password, check_password
 from query_handler.query_parser import QueryProcessor
@@ -159,6 +160,10 @@ class User(BaseModel):
     email: str
     password: str
 
+class UserQuestion(BaseModel):
+    username: str = ""
+    question: str = ""
+
 
 
 # --------------------------------------------IR and Database Connection ---------------------------------------------------------
@@ -253,6 +258,12 @@ async def startup_event():
     # Start the worker coroutine
     asyncio.create_task(worker())
 """
+@app.post("/main")
+async def save_question(user_question: UserQuestion):
+    
+    current_timestamp = datetime.datetime.now()
+    await users_db.insert_question(user_question.username, user_question.question, current_timestamp)
+    return {"message": "Question saved successfully."}
 
 @app.post("/registration")  
 async def register_user(user: User):
