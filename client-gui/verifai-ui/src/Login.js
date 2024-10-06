@@ -33,6 +33,8 @@ function Login() {
         
         <div className="login-container">
         <img src={logo} alt="Logo" className="login-logo" />
+        <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+        </div>
         <div className="login-form">
             <h1>Sign in</h1>
             <form className="formClass" onSubmit={handleLogin}>

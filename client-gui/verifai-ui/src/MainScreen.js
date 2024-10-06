@@ -962,6 +962,8 @@ class MainScreen extends Component {
                                 
 
                                 </div>  
+                                <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+                                </div>
                               
                                 <div className="InputQuestion">
                                     <div className='tabbed'>
@@ -1202,11 +1204,14 @@ class MainScreen extends Component {
                                 <div className="output-section">
                                     <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
                                 </div>
+
+                           
                             </div>
                             </div>
                                 ))}
                             </div>
                         </div>
+                       
                         </div>
                     
                 );
