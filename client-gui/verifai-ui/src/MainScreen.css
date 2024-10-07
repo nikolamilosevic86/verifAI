@@ -934,6 +934,13 @@ body{
   
 }
 
+.websiteLink{
+  font-size: small;
+}
+
+.websiteLinkDiv{
+  margin-top: 1vh;
+}
 
 .login-message {
   display: flex;

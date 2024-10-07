@@ -67,6 +67,8 @@ function UserCredential() {
                 <div className='App'>
                     <div className='login-message'>
                         <img src={logo} alt="Logo" className="login-logo" />
+                        <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+                        </div>
                         <div class='message-container'>
                             <h1>Please log in to access this page.</h1>
                             <button onClick={handleLogin}>Log in</button>
@@ -92,6 +94,8 @@ function UserCredential() {
         <div className="login-container">
             
             <img src={logo} alt="Logo" className="login-logo" />
+            <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+            </div>
 
             <div className="login-form">
                 <h1>Change Password</h1>

@@ -44,6 +44,8 @@ function Registration() {
         
         <div className="login-container">
         <img src={logo} alt="Logo" className="login-logo" />
+        <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+        </div>
         <div className="login-form">
         <div class="special-h2">
             <h1>Registration</h1>
