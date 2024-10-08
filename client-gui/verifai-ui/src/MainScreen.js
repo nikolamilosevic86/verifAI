@@ -868,7 +868,7 @@ class MainScreen extends Component {
 
                      return (
                         <div className='App'>
-                            <GetSession/>
+                         
 
                         </div>
                      );
