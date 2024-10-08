@@ -17,18 +17,17 @@ import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
 import { Helmet } from 'react-helmet';
 import close from './close.svg';
-import GetSession from './GetSession.js';
 
 
 function NavigateWrapper(props) {
     const navigate = useNavigate();
     const { setSharedData } = useContext(DataContext);
 
-    return <MainScreen {...props} navigate={navigate} setSharedData={setSharedData} />
+    return <GetSession {...props} navigate={navigate} setSharedData={setSharedData} />
 }
 
   
-class MainScreen extends Component {
+class GetSession extends Component {
    static contextType = AuthContext
    static regex = /PUBMED:\d+/g;
     static regex_punct = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
@@ -521,11 +520,11 @@ class MainScreen extends Component {
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
             
-                let result = inputString.replace(MainScreen.regex, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct, replaceWithLink);
-                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
+                let result = inputString.replace(GetSession.regex, replaceWithLink);
+                result = result.replace(GetSession.regex_punct, replaceWithLink);
+                result = result.replace(GetSession.regex_square_brackets, replaceWithLink);
+                result = result.replace(GetSession.regex_punct_2, replaceWithLink);
+                result = result.replace(GetSession.regex_punct_3, replaceWithLink);
             
                 return result;
             }
@@ -841,40 +840,7 @@ class MainScreen extends Component {
                 
                 {({ user, logout }) => {
                     
-                    if (!user) {
-
-                        const currentPath = window.location.pathname.substring(1);
-                
-                        const handleLogin = () => {                     
-                          this.props.navigate("/login/?redirection=" + currentPath);
-                                       
-
-                        }
-
-                        if(currentPath === 'main')
-            
-                       { return (
-                            <div className='App'>
-                                <div className='login-message'>
-                                    <img src={logo} alt="Logo" className="login-logo" />
-                                    <div class='message-container'>
-                                        <h1>Please log in to access this page.</h1>
-                                        <button onClick={handleLogin}>Log in</button>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    } else {
-
-                     return (
-                        <div className='App'>
-                            <GetSession/>
-
-                        </div>
-                     );
-
-                    }
-                    } 
+                   
                     
                     const hasQuestions = this.state.questions && this.state.questions.length > 0;
                     const questionContent = hasQuestions ? this.state.questions[0] : '';
@@ -894,7 +860,7 @@ class MainScreen extends Component {
                           
                         
                           <div className='MenuButtons'>
-                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username' ref={this.usernameRef}>{user.username}</p></div></button>
+                    
                             
                             <div className='MenuButtonsSection'>
                                   
@@ -904,9 +870,9 @@ class MainScreen extends Component {
                             
                             </div>
                         </button>
-                            <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
-                                <img className="Logout-logo" src={logout_img}  />
+                            <button title="Log in" className='LogoutButton'> <div className="button-content">
                                
+                              Log in
                             </div></button>
                             
                       
