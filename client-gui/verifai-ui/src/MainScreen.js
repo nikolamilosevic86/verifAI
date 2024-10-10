@@ -29,6 +29,8 @@ function NavigateWrapper(props) {
 
   
 class MainScreen extends Component {
+
+    
    static contextType = AuthContext
    static regex = /PUBMED:\d+/g;
     static regex_punct = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
@@ -51,6 +53,7 @@ class MainScreen extends Component {
                 
                 modalOpen: false,
                 sharingModalOpen: false,
+                loginModalOpen: false,
                 value: "",
                 temperature: 0,
                 lex_parameter:0.7,
@@ -102,11 +105,13 @@ class MainScreen extends Component {
         this.handleTooltip = this.handleTooltip.bind(this);
 
         this.sharingModalRef = this.sharingModalRef.bind(this);
+      
 
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.handleCloseSharingModal = this.hancleCloseSharingModal.bind(this);
         
         this.handleSaveQuestion = this.handleSaveQuestion.bind(this);
+        this.handleLoginModalToggle = this.handleLoginModalToggle.bind(this);
 
        
     }
@@ -117,6 +122,7 @@ class MainScreen extends Component {
         return {
             modalOpen: this.state.modalOpen,
             sharingModalOpen: this.state.sharingModalOpen,
+            loginModalOpen: this.state.loginModalOpen,
             value: this.state.value,
             temperature: this.state.temperature,
             lex_parameter: this.state.lex_parameter,
@@ -151,6 +157,8 @@ class MainScreen extends Component {
         const currentPath = window.location.pathname.substring(1);
        if(currentPath.includes('get_session'))
             this.props.navigate('/login?redirection=' + currentPath);
+       else
+         this.props.navigate('/login');
       };
 
       handleSharingModalToggle = () => {
@@ -163,6 +171,16 @@ class MainScreen extends Component {
         this.setState(prevState => ({
           modalOpen: !prevState.modalOpen
         }));
+      };
+
+      handleLoginModalToggle = () => {
+        
+        this.setState(prevState => ({
+          loginModalOpen: !prevState.loginModalOpen
+        }), () => {
+           
+        });
+       
       };
 
     
@@ -851,13 +869,7 @@ class MainScreen extends Component {
                 {({ user, logout }) => {
 
                     
-    function checkIfLoggedIn()
-        {
-            if(!user)
-            {
-                alert("Please log in");
-            }
-        }
+   
                     
                 /*    if (!user) {
 
@@ -900,8 +912,11 @@ class MainScreen extends Component {
                     
                     
                     return (
-                      <div className='App' ref={this.componentRef}>
-                      <Helmet>
+                      <div  className='App'  ref={this.componentRef}>
+                  
+                     <div className={`MainScreenDiv ${this.state.loginModalOpen ? 'app-disabled' : ''}`}>
+                     
+                     <Helmet>
                             <meta property="og:title" content={ questionContent } />
                             <meta property="og:description" content={ description } />
                             <meta property="og:image" content={logo} />
@@ -1017,7 +1032,7 @@ class MainScreen extends Component {
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
                                   
-                                    <input
+                                  {!user && (  <input
                                             id="question"
                                             name="question"
                                             className="QuestionClass"
@@ -1025,8 +1040,21 @@ class MainScreen extends Component {
                                             value={this.state.value}
                                             onChange={this.handleChange}
                                             ref = {this.questionRef}
-                                            onClick={checkIfLoggedIn}
+                                            onClick={this.handleLoginModalToggle}
                                         />
+                                    )}
+
+                                    {user && (  <input
+                                            id="question"
+                                            name="question"
+                                            className="QuestionClass"
+                                            placeholder="e.g. What genes are promising targets for prostate cancer?"
+                                            value={this.state.value}
+                                            onChange={this.handleChange}
+                                            ref = {this.questionRef}
+                                          
+                                        />
+                                    )}
 
                                     
                                       
@@ -1249,8 +1277,36 @@ class MainScreen extends Component {
                                 ))}
                             </div>
                         </div>
-                       
                         </div>
+                        {this.state.loginModalOpen && (<>
+                        <div className='LoginModalOverlay'>
+                        </div>
+                        <div className='LoginModal'>
+                          
+                           
+                            <div className="login-form">
+                                <h1>Sign in</h1>
+                                <form className="formClass">
+                                    <input className="formInput" type="text" placeholder="Username" />
+                                    <input className="formInput" type="password" placeholder="Password" />
+                                    <button class="center-button">Log In</button>
+                                </form>
+                                
+                            
+                            <br></br>
+                            <p className='message'>New to VerifAi app? <targe><span style={{ color: '#23a1ee', cursor: 'pointer' }}>Sign up</span></targe> to get instant access.</p>
+                        
+                        </div>
+                                
+                         
+                            
+
+                        </div>
+                        
+                        </>
+                    )}
+                        </div>
+                        
                     
                 );
             }}
