@@ -252,7 +252,7 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
-        });
+        }).catch(error =>  alert("An error occurred, please try again later."));
         
         const document_found = await document_response.json()
         console.log(document_found)
@@ -279,7 +279,7 @@ class MainScreen extends Component {
                                    temperature:temperature,
                                    document_found: document_found
                                 })
-        });
+        }).catch(error =>  alert("An error occurred, please try again later."));
     
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
