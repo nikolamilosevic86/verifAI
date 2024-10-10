@@ -1,4 +1,4 @@
-import React, { Component,createRef,useContext} from 'react';
+import React, { Component,createRef,useContext, useState} from 'react';
 import logo from './verifai-logo.png';
 import ask from './new_ask.svg';
 import new_settings from './new_settings.svg';
@@ -12,7 +12,7 @@ import logout_img from './new_logout.svg';
 import { useNavigate } from 'react-router-dom';
 import './MainScreen.css';
 import {BACKEND} from './App.js'
-import { AuthContext} from './AuthContext';
+import { AuthContext, useAuth} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
 import { Helmet } from 'react-helmet';
@@ -27,7 +27,7 @@ function NavigateWrapper(props) {
     return <MainScreen {...props} navigate={navigate} setSharedData={setSharedData} />
 }
 
-  
+
 class MainScreen extends Component {
 
     
@@ -37,9 +37,10 @@ class MainScreen extends Component {
     static regex_square_brackets = /\(PUBMED:(\d+)\)/g;
     static regex_punct_2 = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_punct_3 = /^\(PUBMED:\d+\)[\.\;\,]?$/g;
-
+ 
    
     constructor(props) {
+        
         console.log("I am in the constructor");
         console.log(props);
         super(props);
@@ -112,7 +113,15 @@ class MainScreen extends Component {
         
         this.handleSaveQuestion = this.handleSaveQuestion.bind(this);
         this.handleLoginModalToggle = this.handleLoginModalToggle.bind(this);
+        this.formLogin = this.formLogin.bind(this);
+        this.formRegister = this.formRegister.bind(this);
 
+       
+
+
+     
+
+      
        
     }
 
@@ -160,6 +169,32 @@ class MainScreen extends Component {
        else
          this.props.navigate('/login');
       };
+
+      
+      formLogin = async(e)  => {
+        const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+    
+    const { user, login } = useAuth();
+
+        
+       
+
+        e.preventDefault();
+        await login(username, password, navigate);
+        
+      }
+
+      formRegister = () => {
+     
+        this.props.navigate('/registration?redirection=' + window.location.pathname.substring(1));
+        
+
+      }
+
+      
+
 
       handleSharingModalToggle = () => {
         this.setState(prevState => ({
@@ -1288,13 +1323,13 @@ class MainScreen extends Component {
                                 <h1>Sign in</h1>
                                 <form className="formClass">
                                     <input className="formInput" type="text" placeholder="Username" />
-                                    <input className="formInput" type="password" placeholder="Password" />
-                                    <button class="center-button">Log In</button>
+                                    <input  className="formInput" type="password" placeholder="Password" />
+                                    <button onClick={this.formLogin} class="center-button">Log In</button>
                                 </form>
                                 
                             
                             <br></br>
-                            <p className='message'>New to VerifAi app? <targe><span style={{ color: '#23a1ee', cursor: 'pointer' }}>Sign up</span></targe> to get instant access.</p>
+                            <p className='message'>New to VerifAi app? <targe><span onClick={this.formRegister} style={{ color: '#23a1ee', cursor: 'pointer' }}>Sign up</span></targe> to get instant access.</p>
                         
                         </div>
                                 

@@ -4,6 +4,20 @@ import logo from './verifai-logo.png';
 import './Login.css';
 import {BACKEND} from './App.js'
 
+function getRedirectionPath() {
+  
+    const query = window.location.search;
+    const params = new URLSearchParams(query);
+    const redirectionPath = params.get('redirection')
+  
+    if(redirectionPath)
+      return '/' + redirectionPath;
+    else
+      return '/login';
+   
+       
+  }
+
 function Registration() {
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
@@ -14,7 +28,8 @@ function Registration() {
 
     
     const navigateLogin = () => {
-        navigate('/login'); 
+        const redirectionPath = getRedirectionPath();
+        navigate('/login?redirection=' + redirectionPath); 
     };
 
     const handleLogin = async (e) => {
@@ -29,7 +44,9 @@ function Registration() {
             });
             if (response.ok) {
                 alert('Registration completed successfully!');
-                navigate('/login');
+
+                const redirectionPath = getRedirectionPath();
+                navigate('/login?redirection=' + redirectionPath);
             } else if (response.status === 400) {
                 alert('Username already registered');
             }
