@@ -17,7 +17,7 @@ import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
 import { Helmet } from 'react-helmet';
 import close from './close.svg';
-import GetSession from './GetSession.js';
+
 
 
 function NavigateWrapper(props) {
@@ -93,6 +93,7 @@ class MainScreen extends Component {
 
         this.handleLexParamChange = this.handleLexParamChange.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
+        this.handleLogin = this.handleLogin.bind(this)
         this.handleUserCredential = this.handleUserCredential.bind(this);
         this.modalRef = React.createRef(); // Create a ref for the modal
         this.setWrapperRef = this.setWrapperRef.bind(this);             
@@ -106,6 +107,8 @@ class MainScreen extends Component {
         this.handleCloseSharingModal = this.hancleCloseSharingModal.bind(this);
         
         this.handleSaveQuestion = this.handleSaveQuestion.bind(this);
+
+       
     }
 
    
@@ -142,6 +145,12 @@ class MainScreen extends Component {
     handleLogout = () => {
         this.context.logout();
         this.props.navigate('/login');
+      };
+    
+      handleLogin = () => {
+        const currentPath = window.location.pathname.substring(1);
+       if(currentPath.includes('get_session'))
+            this.props.navigate('/login?redirection=' + currentPath);
       };
 
       handleSharingModalToggle = () => {
@@ -253,7 +262,7 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
-        });
+        }).catch(error => alert("An error occured, please try again."));
         
         const document_found = await document_response.json()
         console.log(document_found)
@@ -840,8 +849,17 @@ class MainScreen extends Component {
             <AuthContext.Consumer>
                 
                 {({ user, logout }) => {
+
                     
-                    if (!user) {
+    function checkIfLoggedIn()
+        {
+            if(!user)
+            {
+                alert("Please log in");
+            }
+        }
+                    
+                /*    if (!user) {
 
                         const currentPath = window.location.pathname.substring(1);
                 
@@ -874,7 +892,7 @@ class MainScreen extends Component {
                      );
 
                     }
-                    } 
+                    } */
                     
                     const hasQuestions = this.state.questions && this.state.questions.length > 0;
                     const questionContent = hasQuestions ? this.state.questions[0] : '';
@@ -894,20 +912,25 @@ class MainScreen extends Component {
                           
                         
                           <div className='MenuButtons'>
-                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username' ref={this.usernameRef}>{user.username}</p></div></button>
-                            
+                          {user && (  <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username' ref={this.usernameRef}>{user.username}</p></div></button>)}
+                          {!user && (<div className='guestDiv'><p className='guest'>Guest</p></div>)}  
                             <div className='MenuButtonsSection'>
                                   
-                        <button title="Share" className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
+                       {user && ( <button title="Share" className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
                             
                             </div>
-                        </button>
-                            <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
+                        </button>)}
+                        {user && (    <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
                                 <img className="Logout-logo" src={logout_img}  />
                                
-                            </div></button>
+                            </div></button>)}
+                        
+                            {!user && (    <button title="Log in" className='LogoutButton' onClick={this.handleLogin}> <div className="button-content">
+                               
+                               <p>Log in</p>                         
+                            </div></button>)}
                             
                       
 
@@ -1002,6 +1025,7 @@ class MainScreen extends Component {
                                             value={this.state.value}
                                             onChange={this.handleChange}
                                             ref = {this.questionRef}
+                                            onClick={checkIfLoggedIn}
                                         />
 
                                     
