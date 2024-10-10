@@ -1,4 +1,4 @@
-import React, { Component,createRef,useContext, useState} from 'react';
+import React, { Component,createRef,useContext, useState, createContext} from 'react';
 import logo from './verifai-logo.png';
 import ask from './new_ask.svg';
 import new_settings from './new_settings.svg';
@@ -67,7 +67,9 @@ class MainScreen extends Component {
                 output: "" , // Holds HTML content safely
                 output_verification: "",
                 questions: [],
-                stream: true
+                stream: true,
+                username: '',
+                password: ''
             };  
         }
         
@@ -116,6 +118,9 @@ class MainScreen extends Component {
         this.formLogin = this.formLogin.bind(this);
         this.formRegister = this.formRegister.bind(this);
 
+        this.handleUsernameChange = this.handleUsernameChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+
        
 
 
@@ -162,6 +167,14 @@ class MainScreen extends Component {
         this.props.navigate('/login');
       };
     
+      handleUsernameChange(event) {
+        this.setState({ username: event.target.value });
+      }
+      
+      handlePasswordChange(event) {
+        this.setState({ password: event.target.value });
+      }
+      
       handleLogin = () => {
         const currentPath = window.location.pathname.substring(1);
        if(currentPath.includes('get_session'))
@@ -172,18 +185,12 @@ class MainScreen extends Component {
 
       
       formLogin = async(e)  => {
-        const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const navigate = useNavigate();
-    
-    const { user, login } = useAuth();
-
-        
-       
+           
+        const {user, login} = useAuth();
 
         e.preventDefault();
-        await login(username, password, navigate);
-        
+        await login(this.state.username, this.state.password, this.props.navigate);
+        this.props.navigate('/' + window.location.pathname.substring(1));
       }
 
       formRegister = () => {
@@ -1322,8 +1329,8 @@ class MainScreen extends Component {
                             <div className="login-form">
                                 <h1>Sign in</h1>
                                 <form className="formClass">
-                                    <input className="formInput" type="text" placeholder="Username" />
-                                    <input  className="formInput" type="password" placeholder="Password" />
+                                    <input onChange={this.handleUsernameChange} className="formInput" type="text" placeholder="Username" />
+                                    <input onChange={this.handlePasswordChange}  className="formInput" type="password" placeholder="Password" />
                                     <button onClick={this.formLogin} class="center-button">Log In</button>
                                 </form>
                                 
