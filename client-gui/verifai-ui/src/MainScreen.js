@@ -183,15 +183,58 @@ class MainScreen extends Component {
          this.props.navigate('/login');
       };
 
-      
-      formLogin = async(e)  => {
-           
-        const {user, login} = useAuth();
+      async loginFromModal(username, password)
+      {
+        const { login, setUser } = this.context;
+        try{
+        const response = await fetch(BACKEND + 'login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+                
+            },
+            body: JSON.stringify({ username: username, password: password })
+        });
 
-        e.preventDefault();
-        await login(this.state.username, this.state.password, this.props.navigate);
-        this.props.navigate('/' + window.location.pathname.substring(1));
+     
+
+            if (response.ok) {
+                const data = await response.json(); 
+                localStorage.setItem("token",data.token);
+                localStorage.setItem("username",username);
+                //setUser({ token: data.token, username: username}); 
+                const redirectionPath = window.location.pathname.substring(1)
+                window.location.reload();
+                
+            } else if (response.status === 401) {
+                alert('Invalid username or password');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed due to an unexpected error');
+        }
+
+      /*  if (this.context.user && this.context.user.token) {
+            this.setState({ loginModalOpen: false });
+            this.props.navigate('/main');
+          }*/
+
+        
+
       }
+
+      async formLogin(event) {
+        event.preventDefault();
+        
+    
+        await this.loginFromModal(this.state.username, this.state.password);
+    
+       
+      }
+    
+      
+
+
 
       formRegister = () => {
      
@@ -216,7 +259,9 @@ class MainScreen extends Component {
       };
 
       handleLoginModalToggle = () => {
-        
+
+        const redirectionPath = window.location.pathname.substring(1);
+       
         this.setState(prevState => ({
           loginModalOpen: !prevState.loginModalOpen
         }), () => {
@@ -1327,6 +1372,7 @@ class MainScreen extends Component {
                           
                            
                             <div className="login-form">
+                                <div className='closeDiv'><img className='close-icon' onClick={this.handleLoginModalToggle} src={close}/></div>
                                 <h1>Sign in</h1>
                                 <form className="formClass">
                                     <input onChange={this.handleUsernameChange} className="formInput" type="text" placeholder="Username" />

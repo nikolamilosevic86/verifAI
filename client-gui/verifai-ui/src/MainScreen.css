@@ -1072,5 +1072,11 @@ border-bottom-right-radius: 3vh;
 
 }
 
-
+.closeDiv{
+  width: 115%;
+  display: flex;
+  justify-content: right;
+  margin-top: -3vh;
+  
+}
 
