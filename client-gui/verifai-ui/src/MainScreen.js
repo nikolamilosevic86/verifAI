@@ -252,7 +252,7 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
-        });
+        }).catch(error =>  alert("An error occurred, please try again later."));
         
         const document_found = await document_response.json()
         console.log(document_found)
@@ -279,7 +279,7 @@ class MainScreen extends Component {
                                    temperature:temperature,
                                    document_found: document_found
                                 })
-        });
+        }).catch(error =>  alert("An error occurred, please try again later."));
     
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
@@ -1176,13 +1176,14 @@ class MainScreen extends Component {
                                               
                                             }
                                             })}
-                                        {!q.showAllDocuments && Object.keys(q.document_found).length > 3 && (
+                                        {!q.showAllDocuments && Object.keys(q.document_found).length > 5 && (
                                         <div className="document-square center" onClick={() => this.handleTooltip(this.state.questions.length - 1 - index)}>  
                                             <h3 className="document-title">
-                                                {`View ${Object.keys(q.document_found).length - 3} more`}
+                                                {`View ${Object.keys(q.document_found).length - 5} more`}
                                             </h3>
                                         </div>
                                     )}
+                                   
                                     </div>
                                     </div>
                                     
