@@ -1,4 +1,4 @@
-import React, { Component,createRef,useContext} from 'react';
+import React, { Component,createRef,useContext, useState, createContext} from 'react';
 import logo from './verifai-logo.png';
 import ask from './new_ask.svg';
 import new_settings from './new_settings.svg';
@@ -12,11 +12,12 @@ import logout_img from './new_logout.svg';
 import { useNavigate } from 'react-router-dom';
 import './MainScreen.css';
 import {BACKEND} from './App.js'
-import { AuthContext} from './AuthContext';
+import { AuthContext, useAuth} from './AuthContext';
 import DOMPurify from 'dompurify';
 import { DataContext } from './DataContext';
 import { Helmet } from 'react-helmet';
 import close from './close.svg';
+
 
 
 function NavigateWrapper(props) {
@@ -26,17 +27,20 @@ function NavigateWrapper(props) {
     return <MainScreen {...props} navigate={navigate} setSharedData={setSharedData} />
 }
 
-  
+
 class MainScreen extends Component {
+
+    
    static contextType = AuthContext
    static regex = /PUBMED:\d+/g;
     static regex_punct = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_square_brackets = /\(PUBMED:(\d+)\)/g;
     static regex_punct_2 = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_punct_3 = /^\(PUBMED:\d+\)[\.\;\,]?$/g;
-
+ 
    
     constructor(props) {
+        
         console.log("I am in the constructor");
         console.log(props);
         super(props);
@@ -50,6 +54,7 @@ class MainScreen extends Component {
                 
                 modalOpen: false,
                 sharingModalOpen: false,
+                loginModalOpen: false,
                 value: "",
                 temperature: 0,
                 lex_parameter:0.7,
@@ -62,7 +67,9 @@ class MainScreen extends Component {
                 output: "" , // Holds HTML content safely
                 output_verification: "",
                 questions: [],
-                stream: true
+                stream: true,
+                username: '',
+                password: ''
             };  
         }
         
@@ -92,6 +99,7 @@ class MainScreen extends Component {
 
         this.handleLexParamChange = this.handleLexParamChange.bind(this);
         this.handleLogout = this.handleLogout.bind(this);
+        this.handleLogin = this.handleLogin.bind(this)
         this.handleUserCredential = this.handleUserCredential.bind(this);
         this.modalRef = React.createRef(); // Create a ref for the modal
         this.setWrapperRef = this.setWrapperRef.bind(this);             
@@ -100,11 +108,26 @@ class MainScreen extends Component {
         this.handleTooltip = this.handleTooltip.bind(this);
 
         this.sharingModalRef = this.sharingModalRef.bind(this);
+      
 
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.handleCloseSharingModal = this.hancleCloseSharingModal.bind(this);
         
         this.handleSaveQuestion = this.handleSaveQuestion.bind(this);
+        this.handleLoginModalToggle = this.handleLoginModalToggle.bind(this);
+        this.formLogin = this.formLogin.bind(this);
+        this.formRegister = this.formRegister.bind(this);
+
+        this.handleUsernameChange = this.handleUsernameChange.bind(this);
+        this.handlePasswordChange = this.handlePasswordChange.bind(this);
+
+       
+
+
+     
+
+      
+       
     }
 
    
@@ -113,6 +136,7 @@ class MainScreen extends Component {
         return {
             modalOpen: this.state.modalOpen,
             sharingModalOpen: this.state.sharingModalOpen,
+            loginModalOpen: this.state.loginModalOpen,
             value: this.state.value,
             temperature: this.state.temperature,
             lex_parameter: this.state.lex_parameter,
@@ -142,6 +166,85 @@ class MainScreen extends Component {
         this.context.logout();
         this.props.navigate('/login');
       };
+    
+      handleUsernameChange(event) {
+        this.setState({ username: event.target.value });
+      }
+      
+      handlePasswordChange(event) {
+        this.setState({ password: event.target.value });
+      }
+      
+      handleLogin = () => {
+        const currentPath = window.location.pathname.substring(1);
+       if(currentPath.includes('get_session'))
+            this.props.navigate('/login?redirection=' + currentPath);
+       else
+         this.props.navigate('/login');
+      };
+
+      async loginFromModal(username, password)
+      {
+        const { login, setUser } = this.context;
+        try{
+        const response = await fetch(BACKEND + 'login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+                
+            },
+            body: JSON.stringify({ username: username, password: password })
+        });
+
+     
+
+            if (response.ok) {
+                const data = await response.json(); 
+                localStorage.setItem("token",data.token);
+                localStorage.setItem("username",username);
+                //setUser({ token: data.token, username: username}); 
+                const redirectionPath = window.location.pathname.substring(1)
+                window.location.reload();
+                
+            } else if (response.status === 401) {
+                alert('Invalid username or password');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Login failed due to an unexpected error');
+        }
+
+      /*  if (this.context.user && this.context.user.token) {
+            this.setState({ loginModalOpen: false });
+            this.props.navigate('/main');
+          }*/
+
+        
+
+      }
+
+      async formLogin(event) {
+        event.preventDefault();
+        
+    
+        await this.loginFromModal(this.state.username, this.state.password);
+    
+       
+      }
+    
+      
+
+
+
+      formRegister = () => {
+     
+        this.props.navigate('/registration?redirection=' + window.location.pathname.substring(1));
+        
+
+      }
+
+      
+
 
       handleSharingModalToggle = () => {
         this.setState(prevState => ({
@@ -153,6 +256,18 @@ class MainScreen extends Component {
         this.setState(prevState => ({
           modalOpen: !prevState.modalOpen
         }));
+      };
+
+      handleLoginModalToggle = () => {
+
+        const redirectionPath = window.location.pathname.substring(1);
+       
+        this.setState(prevState => ({
+          loginModalOpen: !prevState.loginModalOpen
+        }), () => {
+           
+        });
+       
       };
 
     
@@ -252,7 +367,9 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
-        }).catch(error =>  alert("An error occurred, please try again later."));
+
+        }).catch(error => alert("An error occured, please try again."));
+
         
         const document_found = await document_response.json()
         console.log(document_found)
@@ -834,22 +951,28 @@ class MainScreen extends Component {
     
     render() {
         
+        let isGetSession = false;
         return (
             <AuthContext.Consumer>
                 
                 {({ user, logout }) => {
+
                     
-                    if (!user) {
+   
+                    
+                /*    if (!user) {
 
                         const currentPath = window.location.pathname.substring(1);
-             
+                
                         const handleLogin = () => {                     
                           this.props.navigate("/login/?redirection=" + currentPath);
                                        
 
                         }
+
+                        if(currentPath === 'main')
             
-                        return (
+                       { return (
                             <div className='App'>
                                 <div className='login-message'>
                                     <img src={logo} alt="Logo" className="login-logo" />
@@ -860,7 +983,17 @@ class MainScreen extends Component {
                                 </div>
                             </div>
                         );
-                    } 
+                    } else {
+
+                     return (
+                        <div className='App'>
+                         
+
+                        </div>
+                     );
+
+                    }
+                    } */
                     
                     const hasQuestions = this.state.questions && this.state.questions.length > 0;
                     const questionContent = hasQuestions ? this.state.questions[0] : '';
@@ -868,8 +1001,11 @@ class MainScreen extends Component {
                     
                     
                     return (
-                      <div className='App' ref={this.componentRef}>
-                      <Helmet>
+                      <div  className='App'  ref={this.componentRef}>
+                  
+                     <div className={`MainScreenDiv ${this.state.loginModalOpen ? 'app-disabled' : ''}`}>
+                     
+                     <Helmet>
                             <meta property="og:title" content={ questionContent } />
                             <meta property="og:description" content={ description } />
                             <meta property="og:image" content={logo} />
@@ -880,20 +1016,25 @@ class MainScreen extends Component {
                           
                         
                           <div className='MenuButtons'>
-                            <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username' ref={this.usernameRef}>{user.username}</p></div></button>
-                            
+                          {user && (  <button title="User settings" className='UserButton' onClick={this.handleUserCredential}><div><p className='username' ref={this.usernameRef}>{user.username}</p></div></button>)}
+                          {!user && (<div className='guestDiv'><p className='guest'>Guest</p></div>)}  
                             <div className='MenuButtonsSection'>
                                   
-                        <button title="Share" className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
+                       {user && ( <button title="Share" className="BlueButton" id="SharingButton" onClick={this.openSharingModal}>
                             <div className="button-content">
                                 <img className="Share-logo" src={share}  />
                             
                             </div>
-                        </button>
-                            <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
+                        </button>)}
+                        {user && (    <button title="Log out" className='LogoutButton' onClick={this.handleLogout}> <div className="button-content">
                                 <img className="Logout-logo" src={logout_img}  />
                                
-                            </div></button>
+                            </div></button>)}
+                        
+                            {!user && (    <button title="Log in" className='LogoutButton' onClick={this.handleLogin}> <div className="button-content">
+                               
+                               <p>Log in</p>                         
+                            </div></button>)}
                             
                       
 
@@ -980,7 +1121,7 @@ class MainScreen extends Component {
                                   
                                     <form onSubmit={this.handleSubmit} className='QuestionClassForm'>
                                   
-                                    <input
+                                  {!user && (  <input
                                             id="question"
                                             name="question"
                                             className="QuestionClass"
@@ -988,7 +1129,21 @@ class MainScreen extends Component {
                                             value={this.state.value}
                                             onChange={this.handleChange}
                                             ref = {this.questionRef}
+                                            onClick={this.handleLoginModalToggle}
                                         />
+                                    )}
+
+                                    {user && (  <input
+                                            id="question"
+                                            name="question"
+                                            className="QuestionClass"
+                                            placeholder="e.g. What genes are promising targets for prostate cancer?"
+                                            value={this.state.value}
+                                            onChange={this.handleChange}
+                                            ref = {this.questionRef}
+                                          
+                                        />
+                                    )}
 
                                     
                                       
@@ -1212,8 +1367,37 @@ class MainScreen extends Component {
                                 ))}
                             </div>
                         </div>
-                       
                         </div>
+                        {this.state.loginModalOpen && (<>
+                        <div className='LoginModalOverlay'>
+                        </div>
+                        <div className='LoginModal'>
+                          
+                           
+                            <div className="login-form">
+                                <div className='closeDiv'><img className='close-icon' onClick={this.handleLoginModalToggle} src={close}/></div>
+                                <h1>Sign in</h1>
+                                <form className="formClass">
+                                    <input onChange={this.handleUsernameChange} className="formInput" type="text" placeholder="Username" />
+                                    <input onChange={this.handlePasswordChange}  className="formInput" type="password" placeholder="Password" />
+                                    <button onClick={this.formLogin} class="center-button">Log In</button>
+                                </form>
+                                
+                            
+                            <br></br>
+                            <p className='message'>New to VerifAi app? <targe><span onClick={this.formRegister} style={{ color: '#23a1ee', cursor: 'pointer' }}>Sign up</span></targe> to get instant access.</p>
+                        
+                        </div>
+                                
+                         
+                            
+
+                        </div>
+                        
+                        </>
+                    )}
+                        </div>
+                        
                     
                 );
             }}
