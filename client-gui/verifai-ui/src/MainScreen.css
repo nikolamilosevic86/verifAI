@@ -377,17 +377,21 @@ h2{
 .output-section{
     text-align: justify;
     background-color: #f1f1f1;
-    padding: 3.5vh;
+    display: flex;
+    justify-content: center;
     margin-bottom: 2vh;
     
     
 }
+
+
 .output-verification {
     background-color: #fafafa;
     border-radius: 4px;
     padding: 10px;
     margin: 20px;
     max-width: 770px;
+    
   
   }
   
@@ -398,6 +402,8 @@ h2{
     line-height: 3.5vh;
     font-family: 'Montserrat', sans-serif;
     font-weight: 400;
+    width: 80%;
+    margin-top: 2vh;
  
    
   }
@@ -895,6 +901,8 @@ body{
     margin-left: 120vh;
   }
 
+ 
+
 
 
 }
@@ -970,6 +978,10 @@ body{
 
   .OptionButton p{
     visibility: collapse;
+  }
+
+  .output-tokens{
+    font-size: small;
   }
 
 
