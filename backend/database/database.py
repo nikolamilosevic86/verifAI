@@ -67,7 +67,7 @@ class Database:
         await self.sql_database.execute(
             'INSERT INTO user_questions (username, question, question_date) VALUES ($1, $2, $3)', username, question, current_timestamp
         )
-        await self_close()
+        await self.close()
 
  
 

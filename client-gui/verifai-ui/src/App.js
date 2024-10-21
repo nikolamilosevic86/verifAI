@@ -15,7 +15,7 @@ import UserCredential from './UserCredential';
 //  return <MainScreen {...props} sessionId={sessionId} />;
 //}
 
-export const BACKEND = "https://api.verifai-project.com/";
+export const BACKEND = "http://127.0.0.1:5001/"//"https://api.verifai-project.com/";
 
 function App() {
 
