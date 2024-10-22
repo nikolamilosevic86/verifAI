@@ -157,3 +157,4 @@ Werkzeug==3.0.3
 xformers==0.0.26.post1
 yarl==1.9.4
 zstandard==0.19.0
+psycopg2

@@ -2,6 +2,10 @@ import subprocess
 import sys
 import secrets
 import string
+import time
+# Requirement: Install Postgress SQL, e.g. on mac: brew install postgresql
+import psycopg2
+from psycopg2 import sql
 
 
 def run_command(command):
@@ -100,10 +104,79 @@ def main():
     start_services()
     print_status()
 
+
     print("\nServices are now running. You can access them at:")
     print("PostgreSQL: localhost:5432")
     print("OpenSearch: http://localhost:9200")
     print("Qdrant: http://localhost:6333")
+    # Wait for services in dockers to start-up
+    time.sleep(10)
+    print("Creating database")
+    # Establish a connection to the 'postgres' database
+    conn = psycopg2.connect(
+        user="myuser",
+        password="mypassword",
+        host="localhost",
+        database="postgres"
+    )
+
+    # Set autocommit to True because CREATE DATABASE cannot run inside a transaction
+    conn.autocommit = True
+
+    # Create a cursor object
+    cur = conn.cursor()
+
+    try:
+        # Create the database
+        cur.execute(sql.SQL("CREATE DATABASE {}").format(
+            sql.Identifier('verifai_database')
+        ))
+        print("Database verifai_database created successfully")
+        cur.close()
+        conn.close()
+
+        conn = psycopg2.connect(
+            user="myuser",
+            password="mypassword",
+            host="localhost",
+            database="verifai_database"
+        )
+
+        # Set autocommit to True because CREATE DATABASE cannot run inside a transaction
+        conn.autocommit = True
+
+        # Create a cursor object
+        cur = conn.cursor()
+        cur.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+                    name VARCHAR(255),
+                    surname VARCHAR(255),
+                    username VARCHAR(255) PRIMARY KEY,
+                    password VARCHAR(255),
+                    api_token VARCHAR(255),
+                    email VARCHAR(255)
+                );
+
+                CREATE TABLE IF NOT EXISTS user_questions (
+                    username VARCHAR(255),
+                    question TEXT,
+                    question_date TIMESTAMP
+                );
+
+                CREATE TABLE IF NOT EXISTS web_sessions (
+                    id SERIAL PRIMARY KEY,
+                    state JSONB NOT NULL
+                );
+        """)
+    except psycopg2.errors.DuplicateDatabase:
+        print("Database verifai_database already exists")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+    finally:
+        # Close the cursor and the connection
+        cur.close()
+        conn.close()
+
 
     print("OpenSearch security features have been disabled for HTTP access.")
     print("Warning: This configuration is not recommended for production use.")

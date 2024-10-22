@@ -13,6 +13,8 @@ Check the [article about VerifAI project published on TowardsDataScience](https:
 
 ## Installation and start-up
 
+One requirement to run locally is to have installed Postgres SQL. You can install it for example on mac by running `brew install postgresql`.
+
 1. Clone the repository
 2. Run requirements.txt by running `pip install -r backend/requirements.txt`
 3. Download Medline. You can do it by executing `download_medline_data.sh` for core files for the current year and `download_medline_data_update.sh` for Medline current update files.
