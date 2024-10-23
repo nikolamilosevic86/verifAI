@@ -191,6 +191,8 @@ opensearch_port = os.getenv("OPENSEARCH_PORT")
 qdrant_ip = os.getenv("QDRANT_IP")
 qdrant_port = os.getenv("QDRANT_PORT") 
 qdrant_api = os.getenv("QDRANT_API")
+INDEX_NAME_LEXICAL = os.getenv("INDEX_NAME_LEXICAL")
+INDEX_NAME_SEMANTIC = os.getenv("INDEX_NAME_SEMANTIC")
 
 jwt_secret_key =  os.getenv("SECRET_KEY")
 jwt_algorithm =  os.getenv("ALGORITHM")

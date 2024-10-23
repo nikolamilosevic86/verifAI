@@ -72,11 +72,12 @@ services:
       - opensearch_data:/usr/share/opensearch/data
 
   qdrant:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:v1.12.0
     environment:
       - QDRANT__SERVICE__API_KEY={qdrant_api_key}
     ports:
       - "6333:6333"
+      - "6334:6334"
     volumes:
       - qdrant_data:/qdrant/storage
 
