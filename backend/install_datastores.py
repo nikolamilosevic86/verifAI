@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 import secrets
@@ -5,6 +6,7 @@ import string
 import time
 # Requirement: Install Postgress SQL, e.g. on mac: brew install postgresql
 import psycopg2
+from dotenv import load_dotenv
 from psycopg2 import sql
 
 
@@ -33,8 +35,8 @@ def generate_password(length=16):
 
 
 def create_docker_compose_file():
-    opensearch_password = generate_password()
-    print("OpenSearch password:"+opensearch_password)
+    opensearch_password = os.getenv("OPENSEARCH_PASSWORD")#generate_password()
+    qdrant_api_key = os.getenv("QDRANT_API")
     docker_compose_content = f"""
 version: '3.7'
 
@@ -71,6 +73,8 @@ services:
 
   qdrant:
     image: qdrant/qdrant:latest
+    environment:
+      - QDRANT__SERVICE__API_KEY={qdrant_api_key}
     ports:
       - "6333:6333"
     volumes:
@@ -99,6 +103,7 @@ def print_status():
 
 
 def main():
+    load_dotenv()
     check_docker()
     create_docker_compose_file()
     start_services()
