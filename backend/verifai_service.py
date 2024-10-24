@@ -33,6 +33,7 @@ from constants import *
 #from vllm import LLM
 import nltk
 nltk.download('stopwords')
+nltk.download('punkt_tab')
 
 
 # Load environment variables from the .env file

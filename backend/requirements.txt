@@ -43,3 +43,4 @@ peft
 nltk
 asyncpg
 bitsandbytes
+psycopg2
