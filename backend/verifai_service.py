@@ -1,25 +1,26 @@
 from fastapi import FastAPI,HTTPException, Request, Depends
-from fastapi_jwt_auth import AuthJWT
+#from fastapi_jwt_auth import AuthJWT
 from fastapi.responses import StreamingResponse, HTMLResponse
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, validator
 import jwt
+import openai
 from starlette.middleware.cors import CORSMiddleware
-from starlette.responses import RedirectResponse
-from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+#from starlette.responses import RedirectResponse
+#from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
-import torch
+#import torch
 from sentence_transformers import SentenceTransformer
 from transformers import TextStreamer, TextIteratorStreamer, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForCausalLM, BitsAndBytesConfig
 from nltk.corpus import stopwords
 from peft import PeftModel
 
-import time 
+#import time
 import json
-import asyncio
+#import asyncio
 import os, sys
 from dotenv import load_dotenv
 import datetime
@@ -30,6 +31,8 @@ from database.database import Database
 from verification_model.verification import *
 from constants import *
 #from vllm import LLM
+import nltk
+nltk.download('stopwords')
 
 
 # Load environment variables from the .env file
@@ -41,6 +44,11 @@ parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
 sys.path.insert(0, parent_dir_path)
 
+openai_path = os.getenv("OPENAI_PATH")
+openai_key = os.getenv("OPENAI_KEY")
+openai_client = None
+if openai_path!= None and openai_key!=None:
+    openai_client = openai.OpenAI(api_key=openai_key,base_url=openai_path)
 
 
 #-------------------------------------------------Models--------------------------------------------------------------
@@ -48,28 +56,29 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 print("Device = ", device)
 
-
-bnb_config = BitsAndBytesConfig(load_in_4bit=True,
+if openai_client == None:
+    bnb_config = BitsAndBytesConfig(load_in_4bit=True,
                                              bnb_4bit_use_double_quant=True,  # kod našeg fine-tuninga modela ovo je bilo False, što se može videti ovde: https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.1-pqa/blob/main/README.md i zato je zakomentarisano
                                              bnb_4bit_quant_type="fp4",
                                              bnb_4bit_compute_dtype=torch.bfloat16
                                              )
 
-
-#MISTRAL 
-base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
-                                                               torch_dtype=torch.float32,  
+    print("Getting MISTRAL model")
+    #MISTRAL
+    base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
+                                                               torch_dtype=torch.float32,
                                                                trust_remote_code=True,
                                                                quantization_config=bnb_config,
                                                                device_map='auto',
                                                                low_cpu_mem_usage=True,
                                                                )
 
-tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
+    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
 
-model_mistral = PeftModel.from_pretrained(base_model, PEFT_MODEL_ID).to(device)
+    model_mistral = PeftModel.from_pretrained(base_model, PEFT_MODEL_ID).to(device)
 
-model_mistral.eval() # setting the model in evaluation mode
+    model_mistral.eval() # setting the model in evaluation mode
+    print("MISTRAL Model set")
 
 #vllm_model = LLM(model=model_mistral, tensor_parallel_size=4)
 """
@@ -88,6 +97,7 @@ tokenizer.pad_token = tokenizer.eos_token
 model_mistral.eval() # setting the model in evaluation mode
 # END LLAMA 3-----------------------------------------------
 """
+print("Getting verification model")
 verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICATION_MODEL_CARD)
 
 verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
@@ -96,7 +106,7 @@ model = SentenceTransformer(MODEL_CARD) #.to(device)
 
 # stopwords from nltk
 english_stopwords = set(stopwords.words('english'))
-
+print("Verification model set")
 # ------------------------------------------------ App Settings -------------------------------------------
 
 # for permanently user token
@@ -174,12 +184,15 @@ user_db = os.getenv("USER_DB")
 password_db = os.getenv("PASSWORD_DB")
 host_db = os.getenv("HOST_DB")
 
-verifai_ip = os.getenv("VERIFAI_IP")
-verifai_user =  os.getenv("VERIFAI_USER")
-verifai_pass = os.getenv("VERIFAI_PASSWORD")
-port = os.getenv("VERIFAI_PORT")
+opensearch_ip = os.getenv("OPENSEARCH_IP")
+opensearch_user =  os.getenv("OPENSEARCH_USER")
+opensearch_pass = os.getenv("OPENSEARCH_PASSWORD")
+opensearch_port = os.getenv("OPENSEARCH_PORT")
+qdrant_ip = os.getenv("QDRANT_IP")
 qdrant_port = os.getenv("QDRANT_PORT") 
 qdrant_api = os.getenv("QDRANT_API")
+INDEX_NAME_LEXICAL = os.getenv("INDEX_NAME_LEXICAL")
+INDEX_NAME_SEMANTIC = os.getenv("INDEX_NAME_SEMANTIC")
 
 jwt_secret_key =  os.getenv("SECRET_KEY")
 jwt_algorithm =  os.getenv("ALGORITHM")
@@ -188,13 +201,13 @@ jwt_algorithm =  os.getenv("ALGORITHM")
 # Login Database Management 
 users_db = Database(dbname=db_name, user=user_db, password=password_db, host=host_db)
 
-auth = (verifai_user,verifai_pass)
+auth = (opensearch_user,opensearch_pass)
 
 # Create the client with SSL/TLS and hostname verification disabled.
 client_lexical = OpenSearch(
-    hosts = [{'host': verifai_ip, 'port': port}],
+    hosts = [{'host': opensearch_ip, 'port': opensearch_port}],
     http_auth = auth,
-    use_ssl = True,
+    use_ssl = True, #TODO: Maybe needs to be configurable as well?
     verify_certs = False,
     ssl_assert_hostname = False,
     ssl_show_warn = False,
@@ -202,7 +215,7 @@ client_lexical = OpenSearch(
     max_retries=10
 )
 
-url = f"https://{verifai_ip}:{qdrant_port}"
+url = f"https://{qdrant_ip}:{qdrant_port}"
 
 client_semantic = QdrantClient(url=url, api_key=qdrant_api, timeout=TIMEOUT, https=True,**{'verify': False})
 
@@ -243,7 +256,7 @@ async def get_current_user(request: Request):
         if token_type.lower() != "bearer":
             raise HTTPException(status_code=403, detail="Invalid token type")
 
-        user = await users_db.get_user_by_api_token(token)
+        user = "nikola"#await users_db.get_user_by_api_token(token)
         if not user:
             raise HTTPException(status_code=403, detail="Invalid API token")
         return user
@@ -275,7 +288,7 @@ async def register_user(user: User):
     
     # Hash the password
     hashed_password = hash_password(user.password)
-    api_token = jwt.encode({"username": user.username}, jwt_secret_key, algorithm=jwt_algorithm).decode('utf-8')
+    api_token = jwt.encode({"username": user.username}, jwt_secret_key, algorithm=jwt_algorithm)#.decode('utf-8')
     # Insert the user into the database
     await users_db.insert_user(user.name, user.surname, user.username, user.email, hashed_password, api_token)
    
@@ -337,15 +350,34 @@ async def answer_generation(query: Query, current_user: dict = Depends(get_curre
                                                 semantic_parameter=query.semantic_par, limit=query.limit,
                                                 pubdate_filter_lte=query.filter_date_lte, 
                                                 pubdate_filter_gte=query.filter_date_gte,stopwords_preprocessing=query.stop_word)
-        
-       
-        
+
         return documents
     except Exception as e:
         #Handle a specific type of exception
         print(str(e))
         raise HTTPException(status_code=500, detail="{}".format(str(e)))
 
+def openai_generate(openai_input,temperature):
+    instruction = ("Provide an answer with references based on the provided abstracts only. Reference answers in square brackets with given abstract ids from the abstract that was used for that part of the answer. Try to reference each sentence")
+
+    messages = [
+        {"role": "system", "content": instruction},
+        {"role": "user", "content": openai_input}
+    ]
+
+    stream = openai_client.chat.completions.create(
+        model="GPT4o",
+        messages=messages,
+        temperature=temperature,
+        stream=True
+    )
+
+
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            yield f"{chunk.choices[0].delta.content}"
+        elif chunk.choices[0].finish_reason is not None:
+            yield f"\n\n"
 
 
 @app.post("/stream_tokens")
@@ -357,7 +389,6 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
     print("Temperature = ", temperature)
     documents_found = data['document_found']
     try:
-
         documents_string = convert_documents(documents_found)
         
         mistral_input = f"{search_query}\nAbstracts:\n\n" + documents_string
@@ -365,8 +396,11 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
         print(mistral_input)
         print("")
         print("")
-        
-        return StreamingResponse(generate(mistral_input,temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
+        if openai_client == None:
+            return StreamingResponse(generate(mistral_input,temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
+        else:
+            openai_input =  f"Question: {search_query}\nAbstracts:\n\n" + documents_string
+            return StreamingResponse(openai_generate(openai_input,temperature),media_type='text/event-stream')
     except Exception as e:
         raise HTTPException(status_code=500, detail="{}".format(str(e)))
 

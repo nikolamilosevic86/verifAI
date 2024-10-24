@@ -18,8 +18,8 @@ PEFT_MODEL_ID = 'BojanaBas/Mistral-7B-Instruct-v0.2-pqa-10'
 VERIFICATION_MODEL_CARD = "MilosKosRad/TextualEntailment_DeBERTa_preprocessedSciFACT"
 
 # Indexing
-INDEX_NAME_LEXICAL = 'medline-faiss-hnsw-lexical-pmid'
-INDEX_NAME_SEMANTIC = "medline-faiss-hnsw"
+#INDEX_NAME_LEXICAL = 'medline-faiss-hnsw-lexical-pmid'
+#INDEX_NAME_SEMANTIC = "medline-faiss-hnsw"
 
 TIMEOUT = 120
 # Paralle Request
