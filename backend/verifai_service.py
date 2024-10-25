@@ -9,6 +9,7 @@ from starlette.middleware.cors import CORSMiddleware
 #from starlette.responses import RedirectResponse
 #from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import RedirectResponse, FileResponse
 
 from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
@@ -174,6 +175,9 @@ class User(BaseModel):
 class UserQuestion(BaseModel):
     username: str = ""
     question: str = ""
+
+class Download(BaseModel):
+    file:str
 
 
 
@@ -473,4 +477,17 @@ async def handle_get_session(session_id: str): #current_user: dict = Depends(get
         }
     else:
         raise HTTPException(status_code=404, detail="Session not found")
+
+
+
+
+
+@app.post("/download")
+async def download(file_request: Download,current_user: dict = Depends(get_current_user)):
+    file = file_request.file
+    file_path = file
+    try:
+        return FileResponse(file_path, media_type='application/octet-stream', filename=file)
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="File not found")
 
