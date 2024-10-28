@@ -1,3 +1,4 @@
+import dateutil
 import torch
 from datetime import datetime
 from threading import Thread
@@ -54,23 +55,35 @@ def extract_pubmed_references(text):
     return list(pattern.finditer(text))
 
 
-def parse_date(date_string:str, format_strings:datetime = ["%Y-%m-%d", "%Y-%m", "%Y"]):
+def parse_date(date_string: str, format_strings: list = ["%Y-%m-%d", "%Y-%m", "%Y"]):
     """
+    Parse a date string into a datetime object.
+
     param:
-    date_string: string which represent a date
-    format_strings: the type of date, USA date, Eurepean date,..
+    date_string: string which represents a date
+    format_strings: list of date formats to try (in order)
 
     return:
-    it return an object of type datatime which represent the date
+    A datetime object representing the parsed date
 
+    raises:
+    ValueError if the date string cannot be parsed
     """
+    # First, try to parse using dateutil for ISO 8601 and other complex formats
+    try:
+        return dateutil.parser.isoparse(date_string)
+    except ValueError:
+        pass
+
+    # If dateutil fails, try the provided format strings
     for format_str in format_strings:
         try:
             return datetime.strptime(date_string, format_str)
         except ValueError:
             pass
-    # If none of the formats match, return None or handle the error as needed
-    raise ValueError("Incorrect form of date")
+
+    # If none of the formats match, raise a ValueError
+    raise ValueError(f"Unable to parse date string: {date_string}")
 
 
 def hash_password(password: str) -> str:

@@ -45,9 +45,12 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
 
 sys.path.insert(0, parent_dir_path)
-
+def str2bool(v):
+  return v.lower() in ("yes", "true", "t", "1")
 openai_path = os.getenv("OPENAI_PATH")
 openai_key = os.getenv("OPENAI_KEY")
+opensearch_use_ssl = str2bool(os.getenv("OPENSEARCH_USE_SSL"))
+qdrant_use_ssl = str2bool(os.getenv("QDRANT_USE_SSL"))
 openai_client = None
 if openai_path!= None and openai_key!=None:
     openai_client = openai.OpenAI(api_key=openai_key,base_url=openai_path)
@@ -212,17 +215,19 @@ auth = (opensearch_user,opensearch_pass)
 client_lexical = OpenSearch(
     hosts = [{'host': opensearch_ip, 'port': opensearch_port}],
     http_auth = auth,
-    use_ssl = True, #TODO: Maybe needs to be configurable as well?
+    use_ssl = opensearch_use_ssl, #TODO: Maybe needs to be configurable as well?
     verify_certs = False,
     ssl_assert_hostname = False,
     ssl_show_warn = False,
     timeout=TIMEOUT,
     max_retries=10
 )
+if qdrant_use_ssl:
+    url = f"https://{qdrant_ip}:{qdrant_port}"
+else:
+    url = f"http://{qdrant_ip}:{qdrant_port}"
 
-url = f"https://{qdrant_ip}:{qdrant_port}"
-
-client_semantic = QdrantClient(url=url, api_key=qdrant_api, timeout=TIMEOUT, https=True,**{'verify': False})
+client_semantic = QdrantClient(url=url, api_key=qdrant_api, timeout=TIMEOUT, https=qdrant_use_ssl,**{'verify': False})
 
 print("Connection opened...")
 

@@ -1,8 +1,11 @@
 from concurrent.futures import ThreadPoolExecutor
+from datetime import timezone
+
 from nltk.tokenize import word_tokenize
 from datetime import datetime
 from qdrant_client.http import models
 from utils import parse_date
+import dateutil
 
 class QueryProcessor:
     def __init__(self, index_lexical:str = "medline-faiss-hnsw-lexical-pmid", index_name_semantic:str ="medline-faiss-hnsw",
@@ -30,7 +33,10 @@ class QueryProcessor:
         
         # Iterate through the set data
         for _, value in retrived_documents.items():
-            pmid = value['pmid']
+            if value['pmid'] != "":
+                pmid = value['pmid']
+            else:
+                pmid = value['location']
             score = value['score']
             
             # Check if pmid already exists in the dictionary
@@ -76,11 +82,17 @@ class QueryProcessor:
         retrieved_documents = {}
         max_score = results['hits']['max_score']
         for hit in results["hits"]["hits"]:
-            
-            pmid = hit["_source"]["pmid"]
+            location = ""
+            pmid = ""
+            if 'pmid' not in hit["_source"].keys():
+                location = hit["_source"]["location"]
+            else:
+                pmid = hit["_source"]["pmid"]
             score = hit["_score"] / max_score
-            
-            retrieved_documents[pmid] = score
+            if pmid != "":
+                retrieved_documents[pmid] = score
+            else:
+                retrieved_documents[location] = score
             
         return retrieved_documents #adjust the return 
 
@@ -101,13 +113,18 @@ class QueryProcessor:
         retrived_documents = {}
         max_score = None
         for i,document in enumerate(results):
-            
-            pmid = document.payload['pmid']
+            location = ""
+            if 'pmid' not in document.payload.keys():
+                location = document.payload['metadata']['location']
+                pmid = ""
+            else:
+                pmid = document.payload['pmid']
+                location = ""
             score = document.score
             if i == 0:
                 # first score is the max
                 max_score = score
-            retrived_documents[document.id] = { 'pmid': pmid, 'score': round(score / max_score, 5) } 
+            retrived_documents[document.id] = { 'pmid': pmid,'location':location, 'score': round(score / max_score, 5) }
 
         retrived_documents = self.reorder_pmid(retrived_documents)
         
@@ -187,23 +204,39 @@ class QueryProcessor:
         for i,element in enumerate(results):
             
             pmid,_ = element
-            query = {
-                    "query": {
-                        "term": {
-                        "pmid": int(pmid)
+            if pmid == '':
+                continue
+            if isinstance(pmid, int):
+                query = {
+                        "query": {
+                            "term": {
+                            "pmid": int(pmid)
+                            }
                         }
                     }
-                }
+            else:
+                location = pmid
+                pmid = ""
+                query = {
+                        "query": {
+                            "match_phrase": {
+                            "location": location
+                            }
+                        }
+                    }
 
             results = self.lexical_client.search(index=self.index_lexical_name, body=query) 
             full_text = results['hits']['hits'][0]["_source"]['full_text']
             date_string = results['hits']['hits'][0]["_source"]['pubdate']
+            location = results['hits']['hits'][0]["_source"]['location']
             
             date = parse_date(date_string)
+            date = date.replace(tzinfo=None)
             
             if date_gte <= date and date <= date_lte:
                 retrieved_documents.append({
                     "pmid": pmid,
+                    "location": location,
                     "text": full_text,
                     "pubdate": date
                     })

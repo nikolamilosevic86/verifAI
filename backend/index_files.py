@@ -334,6 +334,9 @@ def main_indexing(mypath):
             print(f"Document indexed successfully "+file)
         except Exception as e:
             print(f"Error indexing document: {str(e)}")
+    open_search_client.indices.refresh(index=INDEX_NAME_LEXICAL)
+    count = open_search_client.count(index=INDEX_NAME_LEXICAL)
+    print(f"Count of documents indexed in Open Search: {count['count']}")
 
 
 
