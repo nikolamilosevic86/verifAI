@@ -82,7 +82,7 @@ class MainScreen extends Component {
         this.shareOnLinkedIn = this.shareOnLinkedIn.bind(this);
         this.shareOnFacebook = this.shareOnFacebook.bind(this);
         this.shareOnTwitter = this.shareOnTwitter.bind(this);
-        
+        this.downloadDocument = this.downloadDocument.bind(this);
         this.openSharingModal = this.openSharingModal.bind(this);
         this.copyLink = this.copyLink.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -416,6 +416,7 @@ class MainScreen extends Component {
             }
             let token = decoder.decode(result.value, {stream: true});
             
+          
             var no_space_token = token.trim()
             const regex = /\(?PUBMED:(\d+)\)?/g;
             if (regex.test(no_space_token)){
@@ -574,6 +575,25 @@ class MainScreen extends Component {
 
     }
 
+    
+    downloadDocument(doc){
+
+      
+        fetch(BACKEND + "download", {
+            method: "POST",
+            headers: {
+                'Authorization': "Bearer " + this.context.user.token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({file: doc.location})
+        }).then(async response => {
+            alert("File downloading");
+        }).catch(
+            error => alert("Error downloading")
+        )
+        
+    }
+
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -616,8 +636,8 @@ class MainScreen extends Component {
                     let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
                                      (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                     (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
-                    
+                                      (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                      
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
                         tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
@@ -639,7 +659,11 @@ class MainScreen extends Component {
             
                 let result = inputString.replace(MainScreen.regex, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct, replaceWithLink);
+                
+            
                 result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
+                 
+               
                 result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
             
@@ -1306,22 +1330,36 @@ class MainScreen extends Component {
                                                 const doc = q.document_found[i];
                                                 
                                                 try {
+                                                
+                                                
                                                 const pmid = doc.pmid;
-                                             
-
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
                                                 const truncatedContent = content.length > 100 ? content.substring(0, 28) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
                                                 const docUrl = baseUrl + pmid;
                                                 
+                                                
                                                 return (
-                                                    <a href={docUrl} target="_blank" rel="noopener noreferrer" key={i} className="no-underline-link">
+                                                    <div>
+                                                        {doc.pmid === '' && (
+                                                    <a href="#"  onClick={() => this.downloadDocument(doc)} key={i} className="no-underline-link">
                                                         <div className="document-square">
                                                             <h3 className="document-title">{truncatedTitle}</h3>
                                                             <p className="document-content">{truncatedContent}</p>
                                                         </div>
                                                     </a>
+                                                    )} : {doc.pmid !== '' && (
+                                                        <a href="{docUrl}" key={i} target="_blank" rel="noopener noreferrer" className="no-underline-link">
+                                                        <div className="document-square">
+                                                            <h3 className="document-title">{truncatedTitle}</h3>
+                                                            <p className="document-content">{truncatedContent}</p>
+                                                        </div>
+                                                    </a>
+
+                                                    )}
+
+                                                    </div>
                                                 );
                                             } catch(error)
                                             {
