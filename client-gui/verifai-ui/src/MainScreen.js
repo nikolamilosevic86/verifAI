@@ -367,11 +367,13 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
+                           
 
         }).catch(error => alert("An error occured, please try again."));
 
         
         const document_found = await document_response.json()
+        
         console.log(document_found)
         this.setState(prevState => ({
             questions: prevState.questions.map((q, i) => (
@@ -416,19 +418,24 @@ class MainScreen extends Component {
             }
             let token = decoder.decode(result.value, {stream: true});
             
-          
+           
             var no_space_token = token.trim()
+            
+          
+            
             const regex = /\(?PUBMED:(\d+)\)?/g;
+
             if (regex.test(no_space_token)){
                 
                 const regex = /\(?PUBMED:(\d+)\)?/g; 
                 var new_token = token;
-            
+             
                 let match;
                 while ((match = regex.exec(no_space_token)) !== null) {
                    
                     const number = match[1];
                     const matchedPart = match[0];
+                   
                     const linkedPart = `<a href="${baseUrl + number}" target="_blank">${matchedPart}</a>`;
                     new_token = new_token.replace(matchedPart, linkedPart);
                 }
@@ -644,6 +651,7 @@ class MainScreen extends Component {
                     }
                    
                     text += "<br>" + tooltipText;
+
                     
                 }
                 return { text: text, color: color };
@@ -660,7 +668,7 @@ class MainScreen extends Component {
                 let result = inputString.replace(MainScreen.regex, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct, replaceWithLink);
                 
-            
+               
                 result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
                  
                
@@ -708,7 +716,7 @@ class MainScreen extends Component {
                     const output = this.state.questions[this.state.questions.length - 1].result;
                     var final_output = `<span class="tooltip" style="color: gray;">${output}<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
 
-                    
+                   
                     
                     this.setState(prevState => ({
                         questions: prevState.questions.map((q, i) => (
@@ -1395,6 +1403,8 @@ class MainScreen extends Component {
                                     )}
                                   
                             
+                               
+                               
                                 <div className="output-section">
                                     <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
                                 </div>

@@ -1,30 +1,69 @@
 .login-container {
     display: flex;
-    flex-direction: column; /* Stack children vertically */
+    flex-direction: row; /* Stack children vertically */
     justify-content: center; /* Center vertically */
     align-items: center; /* Center horizontally */
     height: 100vh; /* Full viewport height to center everything in the middle of the page */
     background-color: #f8f8f8; /* Background color, optional */
-}
-
-.login-logo {
-    width: auto; /* Adjust the width as necessary */
-    height: 25vh;
-    border-radius: 50%;
-    box-shadow: 0 0.5vh 1vh rgba(0, 0, 0, 0.1);
-
+    
     
 }
 
+.login-subcontainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+    width: 95%;
+}
+.login-logo {
+    width: auto; /* Adjust the width as necessary */
+    height: 60vh;
+   
+}
+
+.login-text{
+    margin-left: -6%;
+    margin-top: -20vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+    
+}
+
+.login-text-div{
+    margin-top: -20vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+.login-verifai{
+   width: 80%;
+   text-align: center;
+    
+    font-family: 'Montserrat', sans-serif;
+    font-size: x-large;
+}
+
+.login-verifai-subtext{
+  
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+}
+
 .login-form {
+    
     background-color: white;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    width: 15%; /* Adjust width as necessary */
+   /* Adjust width as necessary */
     display: flex;
     flex-direction: column; /* Ensures form elements stack vertically */
     align-items: center; /* Aligns form elements to the center horizontally */
-    padding: 2.5%;
+    padding: 10%;
     margin-top: 2%;
     
 }
@@ -62,6 +101,9 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    
+    
+    
 
 }
 .login-form h2, input {
@@ -166,6 +208,11 @@ button::after {
     
 }
 
+.websiteLink {
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+    text-decoration: none;
+}
 .username:hover{
     background: white; 
     -webkit-background-clip: text; 
