@@ -137,5 +137,8 @@ def convert_documents(documents:list) -> str:
         return ""
     output_string = ""
     for document in documents:
-        output_string += f"abstract_id: PUBMED:{document['pmid']}\n{document['text']}\n\n"
+        if document['pmid']!="":
+            output_string += f"abstract_id: PUBMED:{document['pmid']}\n{document['text']}\n\n"
+        else:
+            output_string += f"abstract_id: FILE:{document['location']}\n{document['text']}\n\n"
     return output_string
