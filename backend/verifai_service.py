@@ -490,7 +490,7 @@ async def handle_get_session(session_id: str): #current_user: dict = Depends(get
 @app.post("/download")
 async def download(file_request: Download,current_user: dict = Depends(get_current_user)):
     file = file_request.file
-    file_path = file
+    file_path = f"{file}"
     try:
         return FileResponse(file_path, media_type='application/octet-stream', filename=file)
     except FileNotFoundError:
