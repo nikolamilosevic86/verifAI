@@ -54,6 +54,20 @@ def extract_pubmed_references(text):
     pattern = re.compile(regular_expression)
     return list(pattern.finditer(text))
 
+def extract_file_references(text):
+    """
+    Extract references from the text leading to files with a set of extensions: .pdf,.docx,.pptx,.txt,.md.
+
+    param:
+    text: The input text to extract references from.
+
+    return:
+    A list of matches containing the PubMed references.
+    """
+    regular_expression = "FILE:[\w\-. \\/]+\.(pdf|docx|pptx|txt|md)"
+    pattern = re.compile(regular_expression)
+    return list(pattern.finditer(text))
+
 
 def parse_date(date_string: str, format_strings: list = ["%Y-%m-%d", "%Y-%m", "%Y"]):
     """

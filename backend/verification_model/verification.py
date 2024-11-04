@@ -3,12 +3,13 @@ import torch
 from nltk.tokenize import sent_tokenize
 import time
 import numpy as np
-from constants import *
+from backend.constants import *
 import numpy as np
 import re
 import nltk
 from nltk.tokenize import sent_tokenize
-from utils import calculate_similarity, clean_text, extract_pubmed_references
+from backend.utils import calculate_similarity, clean_text, extract_pubmed_references,extract_file_references
+
 
 nltk.download('punkt')
 
@@ -114,6 +115,7 @@ def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) 
     text = clean_text(text)
     sentences = sent_tokenize(text)
     matches = extract_pubmed_references(text)
+    matches = matches + extract_file_references(text)
 
     if not matches:
         return []
@@ -122,6 +124,7 @@ def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) 
 
     for sentence in sentences:
         matches = extract_pubmed_references(sentence)
+        matches = matches + extract_file_references(sentence)
 
         if not matches:
             if results and results[-1][0] == NO_REFERENCE_NUMBER:
@@ -130,14 +133,17 @@ def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) 
                 results.append([-1, sentence])
         else:
             for match in matches:
-                pubmed_number = re.sub(r'\D', '', match.group(0))
+                if "FILE:" in match.group(0):
+                    reference = match.group(0).replace("FILE:", "")
+                else:
+                    reference = re.sub(r'\D', '', match.group(0))
                 
                 # if len the result is less then a small value it means that there are edge case that leads to a wrong split so we merge with the last one
                 # the wrong splits are generate by the tokenizer of nltk for edge cases
                 if results and len(results[-1][1]) < 4 and results[-1][0] == NO_REFERENCE_NUMBER:
-                    results[-1] = [pubmed_number, results[-1][1] + sentence]
+                    results[-1] = [reference, results[-1][1] + sentence]
                 else:
-                    results.append([pubmed_number, sentence])
+                    results.append([reference, sentence])
 
     return correct_splits(results, documents, sentence_model)
 
@@ -184,8 +190,11 @@ def converting_document_for_verification(documents:list) -> dict:
         return {}
 
     documents_found = {}
-    for document in documents:   
-        documents_found[document["pmid"]] = {"text": document["text"]}
+    for document in documents:
+        if document["pmid"] != "":
+            documents_found[document["pmid"]] = {"text": document["text"]}
+        else:
+            documents_found[document["location"]] = {"text": document["text"]}
     
     return documents_found
 
