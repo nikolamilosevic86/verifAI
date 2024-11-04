@@ -368,7 +368,7 @@ async def answer_generation(query: Query, current_user: dict = Depends(get_curre
         raise HTTPException(status_code=500, detail="{}".format(str(e)))
 
 def openai_generate(openai_input,temperature):
-    instruction = ("Provide an answer with references based on the provided abstracts only. Reference answers in square brackets with given abstract ids from the abstract that was used for that part of the answer. Try to reference each sentence")
+    instruction = ("Provide an answer with references based on the provided abstracts only. Reference answers in square brackets with given abstract ids or file paths from the abstract that was used for that part of the answer. Do not try to reference page or paragraph. Try to reference each sentence")
 
     messages = [
         {"role": "system", "content": instruction},
