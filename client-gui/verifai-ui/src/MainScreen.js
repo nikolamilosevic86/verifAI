@@ -37,6 +37,12 @@ class MainScreen extends Component {
     static regex_square_brackets = /\(PUBMED:(\d+)\)/g;
     static regex_punct_2 = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_punct_3 = /^\(PUBMED:\d+\)[\.\;\,]?$/g;
+
+    static file_regex = /FILE:\d+/g;
+    static file_regex_punct = /^\(FILE:\d+\)([\.\;\,])?$|^FILE:\d+\)$/g;
+    static file_regex_square_brackets = /\(FILE:(\d+)\)/g;
+    static file_regex_punct_2 = /^\(FILE:\d+\)([\.\;\,])?$|^FILE:\d+\)$/g;
+    static file_regex_punct_3 = /^\(FILE:\d+\)[\.\;\,]?$/g;
  
    
     constructor(props) {
@@ -421,10 +427,12 @@ class MainScreen extends Component {
            
             var no_space_token = token.trim()
             
-          
             
             const regex = /\(?PUBMED:(\d+)\)?/g;
+            const file_regex = /\(?FILE:(\d+)\)?/g;
+            
 
+          
             if (regex.test(no_space_token)){
                 
                 const regex = /\(?PUBMED:(\d+)\)?/g; 
@@ -443,6 +451,27 @@ class MainScreen extends Component {
                 token = new_token;
               
             }
+
+            if (file_regex.test(no_space_token)){
+                
+                const file_regex = /\(?FILE:(\d+)\)?/g; 
+                var new_token = token;
+             
+                let match;
+                while ((match = file_regex.exec(no_space_token)) !== null) {
+                   
+                    const number = match[1];
+                    const matchedPart = match[0];
+                   
+                    const linkedPart = `<a href="${baseUrl + number}" target="_blank">${matchedPart}</a>`;
+                    new_token = new_token.replace(matchedPart, linkedPart);
+                }
+            
+                token = new_token;
+              
+            }
+            
+         
            
             this.setOutput(token);
             await reader.read().then(processResult);
@@ -617,13 +646,14 @@ class MainScreen extends Component {
         .then(async response => {
 
             function tooltipToWrite(listResult) {
+                
                     
                 let text = "";
                 let color = "";
                 for (let [pmid, result] of Object.entries(listResult)) {
                     
                     let label = result['label']
-
+                  
                     if (color === "") {
                         color = (label === "SUPPORT") ? 'green' :
                                 (label === "NO REFERENCE") ? 'gray' :
@@ -641,9 +671,12 @@ class MainScreen extends Component {
                 
 
                     let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                                    (label === "SUPPORT" && pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${result.location}</a> is <strong>SUPPORT</strong>${ballHtml}` :
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
                                      (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                      (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                     (label === "NO_EVIDENCE" && pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${result.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                      (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${result.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
                                       
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
@@ -660,11 +693,13 @@ class MainScreen extends Component {
 
             
             function replacePubMedLinks(inputString) {
+                
                 const replaceWithLink = (match) => {
+                   
                     const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
-            
+                
                 let result = inputString.replace(MainScreen.regex, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct, replaceWithLink);
                 
@@ -682,6 +717,7 @@ class MainScreen extends Component {
             if (this.state.stream) {
 
                 
+            
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
               
@@ -701,14 +737,18 @@ class MainScreen extends Component {
                 
                 // Any other operations if result.done is not true
                 
+               
                 let claim_string = await decoderVerification.decode(result.value, {stream: true});
-                
+               
                 //console.log("Arriva = ", claim_string)
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
                 console.log("Result = ",claim_dict)
                 console.log(typeof claim_dict);
+              
                 
                 if (Object.keys(claim_dict).length === 0) {
+
+                 
                     const ballHtml = ' <span class="gray-ball"></span>';
                     var color =  `<span class="tooltip" style="color: gray;">$1<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
                     
@@ -727,7 +767,8 @@ class MainScreen extends Component {
                     return;
                 }
                 
-                
+               
+                alert(claim_string);
 
                 const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
 
