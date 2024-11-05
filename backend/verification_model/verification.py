@@ -3,7 +3,7 @@ import torch
 from nltk.tokenize import sent_tokenize
 import time
 import numpy as np
-from backend.constants import *
+from constants import *
 import numpy as np
 import re
 import nltk
