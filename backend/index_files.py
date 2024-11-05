@@ -216,6 +216,8 @@ def main_indexing(mypath):
         ),
         shard_number=4
     )
+
+
     qdrant = Qdrant(qdrant_client, INDEX_NAME_SEMANTIC, hf)
 
     print("Qdrant Response = ", response)

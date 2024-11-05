@@ -3,7 +3,7 @@ import torch
 from nltk.tokenize import sent_tokenize
 import time
 import numpy as np
-from backend.constants import *
+from constants import *
 import numpy as np
 import re
 import nltk
@@ -220,12 +220,28 @@ def find_closest_sentence(claim: str, abstract: str, sentence_model) -> str:
             closest_sentence = sentence
     return closest_sentence
 
+def find_closest_sentences(claim: str, abstract: str, sentence_model,n:int) -> list[str]:
+    """
+    Finds to the top n similar sentences in the abstarct:
+    param:
+        claim: is the sentence to use
+        abstract: is the abstract where to find the closest sentence
+        sentence_model: the model used to encode the sentences
+        n: number of similar sentences to find
+    return:
+        the closest sentences in the abstract
+    """
+    abstract_sentence = sent_tokenize(abstract)
+    claim_vector = sentence_model.encode(claim)
+    dot_product = np.array([np.dot(claim_vector,sentence_model.encode(sentence)) for sentence in abstract_sentence])
+    top_n_indices = np.argsort(dot_product)[-n:]
+    return [abstract_sentence[i] for i in top_n_indices]
 
 
 
 def verification_claim(claims: list, abstracts: dict, verification_model, verification_tokenizer, sentence_model):
     if claims == []:
-        yield  {}
+        yield {}
     
     for element in claims:
         
@@ -240,9 +256,11 @@ def verification_claim(claims: list, abstracts: dict, verification_model, verifi
                 title = abstracts[pmid]["text"].split("\n\n")[0] 
                 abstract = ' '.join(abstracts[pmid]["text"].split("\n\n")[1:])
                 results['result'][pmid]['title'] = title
+
+                relevant_sentences = ". ".join(find_closest_sentences(claim, abstracts[pmid]["text"], sentence_model, 10))
                 
                 # Inference
-                model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + abstracts[pmid]["text"] + verification_tokenizer.sep_token
+                model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + relevant_sentences + verification_tokenizer.sep_token
                 inputs = verification_tokenizer(model_instruction, return_tensors="pt")
                 with torch.no_grad(): 
                     outputs = verification_model(**inputs)
