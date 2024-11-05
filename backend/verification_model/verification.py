@@ -8,7 +8,7 @@ import numpy as np
 import re
 import nltk
 from nltk.tokenize import sent_tokenize
-from backend.utils import calculate_similarity, clean_text, extract_pubmed_references,extract_file_references
+from utils import calculate_similarity, clean_text, extract_pubmed_references,extract_file_references
 
 
 nltk.download('punkt')
