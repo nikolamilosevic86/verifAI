@@ -620,7 +620,7 @@ class MainScreen extends Component {
                     
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
-                        tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
+                        tooltipText += `<br>Closest Sentence in the abstract: ${closest_sentence}`
                     }
                    
                     text += "<br>" + tooltipText;
