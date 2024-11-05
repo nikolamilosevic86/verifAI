@@ -49,6 +49,7 @@ def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
 openai_path = os.getenv("OPENAI_PATH")
 openai_key = os.getenv("OPENAI_KEY")
+deployment_model = os.getenv("DEPLOYMENT_MODEL")
 opensearch_use_ssl = str2bool(os.getenv("OPENSEARCH_USE_SSL"))
 qdrant_use_ssl = str2bool(os.getenv("QDRANT_USE_SSL"))
 openai_client = None
@@ -57,7 +58,14 @@ if openai_path!= None and openai_key!=None:
 
 
 #-------------------------------------------------Models--------------------------------------------------------------
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+# Check which device is available
+device = "cpu"
+if torch.cuda.is_available():
+    device = torch.device("cuda")
+elif torch.mps.is_available():
+    device = torch.device("mps")
+
+
 
 print("Device = ", device)
 
@@ -376,7 +384,7 @@ def openai_generate(openai_input,temperature):
     ]
 
     stream = openai_client.chat.completions.create(
-        model="GPT4o",
+        model=deployment_model,
         messages=messages,
         temperature=temperature,
         stream=True

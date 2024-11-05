@@ -84,7 +84,7 @@ class QueryProcessor:
         for hit in results["hits"]["hits"]:
             location = ""
             pmid = ""
-            if 'pmid' not in hit["_source"].keys():
+            if hit["_source"]['pmid'] == "":
                 location = hit["_source"]["location"]
             else:
                 pmid = hit["_source"]["pmid"]
