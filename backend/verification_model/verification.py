@@ -254,7 +254,7 @@ def verification_claim(claims: list, abstracts: dict, verification_model, verifi
 
                 # Adding the title as information to sent, the title is divided for each document by \n\n
                 title = abstracts[pmid]["text"].split("\n\n")[0] 
-                abstract = ' '.join(abstracts[pmid]["text"].split("\n\n")[1:])
+                abstract = abstracts[pmid]["text"] # This will contain both title and abstract
                 results['result'][pmid]['title'] = title
 
                 relevant_sentences = ". ".join(find_closest_sentences(claim, abstracts[pmid]["text"], sentence_model, 10))
