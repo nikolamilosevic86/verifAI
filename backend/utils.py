@@ -64,7 +64,7 @@ def extract_file_references(text):
     return:
     A list of matches containing the PubMed references.
     """
-    regular_expression = "FILE:[\w\-. \\/]+\.(pdf|docx|pptx|txt|md)"
+    regular_expression = r"FILE:[\w\-. \\/]+\.(pdf|docx|pptx|txt|md)"
     pattern = re.compile(regular_expression)
     return list(pattern.finditer(text))
 
