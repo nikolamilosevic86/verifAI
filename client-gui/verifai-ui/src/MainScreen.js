@@ -976,6 +976,38 @@ class MainScreen extends Component {
         this.sharingModal = node;
     }
 
+    handleDownload = ({ file }) => {
+    console.log("Downloading file:", file);
+    fetch(`${BACKEND}download`, {
+        method: 'POST',
+        headers: {
+            'Authorization': "Bearer " + this.context.user.token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ file: file })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', file.split('/').pop()); // Use the last part of the URL as the filename
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Error downloading file:', error);
+        alert('Error downloading file. Please try again.');
+    });
+};
+
   
         
       
@@ -1372,6 +1404,7 @@ class MainScreen extends Component {
                                     <h2>Sources:</h2>
                                         <div className="document-section">
                                         {q.document_found && Object.keys(q.document_found)
+<<<<<<< HEAD
                                             .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 5)
                                             .map((i) => {
                                                 const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -1381,10 +1414,21 @@ class MainScreen extends Component {
                                                 
                                                 
                                                 const pmid = doc.pmid;
+=======
+                                        .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 5)
+                                        .map((i) => {
+                                            const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+                                            const doc = q.document_found[i];
+
+                                            try {
+                                                const pmid = doc.pmid;
+                                                const location = doc.location;
+>>>>>>> 5e9b802344eeb5fb5713dd734aab72dd2ebc4f64
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
-                                                const truncatedContent = content.length > 100 ? content.substring(0, 28) + '...' : content;
+                                                const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
+<<<<<<< HEAD
                                                 const docUrl = baseUrl + pmid;
                                                 
                                                 
@@ -1407,16 +1451,26 @@ class MainScreen extends Component {
 
                                                     )}
 
+=======
+                                                var docUrl = pmid ? baseUrl + pmid : location;
+
+                                                return (
+                                                    <div
+                                                        key={i}
+                                                        className="document-square no-underline-link"
+                                                        onClick={() => this.handleDownload({ file: docUrl })}
+                                                    >
+                                                        <h3 className="document-title">{truncatedTitle}</h3>
+                                                        <p className="document-content">{truncatedContent}</p>
+>>>>>>> 5e9b802344eeb5fb5713dd734aab72dd2ebc4f64
                                                     </div>
                                                 );
-                                            } catch(error)
-                                            {
-                                        
-                                                alert("An error occurred, please try again later.");
-                                                window.location.reload();
-                                              
+                                            } catch (error) {
+                                                console.error("Error processing document:", error);
+                                                return null;
                                             }
-                                            })}
+                                        })
+                                    }
                                         {!q.showAllDocuments && Object.keys(q.document_found).length > 5 && (
                                         <div className="document-square center" onClick={() => this.handleTooltip(this.state.questions.length - 1 - index)}>  
                                             <h3 className="document-title">
