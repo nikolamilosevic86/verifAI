@@ -1,27 +1,22 @@
 from fastapi import FastAPI,HTTPException, Request, Depends
 #from fastapi_jwt_auth import AuthJWT
-from fastapi.responses import StreamingResponse, HTMLResponse
+from fastapi.responses import StreamingResponse
 from fastapi.security import OAuth2PasswordBearer
 from pydantic import BaseModel, validator
 import jwt
 import openai
 from starlette.middleware.cors import CORSMiddleware
-#from starlette.responses import RedirectResponse
-#from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import RedirectResponse, FileResponse
 
 from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
-#import torch
 from sentence_transformers import SentenceTransformer
 from transformers import TextStreamer, TextIteratorStreamer, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForCausalLM, BitsAndBytesConfig
 from nltk.corpus import stopwords
 from peft import PeftModel
 
-#import time
 import json
-#import asyncio
 import os, sys
 from dotenv import load_dotenv
 import datetime
@@ -52,7 +47,9 @@ openai_key = os.getenv("OPENAI_KEY")
 deployment_model = os.getenv("DEPLOYMENT_MODEL")
 opensearch_use_ssl = str2bool(os.getenv("OPENSEARCH_USE_SSL"))
 qdrant_use_ssl = str2bool(os.getenv("QDRANT_USE_SSL"))
+MODEL_CARD = os.getenv("EMBEDDING_MODEL")
 openai_client = None
+max_content_length = int(os.getenv("MAX_CONTEXT_LENGTH"))
 if openai_path!= None and openai_key!=None:
     openai_client = openai.OpenAI(api_key=openai_key,base_url=openai_path)
 
@@ -407,7 +404,7 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
     print("Temperature = ", temperature)
     documents_found = data['document_found']
     try:
-        documents_string = convert_documents(documents_found)
+        documents_string = convert_documents(documents_found,max_content_length,model, search_query)
         
         mistral_input = f"{search_query}\nAbstracts:\n\n" + documents_string
         
