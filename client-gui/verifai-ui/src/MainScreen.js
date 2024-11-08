@@ -683,15 +683,29 @@ class MainScreen extends Component {
                                    (label === "NO_EVIDENCE") ? '  <span class="orange-ball"></span>' :
                                    (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
                     
-                
+                    let checkPmid;
+                    let locationPath;
+                    let foundDocument;
 
-                    let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
-                                    (label === "SUPPORT" && pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${result.location}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                    document_found.forEach(doc => {
+                        if(doc.location === pmid)
+                         {  
+                             foundDocument = doc;
+                             
+                         }
+
+                    })
+                   
+
+
+        
+                    let tooltipText = (label === "SUPPORT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                                    (label === "SUPPORT" && foundDocument.pmid === '') ? (`The claim for document <a href="#"  onClick="{() => this.downloadDocument(foundDocument))}">FILE:${foundDocument.location}</a> is <strong>SUPPORT</strong>${ballHtml}` ):
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
-                                     (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                     (label === "NO_EVIDENCE" && pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${result.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                      (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
-                                      (label === "CONTRADICT" && pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${result.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
                                       
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
@@ -706,6 +720,7 @@ class MainScreen extends Component {
             }
 
 
+            
             
             function replacePubMedLinks(inputString) {
                 
