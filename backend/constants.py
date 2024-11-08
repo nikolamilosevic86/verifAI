@@ -8,7 +8,7 @@ CONTRADICT = "CONTRADICT"
 
 LABELS = [NO_EVIDENCE, SUPPORT, CONTRADICT]
 # Models
-MODEL_CARD = 'sentence-transformers/msmarco-distilbert-base-tas-b'
+#MODEL_CARD = 'sentence-transformers/msmarco-distilbert-base-tas-b'
 
 # 'meta-llama/Meta-Llama-3-8B-Instruct'
 BASE_MODEL_ID =  'mistralai/Mistral-7B-Instruct-v0.2'
