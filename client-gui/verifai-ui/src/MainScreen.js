@@ -29,6 +29,7 @@ function NavigateWrapper(props) {
 
 
 class MainScreen extends Component {
+    
 
     
    static contextType = AuthContext
@@ -126,6 +127,11 @@ class MainScreen extends Component {
 
         this.handleUsernameChange = this.handleUsernameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
+
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
+
+      
+
 
        
 
@@ -612,7 +618,7 @@ class MainScreen extends Component {
     }
 
     
-    downloadDocument(doc){
+    downloadDocument(path){
        //test_data\subfolder\2305.04928v4.pdf
         fetch(BACKEND + "download", {
             method: "POST",
@@ -621,7 +627,7 @@ class MainScreen extends Component {
                 'Content-Type': 'application/json',
                 'Response-Type': 'blob'
             },
-            body: JSON.stringify({file: doc.location})
+            body: JSON.stringify({file: path})
         }).then(async response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -631,7 +637,7 @@ class MainScreen extends Component {
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = doc.location.split('\\').pop().split('/').pop() || 'downloadedFile';
+            a.download = path.split('\\').pop().split('/').pop() || 'downloadedFile';
             document.body.appendChild(a);
             a.click();
 
@@ -645,6 +651,8 @@ class MainScreen extends Component {
         
     }
 
+
+    
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -700,12 +708,12 @@ class MainScreen extends Component {
 
         
                     let tooltipText = (label === "SUPPORT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
-                                    (label === "SUPPORT" && foundDocument.pmid === '') ? (`The claim for document <a href="#"  onClick="{() => this.downloadDocument(foundDocument))}">FILE:${foundDocument.location}</a> is <strong>SUPPORT</strong>${ballHtml}` ):
+                                    (label === "SUPPORT" && foundDocument.pmid === '') ? (`The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> is <strong>SUPPORT</strong>${ballHtml}` ):
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
                                      (label === "NO_EVIDENCE" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#">FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
                                       (label === "CONTRADICT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
-                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#"  onClick={() => this.downloadDocument(result)}>FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#">FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
                                       
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
@@ -1061,14 +1069,28 @@ class MainScreen extends Component {
     }
     
     componentDidMount() {
+      
         document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener("click", this.handleDocumentClick);
        
       }
       
     componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener("click", this.handleDocumentClick);
     
     }
+
+    handleDocumentClick = (e) => {
+        const target = e.target;
+        // Check if the clicked element has `data-download="true"`
+        if (target.matches('[data-download="true"]')) {
+          e.preventDefault(); // Prevent default anchor behavior
+         // this.downloadDocument(foundDocument);
+         const filePath = target.textContent.replace("FILE:", "");
+         this.downloadDocument(filePath);
+        }
+      };
 
     handleTooltip(index) {
 
@@ -1452,7 +1474,7 @@ class MainScreen extends Component {
                                                 return (
                                                     <div>
                                                         {doc.pmid === '' && (
-                                                    <a href="#"  onClick={() => this.downloadDocument(doc)} key={i} className="no-underline-link">
+                                                    <a href="#"  onClick={() => this.downloadDocument(doc.location)} key={i} className="no-underline-link">
                                                         <div className="document-square">
                                                             <h3 className="document-title">{truncatedTitle}</h3>
                                                             <p className="document-content">{truncatedContent}</p>
