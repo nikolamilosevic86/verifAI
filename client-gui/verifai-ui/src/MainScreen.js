@@ -432,7 +432,7 @@ class MainScreen extends Component {
             
            
             var no_space_token = token.trim()
-            
+            console.log(no_space_token);
             
             const regex = /\(?PUBMED:(\d+)\)?/g;
             const file_regex = /\(?FILE:(\d+)\)?/g;
@@ -457,30 +457,23 @@ class MainScreen extends Component {
                 token = new_token;
               
             }
+            const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
 
-            if (file_regex.test(no_space_token)){
-                
-                const file_regex = /\(?FILE:(\d+)\)?/g; 
-                var new_token = token;
-             
-                let match;
-                while ((match = file_regex.exec(no_space_token)) !== null) {
-                   
-                    const number = match[1];
-                    const matchedPart = match[0];
-                   
-                    const linkedPart = `<a href="${baseUrl + number}" target="_blank">${matchedPart}</a>`;
-                    new_token = new_token.replace(matchedPart, linkedPart);
-                }
+            // Replace the matched text with a clickable link
+            const outputString = token.replace(fileregex, (match, filePath) => {
+              // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
+              const formattedPath = filePath.replace(/\\/g, '/'); 
+              return `<a href="#" data-download="true" target="_blank">${filePath}</a>`;
+            });
             
-                token = new_token;
-              
-            }
+            let newToken = outputString;
+
+            // Set output synchronously
+            this.setOutput(newToken);
             
-         
+            // Start the reader asynchronously and process the result concurrently
+            reader.read().then(processResult); 
            
-            this.setOutput(token);
-            await reader.read().then(processResult);
         };
     
         return reader.read().then(processResult);
@@ -711,9 +704,9 @@ class MainScreen extends Component {
                                     (label === "SUPPORT" && foundDocument.pmid === '') ? (`The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> is <strong>SUPPORT</strong>${ballHtml}` ):
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
                                      (label === "NO_EVIDENCE" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#">FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
                                       (label === "CONTRADICT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
-                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#">FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
                                       
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
