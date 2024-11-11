@@ -1484,8 +1484,9 @@ class MainScreen extends Component {
                                                    onChange={this.handleStreamChange}
                                                    title="Please select the stream option"
                                                >
-                                                   <option value="true">Stream</option>
-                                                   <option value="false">Not Stream</option>
+                                                   <option value="false">Do not stream verification</option>
+                                                   <option value="true">Stream verification</option>
+
                                                </select>
                                            </div>
                                            </div>
