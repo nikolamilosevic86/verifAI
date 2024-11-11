@@ -613,14 +613,19 @@ class MainScreen extends Component {
     
     downloadDocument(path){
        //test_data\subfolder\2305.04928v4.pdf
-        fetch(BACKEND + "download", {
-            method: "POST",
-            headers: {
-                'Authorization': "Bearer " + this.context.user.token,
-                'Content-Type': 'application/json',
-                'Response-Type': 'blob'
-            },
-            body: JSON.stringify({file: path})
+    if (path.startsWith('[') && path.endsWith(']')) {
+        path = path.slice(1, -1);
+    }
+
+    // Rest of the function remains the same
+    fetch(BACKEND + "download", {
+        method: "POST",
+        headers: {
+            'Authorization': "Bearer " + this.context.user.token,
+            'Content-Type': 'application/json',
+            'Response-Type': 'blob'
+        },
+        body: JSON.stringify({file: path})
         }).then(async response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -729,24 +734,30 @@ class MainScreen extends Component {
 
             
             
-            function replacePubMedLinks(inputString) {
-                
-                const replaceWithLink = (match) => {
-                   
-                    const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
+            function replacePubMedAndFileLinks(inputString) {
+                const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+
+                const replaceWithPubMedLink = (match) => {
+                    const pubMedId = match.match(/\d+/)[0];
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
-                
-                let result = inputString.replace(MainScreen.regex, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct, replaceWithLink);
-                
-               
-                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
-                 
-               
-                result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
-            
+
+                const replaceWithFileLink = (match) => {
+                    const filePath = match.match(/\[FILE:(.*?)\]/)[1];
+                    return `<a href="#" data-download="true" onClick="(e) => {  this.downloadDocument('${filePath}'); }">[FILE:${filePath}]</a>`;
+                };
+
+                // PubMed replacements
+                let result = inputString.replace(MainScreen.regex, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_square_brackets, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct_2, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct_3, replaceWithPubMedLink);
+
+                // File replacement
+                const fileRegex = /\[FILE:.*?\]/g;
+                result = result.replace(fileRegex, replaceWithFileLink);
+
                 return result;
             }
             
@@ -782,7 +793,7 @@ class MainScreen extends Component {
                 if (claim_dict.message === "Verification is turned off") {
                     // Verification is turned off, skip highlighting and tooltips
                     const output = this.state.questions[this.state.questions.length - 1].result;
-                    const finalOutput = replacePubMedLinks(output);
+                    const finalOutput = replacePubMedAndFileLinks(output);
 
                     this.setState(prevState => ({
                         questions: prevState.questions.map((q, i) => (
@@ -845,7 +856,7 @@ class MainScreen extends Component {
                     const safeHTML = DOMPurify.sanitize(html);
                     
                     // Split the claim text into sentences
-                    const sentences = textToHighlight.match(/[^\.!\?]+[\.!\?]+/g) || [textToHighlight];
+                    const sentences = textToHighlight.match(/[^.!?]+(?:[.!?]+(?:\s*\[FILE:[^\]]+\])?|\s*\[FILE:[^\]]+\]|$)(?:\s|$)/g) || [textToHighlight];
     
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
@@ -878,7 +889,7 @@ class MainScreen extends Component {
                 var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
-                highlightedHTML = replacePubMedLinks(highlightedHTML)
+                highlightedHTML = replacePubMedAndFileLinks(highlightedHTML)
                     
                 
                 this.setState(prevState => ({
@@ -899,7 +910,7 @@ class MainScreen extends Component {
         // Verification is turned off, skip parsing and just replace PubMed links
         const output = this.state.questions[this.state.questions.length - 1].result;
         let html = DOMPurify.sanitize(output);
-        html = replacePubMedLinks(html);
+        html = replacePubMedAndFileLinks(html);
 
         this.setState(prevState => ({
             questions: prevState.questions.map((q, i) => (
@@ -916,10 +927,31 @@ class MainScreen extends Component {
 
         let i = 0;
         for (const claim_dict of claim_dict_list) {
-            // ... (rest of the parsing code remains unchanged)
+            function cleanHTML(inputText) {
+                    // Regular expression to match tags that are not <span> or </span>
+                    const regex = /<(?!\/?span\b)[^>]*>/gi;
+
+                    // Replace the matched parts with an empty string
+                    return inputText.replace(regex, '');
+                  }
+
+                function normalizeWhitespace2(string) {
+                    string = string.replace(/\s/g, ' ').trim();
+                    return string.replace(/\s*([.,;!?:])\s*/g, '$1');
+                }
+                html = cleanHTML(html)
+                html = normalizeWhitespace2(html)
+                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
+                console.log("text toolpit = ", text_toolpit);
+                const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>`;
+                html = html.replace(normalizeWhitespace2(claim_dict.claim), color);
+
+                console.log("HTML dopo = ", html);
+
+                i = i + 1;
         }
 
-        html = replacePubMedLinks(html);
+        html = replacePubMedAndFileLinks(html);
         this.setState(prevState => ({
             questions: prevState.questions.map((q, i) => (
                 i === prevState.questions.length - 1 ? { ...q, result: html, status: "finished", loading: false } : q
