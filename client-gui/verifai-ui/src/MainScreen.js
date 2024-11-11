@@ -74,7 +74,7 @@ class MainScreen extends Component {
                 output: "" , // Holds HTML content safely
                 output_verification: "",
                 questions: [],
-                stream: true,
+                stream: false,
                 username: '',
                 password: ''
             };  
@@ -794,7 +794,20 @@ class MainScreen extends Component {
                     }
                
                 //console.log("Arriva = ", claim_string)
-                var claim_dict = JSON.parse(claim_string); // receiving the result from backend
+                let claim_dict;
+                try {
+                    claim_dict = JSON.parse(claim_string);
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        console.error("JSON Parse Error:", error.message);
+                        // Handle the error - you might want to skip this iteration or take some other action
+                        return readerVerification.read().then(processResultVerification);
+                    } else {
+                        // If it's not a SyntaxError, rethrow the error
+                        throw error;
+                    }
+                }
+               // var claim_dict = JSON.parse(claim_string); // receiving the result from backend
                 if (claim_dict.message === "Verification is turned off") {
                     // Verification is turned off, skip highlighting and tooltips
                     const output = this.state.questions[this.state.questions.length - 1].result;
@@ -877,7 +890,7 @@ class MainScreen extends Component {
                     const safeHTML = DOMPurify.sanitize(html);
                     
                     // Split the claim text into sentences
-                    const sentences = textToHighlight.match(/[^.!?]+(?:[.!?]+(?:\s*\[FILE:[^\]]+\])?(?=\s*(?:[A-Z]|\[|$))|\s*\[FILE:[^\]]+\]|$)(?:\s*,?\s*(?:\[FILE:[^\]]+\])?)*|[^.!?]+(?:\.[^.!?\s]+)+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
+                    const sentences = textToHighlight.match(/[^.!?]+(?:(?:(?<=\b(?:etc|al|vs|Mr|Mrs|Ms|Dr|Prof|Sr|Jr|e\.g|i\.e))\.|[.!?]+)(?:\s*\[FILE:[^\]]+\])?(?=\s*(?:[A-Z]|\[|$)(?!\.))|\s*\[FILE:[^\]]+\]|$)(?:\s*,?\s*(?:\[FILE:[^\]]+\])?)*|[^.!?]+(?:\.[^.!?\s]+)+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
                         // Escape special characters in the sentence
@@ -905,8 +918,6 @@ class MainScreen extends Component {
                     
                     return highlightedHTML;
                 }
-
-                //var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
                 highlightedHTML = replacePubMedAndFileLinks(highlightedHTML)
@@ -1520,7 +1531,7 @@ class MainScreen extends Component {
                                                             <p className="document-content">{truncatedContent}</p>
                                                         </div>
                                                     </a>
-                                                    )} : {doc.pmid !== '' && (
+                                                    )}  {doc.pmid !== '' && (
                                                         <a href="{docUrl}" key={i} target="_blank" rel="noopener noreferrer" className="no-underline-link">
                                                         <div className="document-square">
                                                             <h3 className="document-title">{truncatedTitle}</h3>
