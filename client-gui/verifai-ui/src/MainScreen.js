@@ -588,6 +588,12 @@ class MainScreen extends Component {
             body: JSON.stringify({ text: completeText, document_found:document_found, stream: this.state.stream})
         })
         .then(async response => {
+//        const data = await response.json();
+//
+//        if (data.message === "Verification is not enabled") {
+//            // If verification is not enabled, return black color and empty text
+//            return { text: completeText, color: "black" };
+//            }
 
             function tooltipToWrite(listResult) {
                     

@@ -44,6 +44,7 @@ def str2bool(v):
   return v.lower() in ("yes", "true", "t", "1")
 openai_path = os.getenv("OPENAI_PATH")
 openai_key = os.getenv("OPENAI_KEY")
+use_verification = str2bool(os.getenv("USE_VERIFICATION"))
 deployment_model = os.getenv("DEPLOYMENT_MODEL")
 opensearch_use_ssl = str2bool(os.getenv("OPENSEARCH_USE_SSL"))
 qdrant_use_ssl = str2bool(os.getenv("QDRANT_USE_SSL"))
@@ -107,16 +108,18 @@ tokenizer.pad_token = tokenizer.eos_token
 model_mistral.eval() # setting the model in evaluation mode
 # END LLAMA 3-----------------------------------------------
 """
-print("Getting verification model")
-verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICATION_MODEL_CARD)
+if use_verification:
+    print("Getting verification model")
+    verification_model = AutoModelForSequenceClassification.from_pretrained(VERIFICATION_MODEL_CARD)
 
-verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
+    verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
+    print("Verification model set")
 
 model = SentenceTransformer(MODEL_CARD) #.to(device)
 
 # stopwords from nltk
 english_stopwords = set(stopwords.words('english'))
-print("Verification model set")
+
 # ------------------------------------------------ App Settings -------------------------------------------
 
 # for permanently user token
@@ -421,7 +424,9 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
 
 @app.post("/verification_answer")
 async def verification_answer(answer: VerificationInput, current_user: dict = Depends(get_current_user)):
-    
+    # if not use_verification:
+    #
+    #     return {"message": "Verification is not enabled"}
     # Extracting input 
     answer_complete = answer.text
     documents = answer.document_found
@@ -434,6 +439,11 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
     pmid_claim = split_text_by_pubmed_references(answer_complete, documents_found, model)
    
     claim_pmid_list = verification_format(pmid_claim)
+    # if not use_verification:
+    #     claims = []
+    #     for claim in claim_pmid_list:
+    #         claims.append({"claim": claim[0], "result": []{claim[1][0]:{"title":"","label":NO_REFERENCE}}}})
+    #     return json.dumps(claims)
     
     #print("Results of splitting...")
     #print(claim_pmid_list)
