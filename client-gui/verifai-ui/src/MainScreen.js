@@ -736,8 +736,9 @@ class MainScreen extends Component {
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
 
-                if(inputString.includes("FILE:"))
+               if(inputString.includes("FILE:"))
                 {
+                  
                     const splitPoint = '<span class="tooltiptext">';
                     const parts = inputString.split(splitPoint);
                     parts[0] = parts[0] + 'docx]';
@@ -757,14 +758,13 @@ class MainScreen extends Component {
                     });
 
                     result = parts[0] + parts[1];
-
-                  //  console.log(result);
                     return result;
         
                  
 
                 }
-                
+
+              
               
                 result = inputString.replace(MainScreen.regex, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct, replaceWithLink);
