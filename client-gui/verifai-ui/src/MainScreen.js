@@ -764,10 +764,12 @@ class MainScreen extends Component {
 
             if (this.state.stream) {
 
-                
-            
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
+            // Initialize an accumulator for processed claims
+            let processedClaims = [];
+            let originalOutput = this.state.questions[this.state.questions.length - 1].result;
+
               
             const processResultVerification = async (result) => {
                 
@@ -787,6 +789,9 @@ class MainScreen extends Component {
                 
                
                 let claim_string = await decoderVerification.decode(result.value, {stream: true});
+                function sleep(ms) {
+                        return new Promise(resolve => setTimeout(resolve, ms));
+                    }
                
                 //console.log("Arriva = ", claim_string)
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
@@ -827,18 +832,34 @@ class MainScreen extends Component {
                     
                     return;
                 }
-                
-             
 
-                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
-
-                
-                var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>` 
-                            
-                
-                var output = this.state.questions[this.state.questions.length - 1].result
+                processedClaims.push(claim_dict);
+                // Start with the original output each time
+                let highlightedHTML = originalOutput;
                 const regex_output = /<a\s+href=.*?>/gi;
-                output = output.replace(regex_output, '');
+                highlightedHTML = highlightedHTML.replace(regex_output, '');
+
+                //var output = this.state.questions[this.state.questions.length - 1].result;
+//
+//
+//
+//
+//                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
+//
+//
+//                var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>`
+//
+//
+//                var output = this.state.questions[this.state.questions.length - 1].result
+                //const regex_output = /<a\s+href=.*?>/gi;
+                //output = output.replace(regex_output, '');
+                //let highlightedHTML = output;
+                for (let claim of processedClaims) {
+                    const { text: text_tooltip, color: color_to_use } = tooltipToWrite(claim.result);
+                    var color = `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_tooltip}</span></span>`;
+
+                    highlightedHTML = highlightText(highlightedHTML, claim.claim, color);
+                    }
                 
 
                 function escapeRegex(string) {
@@ -856,8 +877,7 @@ class MainScreen extends Component {
                     const safeHTML = DOMPurify.sanitize(html);
                     
                     // Split the claim text into sentences
-                    const sentences = textToHighlight.match(/[^.!?]+(?:[.!?]+(?:\s*\[FILE:[^\]]+\])?|\s*\[FILE:[^\]]+\]|$)(?:\s|$)|[^.!?]+\.[^.!?\s]+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
-    
+                    const sentences = textToHighlight.match(/[^.!?]+(?:[.!?]+(?:\s*\[FILE:[^\]]+\])?(?=\s*(?:[A-Z]|\[|$))|\s*\[FILE:[^\]]+\]|$)(?:\s*,?\s*(?:\[FILE:[^\]]+\])?)*|[^.!?]+(?:\.[^.!?\s]+)+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
                         // Escape special characters in the sentence
@@ -886,7 +906,7 @@ class MainScreen extends Component {
                     return highlightedHTML;
                 }
 
-                var highlightedHTML = highlightText(output, claim_dict.claim, color);
+                //var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
                 highlightedHTML = replacePubMedAndFileLinks(highlightedHTML)
