@@ -856,7 +856,7 @@ class MainScreen extends Component {
                     const safeHTML = DOMPurify.sanitize(html);
                     
                     // Split the claim text into sentences
-                    const sentences = textToHighlight.match(/[^.!?]+(?:[.!?]+(?:\s*\[FILE:[^\]]+\])?|\s*\[FILE:[^\]]+\]|$)(?:\s|$)/g) || [textToHighlight];
+                    const sentences = textToHighlight.match(/[^.!?]+(?:[.!?]+(?:\s*\[FILE:[^\]]+\])?|\s*\[FILE:[^\]]+\]|$)(?:\s|$)|[^.!?]+\.[^.!?\s]+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
     
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
