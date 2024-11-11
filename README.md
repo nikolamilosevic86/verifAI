@@ -82,6 +82,7 @@ npm install
 npm start
 ```
 10. Go to `http://localhost:3000` to see the VerifAI in action.
+
 ## VerifAI BioMed
 
 This is biomedical version of VerifAI. It is designed to answer questions from the biomedical domain.
@@ -99,18 +100,26 @@ One requirement to run locally is to have installed Postgres SQL. You can instal
 9. Run `python scripts/indexing_qdrant.py` to create qdrant index. Make sure to point to the right folder created in the previous step and to the qdrant instance. 
 10. Install OpenSearch following the guide [here](https://opensearch.org/docs/latest/install-and-configure/install-opensearch/index/)
 11. Create OpenSearch index by running `python scripts/indexing_lexical_pmid.py`. Make sure to configure access to the OpenSearch and point the path variable to the folder created by json2selected script.
-12. Set up system variables that are needed for the project:
+12. Set up system variables that are needed for the project. You can do it by creating `.env` file with the following content:
 ```
-export DBNAME=db_name
-export USER_DB=db_username
-export PASSWORD_DB=db_password
-export HOST_DB=db_host_name
+OPENSEARCH_IP=open_search_ip
+OPENSEARCH_USER=open_search_user
+OPENSEARCH_PASSWORD=open_search_pass
+OPENSEARCH_PORT=9200
+QDRANT_IP=qdrant_ip
+QDRANT_PORT=qdrant_port
+QDRANT_API=qdrant_api_key
+QDRANT_USE_SSL=False
+OPENSEARCH_USE_SSL=False
+MAX_CONTEXT_LENGTH=32000
 
-export VERIFAI_IP=ip_address_of_machines_with_qdrant_and_opensearch
-export VERIFAI_USER=user_name_open_search
-export VERIFAI_PASSWORD=password_open_search
-export VERIFAI_PORT=port_open_search
-export QDRANT_PORT=port_qdrant
+
+EMBEDDING_MODEL="sentence-transformers/msmarco-bert-base-dot-v5"
+
+INDEX_NAME_LEXICAL = 'medline-faiss-hnsw-lexical-pmid'
+INDEX_NAME_SEMANTIC = "medline-faiss-hnsw"
+
+USE_VERIFICATION=True
 ```
 13. Run backend by running `python backend/main.py`
 14. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
