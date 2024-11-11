@@ -439,11 +439,11 @@ async def verification_answer(answer: VerificationInput, current_user: dict = De
     pmid_claim = split_text_by_pubmed_references(answer_complete, documents_found, model)
    
     claim_pmid_list = verification_format(pmid_claim)
-    # if not use_verification:
-    #     claims = []
-    #     for claim in claim_pmid_list:
-    #         claims.append({"claim": claim[0], "result": []{claim[1][0]:{"title":"","label":NO_REFERENCE}}}})
-    #     return json.dumps(claims)
+    if not use_verification:
+        claims = []
+        # for claim in claim_pmid_list:
+        #     claims.append({"claim": claim[0], "result": {claim[1][0]:{"title":"","label":NO_REFERENCE}}})
+        return {"message":"Verification is turned off"}#json.dumps(claims)
     
     #print("Results of splitting...")
     #print(claim_pmid_list)
