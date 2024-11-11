@@ -39,11 +39,11 @@ class MainScreen extends Component {
     static regex_punct_2 = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_punct_3 = /^\(PUBMED:\d+\)[\.\;\,]?$/g;
 
-    static file_regex = /FILE:\d+/g;
-    static file_regex_punct = /^\(FILE:\d+\)([\.\;\,])?$|^FILE:\d+\)$/g;
-    static file_regex_square_brackets = /\(FILE:(\d+)\)/g;
-    static file_regex_punct_2 = /^\(FILE:\d+\)([\.\;\,])?$|^FILE:\d+\)$/g;
-    static file_regex_punct_3 = /^\(FILE:\d+\)[\.\;\,]?$/g;
+    static file_regex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/g;
+    static file_regex_punct = /^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\](\.\;\,)?$|^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]$/g;
+    static file_regex_square_brackets = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/g;
+    static file_regex_punct_2 = /^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\](\.\;\,)?$|^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]$/g;
+    static file_regex_punct_3 = /^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\][\.\;\,]?$/g;
  
    
     constructor(props) {
@@ -415,7 +415,7 @@ class MainScreen extends Component {
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
-        
+      
         
         const processResult = async (result) => {
             if (result.done) {
@@ -435,7 +435,7 @@ class MainScreen extends Component {
             console.log(no_space_token);
             
             const regex = /\(?PUBMED:(\d+)\)?/g;
-            const file_regex = /\(?FILE:(\d+)\)?/g;
+           
             
 
           
@@ -455,9 +455,11 @@ class MainScreen extends Component {
                 }
             
                 token = new_token;
+                
               
             }
-            const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
+            this.setOutput(token);
+           /* const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
 
             // Replace the matched text with a clickable link
             const outputString = token.replace(fileregex, (match, filePath) => {
@@ -467,9 +469,10 @@ class MainScreen extends Component {
             });
             
             let newToken = outputString;
+          
 
             // Set output synchronously
-            this.setOutput(newToken);
+            this.setOutput(newToken);*/
             
             // Start the reader asynchronously and process the result concurrently
             reader.read().then(processResult); 
@@ -723,24 +726,56 @@ class MainScreen extends Component {
 
             
             
-            function replacePubMedLinks(inputString) {
+            function replacePubMedLinks(output, inputString) {
+                let result;
+              
                 
                 const replaceWithLink = (match) => {
                    
                     const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
-                
-                let result = inputString.replace(MainScreen.regex, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct, replaceWithLink);
-                
-               
-                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
+
+                if(inputString.includes("FILE:"))
+                {
+                    const splitPoint = '<span class="tooltiptext">';
+                    const parts = inputString.split(splitPoint);
+                    parts[0] = parts[0] + 'docx]';
+                    parts[1] = splitPoint + parts[1];
+                    parts[1] = parts[1].replace('docx].', '');
+                   
+                    const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
+
+                    // Replace the matched text with a clickable link
+                    parts[0] = parts[0].replace(fileregex, (match, filePath) => {
+                      // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
+                      const formattedPath = filePath.replace(/\\/g, '/'); 
+                      return `<a href="#" data-download="true" target="_blank">FILE: ${filePath}</a>`;
+                    });
+
+                    result = parts[0] + parts[1];
+
+                  //  console.log(result);
+                    return result;
+        
                  
-               
+
+                }
+                
+              
+                result = inputString.replace(MainScreen.regex, replaceWithLink);
+                result = result.replace(MainScreen.regex_punct, replaceWithLink);
+                        
+                    
+                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
+                        
+                    
                 result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
-            
+
+                
+                result = output;
+
                 return result;
             }
             
@@ -807,10 +842,11 @@ class MainScreen extends Component {
                             
                 
                 var output = this.state.questions[this.state.questions.length - 1].result
+               // alert(output);
                 const regex_output = /<a\s+href=.*?>/gi;
                 output = output.replace(regex_output, '');
-                
 
+              
                 function escapeRegex(string) {
                     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 }
@@ -859,7 +895,7 @@ class MainScreen extends Component {
                 var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
-                highlightedHTML = replacePubMedLinks(highlightedHTML)
+                highlightedHTML = replacePubMedLinks(output, highlightedHTML)
                     
                 
                 this.setState(prevState => ({
@@ -873,6 +909,17 @@ class MainScreen extends Component {
     
             // Start reading the stream
             await readerVerification.read().then(processResultVerification);
+
+            var output = this.state.questions[this.state.questions.length - 1].result
+
+           
+            const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
+                
+            output = output.replace(fileregex, (match, filePath) => {
+                // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
+                const formattedPath = filePath.replace(/\\/g, '/'); 
+                return `<a href="#" data-download="true" target="_blank">${filePath}</a>`;
+              });
         } else {
             
             const claim_dict_list_string = await response.json();
