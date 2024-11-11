@@ -74,7 +74,7 @@ class MainScreen extends Component {
                 output: "" , // Holds HTML content safely
                 output_verification: "",
                 questions: [],
-                stream: true,
+                stream: false,
                 username: '',
                 password: ''
             };  
@@ -616,14 +616,19 @@ class MainScreen extends Component {
     
     downloadDocument(path){
        //test_data\subfolder\2305.04928v4.pdf
-        fetch(BACKEND + "download", {
-            method: "POST",
-            headers: {
-                'Authorization': "Bearer " + this.context.user.token,
-                'Content-Type': 'application/json',
-                'Response-Type': 'blob'
-            },
-            body: JSON.stringify({file: path})
+    if (path.startsWith('[') && path.endsWith(']')) {
+        path = path.slice(1, -1);
+    }
+
+    // Rest of the function remains the same
+    fetch(BACKEND + "download", {
+        method: "POST",
+        headers: {
+            'Authorization': "Bearer " + this.context.user.token,
+            'Content-Type': 'application/json',
+            'Response-Type': 'blob'
+        },
+        body: JSON.stringify({file: path})
         }).then(async response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok');
@@ -639,7 +644,7 @@ class MainScreen extends Component {
 
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-            alert("File downloading");
+            //alert("File downloading");
 
         }).catch(
             error => alert("Error downloading")
@@ -663,6 +668,12 @@ class MainScreen extends Component {
             body: JSON.stringify({ text: completeText, document_found:document_found, stream: this.state.stream})
         })
         .then(async response => {
+//        const data = await response.json();
+//
+//        if (data.message === "Verification is not enabled") {
+//            // If verification is not enabled, return black color and empty text
+//            return { text: completeText, color: "black" };
+//            }
 
             function tooltipToWrite(listResult) {
                 
@@ -726,58 +737,29 @@ class MainScreen extends Component {
 
             
             
-            function replacePubMedLinks(output, inputString) {
-                let result;
-              
-                
-                const replaceWithLink = (match) => {
-                   
-                    const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
+            function replacePubMedAndFileLinks(inputString) {
+                const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+
+                const replaceWithPubMedLink = (match) => {
+                    const pubMedId = match.match(/\d+/)[0];
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
 
-               if(inputString.includes("FILE:"))
-                {
-                  
-                    const splitPoint = '<span class="tooltiptext">';
-                    const parts = inputString.split(splitPoint);
-                    parts[0] = parts[0] + 'docx]';
-                    parts[1] = splitPoint + parts[1];
-                    //parts[1] = parts[1].replace('docx].', '');
-                   
-                    const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
-                    const extensionRegex = /(docx|pdf|pptx|txt|md)\]/g;
-                    parts[1] = parts[1].replace(extensionRegex, (match) => {
-                       return '';
-                      });
-                    // Replace the matched text with a clickable link
-                    parts[0] = parts[0].replace(fileregex, (match, filePath) => {
-                      // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
-                      const formattedPath = filePath.replace(/\\/g, '/'); 
-                      return `<a href="#" data-download="true" target="_blank">FILE: ${filePath}</a>`;
-                    });
+                const replaceWithFileLink = (match) => {
+                    const filePath = match.match(/\[FILE:(.*?)\]/)[1];
+                    return `<a href="#" data-download="true" onClick="(e) => {  this.downloadDocument('${filePath}'); }">[FILE:${filePath}]</a>`;
+                };
 
-                    result = parts[0] + parts[1];
-                    return result;
-        
-                 
+                // PubMed replacements
+                let result = inputString.replace(MainScreen.regex, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_square_brackets, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct_2, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct_3, replaceWithPubMedLink);
 
-                }
-
-              
-              
-                result = inputString.replace(MainScreen.regex, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct, replaceWithLink);
-                        
-                    
-                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
-                        
-                    
-                result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
-
-                
-                result = output;
+                // File replacement
+                const fileRegex = /\[FILE:.*?\]/g;
+                result = result.replace(fileRegex, replaceWithFileLink);
 
                 return result;
             }
@@ -785,10 +767,12 @@ class MainScreen extends Component {
 
             if (this.state.stream) {
 
-                
-            
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
+            // Initialize an accumulator for processed claims
+            let processedClaims = [];
+            let originalOutput = this.state.questions[this.state.questions.length - 1].result;
+
               
             const processResultVerification = async (result) => {
                 
@@ -808,9 +792,38 @@ class MainScreen extends Component {
                 
                
                 let claim_string = await decoderVerification.decode(result.value, {stream: true});
+                function sleep(ms) {
+                        return new Promise(resolve => setTimeout(resolve, ms));
+                    }
                
                 //console.log("Arriva = ", claim_string)
-                var claim_dict = JSON.parse(claim_string); // receiving the result from backend
+                let claim_dict;
+                try {
+                    claim_dict = JSON.parse(claim_string);
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        console.error("JSON Parse Error:", error.message);
+                        // Handle the error - you might want to skip this iteration or take some other action
+                        return readerVerification.read().then(processResultVerification);
+                    } else {
+                        // If it's not a SyntaxError, rethrow the error
+                        throw error;
+                    }
+                }
+               // var claim_dict = JSON.parse(claim_string); // receiving the result from backend
+                if (claim_dict.message === "Verification is turned off") {
+                    // Verification is turned off, skip highlighting and tooltips
+                    const output = this.state.questions[this.state.questions.length - 1].result;
+                    const finalOutput = replacePubMedAndFileLinks(output);
+
+                    this.setState(prevState => ({
+                        questions: prevState.questions.map((q, i) => (
+                            i === prevState.questions.length - 1 ? { ...q, result: finalOutput, status: "finished", loading: false } : q
+                        )),
+                    }));
+
+                    return;
+                }
                 console.log("Result = ",claim_dict)
                 console.log(typeof claim_dict);
               
@@ -835,19 +848,35 @@ class MainScreen extends Component {
                     
                     return;
                 }
-                
-             
 
-                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
-
-                
-                var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>` 
-                            
-                
-                var output = this.state.questions[this.state.questions.length - 1].result
-               // alert(output);
+                processedClaims.push(claim_dict);
+                // Start with the original output each time
+                let highlightedHTML = originalOutput;
                 const regex_output = /<a\s+href=.*?>/gi;
-                output = output.replace(regex_output, '');
+                highlightedHTML = highlightedHTML.replace(regex_output, '');
+
+                //var output = this.state.questions[this.state.questions.length - 1].result;
+//
+//
+//
+//
+//                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
+//
+//
+//                var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>`
+//
+//
+//                var output = this.state.questions[this.state.questions.length - 1].result
+                //const regex_output = /<a\s+href=.*?>/gi;
+                //output = output.replace(regex_output, '');
+                //let highlightedHTML = output;
+                for (let claim of processedClaims) {
+                    const { text: text_tooltip, color: color_to_use } = tooltipToWrite(claim.result);
+                    var color = `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_tooltip}</span></span>`;
+
+                    highlightedHTML = highlightText(highlightedHTML, claim.claim, color);
+                    }
+                
 
               
                 function escapeRegex(string) {
@@ -865,8 +894,7 @@ class MainScreen extends Component {
                     const safeHTML = DOMPurify.sanitize(html);
                     
                     // Split the claim text into sentences
-                    const sentences = textToHighlight.match(/[^\.!\?]+[\.!\?]+/g) || [textToHighlight];
-    
+                    const sentences = textToHighlight.match(/[^.!?]+(?:(?:(?<=\b(?:etc|al|vs|Mr|Mrs|Ms|Dr|Prof|Sr|Jr|e\.g|i\.e))\.|[.!?]+)(?:\s*\[FILE:[^\]]+\])?(?=\s*(?:[A-Z]|\[|$)(?!\.))|\s*\[FILE:[^\]]+\]|$)(?:\s*,?\s*(?:\[FILE:[^\]]+\])?)*|[^.!?]+(?:\.[^.!?\s]+)+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
                         // Escape special characters in the sentence
@@ -894,11 +922,9 @@ class MainScreen extends Component {
                     
                     return highlightedHTML;
                 }
-
-                var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
-                highlightedHTML = replacePubMedLinks(output, highlightedHTML)
+                highlightedHTML = replacePubMedAndFileLinks(highlightedHTML)
                     
                 
                 this.setState(prevState => ({
@@ -924,28 +950,37 @@ class MainScreen extends Component {
                 return `<a href="#" data-download="true" target="_blank">${filePath}</a>`;
               });
         } else {
-            
-            const claim_dict_list_string = await response.json();
+    const responseData = await response.json();
 
-            const claim_dict_list = JSON.parse(claim_dict_list_string);
+    if (responseData.message === "Verification is turned off") {
+        // Verification is turned off, skip parsing and just replace PubMed links
+        const output = this.state.questions[this.state.questions.length - 1].result;
+        let html = DOMPurify.sanitize(output);
+        html = replacePubMedAndFileLinks(html);
 
-            const output = this.state.questions[this.state.questions.length - 1].result
-            
-            let html = DOMPurify.sanitize(output);
+        this.setState(prevState => ({
+            questions: prevState.questions.map((q, i) => (
+                i === prevState.questions.length - 1 ? { ...q, result: html, status: "finished", loading: false } : q
+            ))
+        }));
+    } else {
+        // Proceed with verification parsing
+        const claim_dict_list = JSON.parse(responseData);
+        const output = this.state.questions[this.state.questions.length - 1].result;
+        let html = DOMPurify.sanitize(output);
 
-            console.log("Arriva questa lista = ", claim_dict_list);
+        console.log("Arriva questa lista = ", claim_dict_list);
 
-            let i = 0
-            for (const claim_dict of claim_dict_list) {
-                
-                function cleanHTML(inputText) {
+        let i = 0;
+        for (const claim_dict of claim_dict_list) {
+            function cleanHTML(inputText) {
                     // Regular expression to match tags that are not <span> or </span>
                     const regex = /<(?!\/?span\b)[^>]*>/gi;
-                    
+
                     // Replace the matched parts with an empty string
                     return inputText.replace(regex, '');
                   }
-                
+
                 function normalizeWhitespace2(string) {
                     string = string.replace(/\s/g, ' ').trim();
                     return string.replace(/\s*([.,;!?:])\s*/g, '$1');
@@ -953,35 +988,23 @@ class MainScreen extends Component {
                 html = cleanHTML(html)
                 html = normalizeWhitespace2(html)
                 const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
-                console.log("text toolpit = ", text_toolpit)
-                const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>` 
-                
-                
-                
-                //const claimRegex = new RegExp(claim_dict.claim.split(/\s+/).join('\\s*'), 'g');
-               
-
+                console.log("text toolpit = ", text_toolpit);
+                const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>`;
                 html = html.replace(normalizeWhitespace2(claim_dict.claim), color);
-               
-                console.log("HTML dopo = ", html);
-                
-                i = i + 1;
-            }
-            
-            html = replacePubMedLinks(html)
-            this.setState(prevState => ({
-                questions: prevState.questions.map((q, i) => (
-                    i === prevState.questions.length - 1 ? { ...q, result: html } : q
-                ))
-            }));
 
-            this.setState(prevState => ({
-                questions: prevState.questions.map((q, i) => (
-                    i === prevState.questions.length - 1 ? { ...q, status: "finished", loading:false} : q
-                )),
-            }), 
-            );
-            }
+                console.log("HTML dopo = ", html);
+
+                i = i + 1;
+        }
+
+        html = replacePubMedAndFileLinks(html);
+        this.setState(prevState => ({
+            questions: prevState.questions.map((q, i) => (
+                i === prevState.questions.length - 1 ? { ...q, result: html, status: "finished", loading: false } : q
+            ))
+        }));
+    }
+}
         })
         .catch(error => {
             console.error('Error during verification:', error);
@@ -1476,8 +1499,9 @@ class MainScreen extends Component {
                                                    onChange={this.handleStreamChange}
                                                    title="Please select the stream option"
                                                >
-                                                   <option value="true">Stream</option>
-                                                   <option value="false">Not Stream</option>
+                                                   <option value="false">Do not stream verification</option>
+                                                   <option value="true">Stream verification</option>
+
                                                </select>
                                            </div>
                                            </div>
@@ -1523,7 +1547,7 @@ class MainScreen extends Component {
                                                             <p className="document-content">{truncatedContent}</p>
                                                         </div>
                                                     </a>
-                                                    )} : {doc.pmid !== '' && (
+                                                    )}  {doc.pmid !== '' && (
                                                         <a href="{docUrl}" key={i} target="_blank" rel="noopener noreferrer" className="no-underline-link">
                                                         <div className="document-square">
                                                             <h3 className="document-title">{truncatedTitle}</h3>
