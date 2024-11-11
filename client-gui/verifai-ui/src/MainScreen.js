@@ -742,10 +742,13 @@ class MainScreen extends Component {
                     const parts = inputString.split(splitPoint);
                     parts[0] = parts[0] + 'docx]';
                     parts[1] = splitPoint + parts[1];
-                    parts[1] = parts[1].replace('docx].', '');
+                    //parts[1] = parts[1].replace('docx].', '');
                    
                     const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
-
+                    const extensionRegex = /(docx|pdf|pptx|txt|md)\]/g;
+                    parts[1] = parts[1].replace(extensionRegex, (match) => {
+                       return '';
+                      });
                     // Replace the matched text with a clickable link
                     parts[0] = parts[0].replace(fileregex, (match, filePath) => {
                       // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
