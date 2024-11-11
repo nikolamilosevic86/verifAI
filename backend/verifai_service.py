@@ -24,7 +24,7 @@ import datetime
 from utils import convert_documents, generate, hash_password, check_password
 from query_handler.query_parser import QueryProcessor
 from database.database import Database
-from verification_model.verification import *
+from verification import *
 from constants import *
 #from vllm import LLM
 import nltk

@@ -29,6 +29,7 @@ function NavigateWrapper(props) {
 
 
 class MainScreen extends Component {
+    
 
     
    static contextType = AuthContext
@@ -37,6 +38,12 @@ class MainScreen extends Component {
     static regex_square_brackets = /\(PUBMED:(\d+)\)/g;
     static regex_punct_2 = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_punct_3 = /^\(PUBMED:\d+\)[\.\;\,]?$/g;
+
+    static file_regex = /FILE:\d+/g;
+    static file_regex_punct = /^\(FILE:\d+\)([\.\;\,])?$|^FILE:\d+\)$/g;
+    static file_regex_square_brackets = /\(FILE:(\d+)\)/g;
+    static file_regex_punct_2 = /^\(FILE:\d+\)([\.\;\,])?$|^FILE:\d+\)$/g;
+    static file_regex_punct_3 = /^\(FILE:\d+\)[\.\;\,]?$/g;
  
    
     constructor(props) {
@@ -82,7 +89,7 @@ class MainScreen extends Component {
         this.shareOnLinkedIn = this.shareOnLinkedIn.bind(this);
         this.shareOnFacebook = this.shareOnFacebook.bind(this);
         this.shareOnTwitter = this.shareOnTwitter.bind(this);
-        
+        this.downloadDocument = this.downloadDocument.bind(this);
         this.openSharingModal = this.openSharingModal.bind(this);
         this.copyLink = this.copyLink.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -120,6 +127,11 @@ class MainScreen extends Component {
 
         this.handleUsernameChange = this.handleUsernameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
+
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
+
+      
+
 
        
 
@@ -367,11 +379,13 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
+                           
 
         }).catch(error => alert("An error occured, please try again."));
 
         
         const document_found = await document_response.json()
+        
         console.log(document_found)
         this.setState(prevState => ({
             questions: prevState.questions.map((q, i) => (
@@ -416,18 +430,26 @@ class MainScreen extends Component {
             }
             let token = decoder.decode(result.value, {stream: true});
             
+           
             var no_space_token = token.trim()
+            console.log(no_space_token);
+            
             const regex = /\(?PUBMED:(\d+)\)?/g;
+            const file_regex = /\(?FILE:(\d+)\)?/g;
+            
+
+          
             if (regex.test(no_space_token)){
                 
                 const regex = /\(?PUBMED:(\d+)\)?/g; 
                 var new_token = token;
-            
+             
                 let match;
                 while ((match = regex.exec(no_space_token)) !== null) {
                    
                     const number = match[1];
                     const matchedPart = match[0];
+                   
                     const linkedPart = `<a href="${baseUrl + number}" target="_blank">${matchedPart}</a>`;
                     new_token = new_token.replace(matchedPart, linkedPart);
                 }
@@ -435,9 +457,23 @@ class MainScreen extends Component {
                 token = new_token;
               
             }
+            const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
+
+            // Replace the matched text with a clickable link
+            const outputString = token.replace(fileregex, (match, filePath) => {
+              // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
+              const formattedPath = filePath.replace(/\\/g, '/'); 
+              return `<a href="#" data-download="true" target="_blank">${filePath}</a>`;
+            });
+            
+            let newToken = outputString;
+
+            // Set output synchronously
+            this.setOutput(newToken);
+            
+            // Start the reader asynchronously and process the result concurrently
+            reader.read().then(processResult); 
            
-            this.setOutput(token);
-            await reader.read().then(processResult);
         };
     
         return reader.read().then(processResult);
@@ -574,6 +610,42 @@ class MainScreen extends Component {
 
     }
 
+    
+    downloadDocument(path){
+       //test_data\subfolder\2305.04928v4.pdf
+        fetch(BACKEND + "download", {
+            method: "POST",
+            headers: {
+                'Authorization': "Bearer " + this.context.user.token,
+                'Content-Type': 'application/json',
+                'Response-Type': 'blob'
+            },
+            body: JSON.stringify({file: path})
+        }).then(async response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = path.split('\\').pop().split('/').pop() || 'downloadedFile';
+            document.body.appendChild(a);
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            alert("File downloading");
+
+        }).catch(
+            error => alert("Error downloading")
+        )
+        
+    }
+
+
+    
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -596,13 +668,14 @@ class MainScreen extends Component {
 //            }
 
             function tooltipToWrite(listResult) {
+                
                     
                 let text = "";
                 let color = "";
                 for (let [pmid, result] of Object.entries(listResult)) {
                     
                     let label = result['label']
-
+                  
                     if (color === "") {
                         color = (label === "SUPPORT") ? 'green' :
                                 (label === "NO REFERENCE") ? 'gray' :
@@ -617,19 +690,37 @@ class MainScreen extends Component {
                                    (label === "NO_EVIDENCE") ? '  <span class="orange-ball"></span>' :
                                    (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
                     
-                
+                    let checkPmid;
+                    let locationPath;
+                    let foundDocument;
 
-                    let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                    document_found.forEach(doc => {
+                        if(doc.location === pmid)
+                         {  
+                             foundDocument = doc;
+                             
+                         }
+
+                    })
+                   
+
+
+        
+                    let tooltipText = (label === "SUPPORT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                                    (label === "SUPPORT" && foundDocument.pmid === '') ? (`The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> is <strong>SUPPORT</strong>${ballHtml}` ):
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
-                                     (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                     (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
-                    
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                      
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
-                        tooltipText += `<br>Closest Sentence in the abstract: ${closest_sentence}`
+                        tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
                     }
                    
                     text += "<br>" + tooltipText;
+
                     
                 }
                 return { text: text, color: color };
@@ -637,15 +728,22 @@ class MainScreen extends Component {
 
 
             
+            
             function replacePubMedLinks(inputString) {
+                
                 const replaceWithLink = (match) => {
+                   
                     const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
-            
+                
                 let result = inputString.replace(MainScreen.regex, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct, replaceWithLink);
+                
+               
                 result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
+                 
+               
                 result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
                 result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
             
@@ -656,6 +754,7 @@ class MainScreen extends Component {
             if (this.state.stream) {
 
                 
+            
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
               
@@ -675,14 +774,18 @@ class MainScreen extends Component {
                 
                 // Any other operations if result.done is not true
                 
+               
                 let claim_string = await decoderVerification.decode(result.value, {stream: true});
-                
+               
                 //console.log("Arriva = ", claim_string)
                 var claim_dict = JSON.parse(claim_string); // receiving the result from backend
                 console.log("Result = ",claim_dict)
                 console.log(typeof claim_dict);
+              
                 
                 if (Object.keys(claim_dict).length === 0) {
+
+                 
                     const ballHtml = ' <span class="gray-ball"></span>';
                     var color =  `<span class="tooltip" style="color: gray;">$1<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
                     
@@ -690,7 +793,7 @@ class MainScreen extends Component {
                     const output = this.state.questions[this.state.questions.length - 1].result;
                     var final_output = `<span class="tooltip" style="color: gray;">${output}<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
 
-                    
+                   
                     
                     this.setState(prevState => ({
                         questions: prevState.questions.map((q, i) => (
@@ -701,7 +804,7 @@ class MainScreen extends Component {
                     return;
                 }
                 
-                
+             
 
                 const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
 
@@ -965,14 +1068,28 @@ class MainScreen extends Component {
     }
     
     componentDidMount() {
+      
         document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener("click", this.handleDocumentClick);
        
       }
       
     componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener("click", this.handleDocumentClick);
     
     }
+
+    handleDocumentClick = (e) => {
+        const target = e.target;
+        // Check if the clicked element has `data-download="true"`
+        if (target.matches('[data-download="true"]')) {
+          e.preventDefault(); // Prevent default anchor behavior
+         // this.downloadDocument(foundDocument);
+         const filePath = target.textContent.replace("FILE:", "");
+         this.downloadDocument(filePath);
+        }
+      };
 
     handleTooltip(index) {
 
@@ -1350,16 +1467,28 @@ class MainScreen extends Component {
                                                 const content = doc.text.replace(title, '').trim();
                                                 const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
-                                                var docUrl = pmid ? baseUrl + pmid : location;
-
+                                                const docUrl = baseUrl + pmid;
+                                                
+                                                
                                                 return (
-                                                    <div
-                                                        key={i}
-                                                        className="document-square no-underline-link"
-                                                        onClick={() => this.handleDownload({ file: docUrl })}
-                                                    >
-                                                        <h3 className="document-title">{truncatedTitle}</h3>
-                                                        <p className="document-content">{truncatedContent}</p>
+                                                    <div>
+                                                        {doc.pmid === '' && (
+                                                    <a href="#"  onClick={() => this.downloadDocument(doc.location)} key={i} className="no-underline-link">
+                                                        <div className="document-square">
+                                                            <h3 className="document-title">{truncatedTitle}</h3>
+                                                            <p className="document-content">{truncatedContent}</p>
+                                                        </div>
+                                                    </a>
+                                                    )} : {doc.pmid !== '' && (
+                                                        <a href="{docUrl}" key={i} target="_blank" rel="noopener noreferrer" className="no-underline-link">
+                                                        <div className="document-square">
+                                                            <h3 className="document-title">{truncatedTitle}</h3>
+                                                            <p className="document-content">{truncatedContent}</p>
+                                                        </div>
+                                                    </a>
+
+                                                    )}
+
                                                     </div>
                                                 );
                                             } catch (error) {
@@ -1394,6 +1523,8 @@ class MainScreen extends Component {
                                     )}
                                   
                             
+                               
+                               
                                 <div className="output-section">
                                     <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
                                 </div>

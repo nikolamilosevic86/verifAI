@@ -2,7 +2,7 @@ import dateutil
 import torch
 from datetime import datetime
 from threading import Thread
-
+from sentence_transformers import SentenceTransformer
 from langchain_text_splitters import TokenTextSplitter
 from transformers import TextIteratorStreamer
 import hashlib
@@ -66,7 +66,8 @@ def extract_file_references(text):
     return:
     A list of matches containing the PubMed references.
     """
-    regular_expression = r"FILE:[\w\-. \\/]+\.(pdf|docx|pptx|txt|md)"
+    regular_expression = r"FILE:(?i)[\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md)"
+
     pattern = re.compile(regular_expression)
     return list(pattern.finditer(text))
 
