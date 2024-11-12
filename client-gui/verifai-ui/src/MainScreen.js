@@ -130,6 +130,8 @@ class MainScreen extends Component {
 
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
 
+        this.handleStopGenerating = this.handleStopGenerating.bind(this);
+
       
 
 
@@ -167,6 +169,10 @@ class MainScreen extends Component {
 
     handleStreamChange(event) {
         this.setState({ stream: event.target.value === "true" });
+    }
+
+    handleStopGenerating(){
+        window.location.reload();
     }
 
 
@@ -1582,12 +1588,16 @@ class MainScreen extends Component {
 
                                   
                                     {Object.keys(q.document_found).length > 0 && (
+                                        <>
                                     <h2 className="StatusMessage">
                                         {q.status === "fetching_query" && "Answering"}
                                         {q.status === "fetching_verification" && "Verification"}
                                         {q.status !== "fetching_verification" && q.status !== "fetching_query" && "Answer:"}
                                         {q.loading && <div className="spinner" />}
                                     </h2>
+                                    {q.status === "fetching_query" && (<button className='stopButton' onClick={this.handleStopGenerating}>Stop</button>)} 
+                                    { q.status === "fetching_verification" && (<button className='stopButton' onClick={this.handleStopGenerating}>Stop</button>)}
+                                    </>
                                     )}
                                   
                             
