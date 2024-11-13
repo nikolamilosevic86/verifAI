@@ -60,14 +60,20 @@ function Registration() {
     return (
         
         <div className="login-container">
+                 <div className='login-subcontainer'>
+                 <div className='login-text'>
         <img src={logo} alt="Logo" className="login-logo" />
-        <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+        <div className='login-text-div'><p className='login-verifai'>VerifAI helps you find and summarize information you are looking for with verified references.</p>
+        <p className='login-verifai-subtext'>New here? Learn more about VerifAI project at:   <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a></p>
         </div>
+        </div>
+
+        <div className='form-section-div'>
         <div className="login-form">
         <div class="special-h2">
             <h1>Registration</h1>
         </div>
-    
+        
         <form className="formClass" onSubmit={handleLogin}>
             <input className="formInput" type="text" placeholder="Name" onChange={e => setName(e.target.value)}/>
             <input className="formInput" type="text" placeholder="Surname" onChange={e => setSurname(e.target.value)}/>
@@ -79,7 +85,8 @@ function Registration() {
         </div>
         <br></br>
         <p className='message'>Already have an account? Log in <targe><span onClick={navigateLogin} style={{ color: '#23a1ee', cursor: 'pointer' }}>here</span></targe>.</p>
-       
+        </div>
+        </div>
     </div>
     
     );

@@ -20,6 +20,21 @@
 
 }
 
+.stopButton{
+  background-color: #27292b;
+  width: 7%;
+  font-size: x-large;
+  text-align: center;
+  font-family: 'BebasNeue', sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 2vh;
+}
+
+.stopButton:hover{
+  background-color: #9bb9d5;
+ 
+}
 
 .LoginModalOverlay{
   background-color: #9bb9d5;

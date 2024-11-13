@@ -29,6 +29,7 @@ function NavigateWrapper(props) {
 
 
 class MainScreen extends Component {
+    
 
     
    static contextType = AuthContext
@@ -37,6 +38,12 @@ class MainScreen extends Component {
     static regex_square_brackets = /\(PUBMED:(\d+)\)/g;
     static regex_punct_2 = /^\(PUBMED:\d+\)([\.\;\,])?$|^PUBMED:\d+\)$/g;
     static regex_punct_3 = /^\(PUBMED:\d+\)[\.\;\,]?$/g;
+
+    static file_regex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/g;
+    static file_regex_punct = /^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\](\.\;\,)?$|^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]$/g;
+    static file_regex_square_brackets = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/g;
+    static file_regex_punct_2 = /^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\](\.\;\,)?$|^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]$/g;
+    static file_regex_punct_3 = /^\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\][\.\;\,]?$/g;
  
    
     constructor(props) {
@@ -67,7 +74,7 @@ class MainScreen extends Component {
                 output: "" , // Holds HTML content safely
                 output_verification: "",
                 questions: [],
-                stream: true,
+                stream: false,
                 username: '',
                 password: ''
             };  
@@ -82,7 +89,7 @@ class MainScreen extends Component {
         this.shareOnLinkedIn = this.shareOnLinkedIn.bind(this);
         this.shareOnFacebook = this.shareOnFacebook.bind(this);
         this.shareOnTwitter = this.shareOnTwitter.bind(this);
-        
+        this.downloadDocument = this.downloadDocument.bind(this);
         this.openSharingModal = this.openSharingModal.bind(this);
         this.copyLink = this.copyLink.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -121,6 +128,13 @@ class MainScreen extends Component {
         this.handleUsernameChange = this.handleUsernameChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);
 
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
+
+        this.handleStopGenerating = this.handleStopGenerating.bind(this);
+
+      
+
+
        
 
 
@@ -155,6 +169,10 @@ class MainScreen extends Component {
 
     handleStreamChange(event) {
         this.setState({ stream: event.target.value === "true" });
+    }
+
+    handleStopGenerating(){
+        window.location.reload();
     }
 
 
@@ -367,11 +385,13 @@ class MainScreen extends Component {
                                    lex_par:lex_parameter,
                                    semantic_par:sem_parameter,
                                 })
+                           
 
         }).catch(error => alert("An error occured, please try again."));
 
         
         const document_found = await document_response.json()
+        
         console.log(document_found)
         this.setState(prevState => ({
             questions: prevState.questions.map((q, i) => (
@@ -401,7 +421,7 @@ class MainScreen extends Component {
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
-        
+      
         
         const processResult = async (result) => {
             if (result.done) {
@@ -416,28 +436,53 @@ class MainScreen extends Component {
             }
             let token = decoder.decode(result.value, {stream: true});
             
+           
             var no_space_token = token.trim()
+            console.log(no_space_token);
+            
             const regex = /\(?PUBMED:(\d+)\)?/g;
+           
+            
+
+          
             if (regex.test(no_space_token)){
                 
                 const regex = /\(?PUBMED:(\d+)\)?/g; 
                 var new_token = token;
-            
+             
                 let match;
                 while ((match = regex.exec(no_space_token)) !== null) {
                    
                     const number = match[1];
                     const matchedPart = match[0];
+                   
                     const linkedPart = `<a href="${baseUrl + number}" target="_blank">${matchedPart}</a>`;
                     new_token = new_token.replace(matchedPart, linkedPart);
                 }
             
                 token = new_token;
+                
               
             }
-           
             this.setOutput(token);
-            await reader.read().then(processResult);
+           /* const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
+
+            // Replace the matched text with a clickable link
+            const outputString = token.replace(fileregex, (match, filePath) => {
+              // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
+              const formattedPath = filePath.replace(/\\/g, '/'); 
+              return `<a href="#" data-download="true" target="_blank">${filePath}</a>`;
+            });
+            
+            let newToken = outputString;
+          
+
+            // Set output synchronously
+            this.setOutput(newToken);*/
+            
+            // Start the reader asynchronously and process the result concurrently
+            reader.read().then(processResult); 
+           
         };
     
         return reader.read().then(processResult);
@@ -574,6 +619,47 @@ class MainScreen extends Component {
 
     }
 
+    
+    downloadDocument(path){
+       //test_data\subfolder\2305.04928v4.pdf
+    if (path.startsWith('[') && path.endsWith(']')) {
+        path = path.slice(1, -1);
+    }
+
+    // Rest of the function remains the same
+    fetch(BACKEND + "download", {
+        method: "POST",
+        headers: {
+            'Authorization': "Bearer " + this.context.user.token,
+            'Content-Type': 'application/json',
+            'Response-Type': 'blob'
+        },
+        body: JSON.stringify({file: path})
+        }).then(async response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = path.split('\\').pop().split('/').pop() || 'downloadedFile';
+            document.body.appendChild(a);
+            a.click();
+
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            //alert("File downloading");
+
+        }).catch(
+            error => alert("Error downloading")
+        )
+        
+    }
+
+
+    
 
     postVerification(completeText) {
         const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
@@ -588,15 +674,22 @@ class MainScreen extends Component {
             body: JSON.stringify({ text: completeText, document_found:document_found, stream: this.state.stream})
         })
         .then(async response => {
+//        const data = await response.json();
+//
+//        if (data.message === "Verification is not enabled") {
+//            // If verification is not enabled, return black color and empty text
+//            return { text: completeText, color: "black" };
+//            }
 
             function tooltipToWrite(listResult) {
+                
                     
                 let text = "";
                 let color = "";
                 for (let [pmid, result] of Object.entries(listResult)) {
                     
                     let label = result['label']
-
+                  
                     if (color === "") {
                         color = (label === "SUPPORT") ? 'green' :
                                 (label === "NO REFERENCE") ? 'gray' :
@@ -611,19 +704,37 @@ class MainScreen extends Component {
                                    (label === "NO_EVIDENCE") ? '  <span class="orange-ball"></span>' :
                                    (label === "CONTRADICT") ? '  <span class="red-ball"></span>' : '';
                     
-                
+                    let checkPmid;
+                    let locationPath;
+                    let foundDocument;
 
-                    let tooltipText = (label === "SUPPORT") ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                    document_found.forEach(doc => {
+                        if(doc.location === pmid)
+                         {  
+                             foundDocument = doc;
+                             
+                         }
+
+                    })
+                   
+
+
+        
+                    let tooltipText = (label === "SUPPORT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid} target="_blank">PUBMED:${pmid}</a> is <strong>SUPPORT</strong>${ballHtml}` :
+                                    (label === "SUPPORT" && foundDocument.pmid === '') ? (`The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> is <strong>SUPPORT</strong>${ballHtml}` ):
                                      (label === "NO REFERENCE") ? `The claim has <strong>NO REFERENCE</strong>${ballHtml}` :
-                                     (label === "NO_EVIDENCE") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
-                                     (label === "CONTRADICT") ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
-                    
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                     (label === "NO_EVIDENCE" && foundDocument.pmid === '') ? `The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> has <strong>NO EVIDENCE</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && foundDocument.pmid !== '') ? `The claim for document <a href=${baseUrl + pmid}>PUBMED:${pmid}</a> has <strong>CONTRADICTION</strong>${ballHtml}` :
+                                      (label === "CONTRADICT" && foundDocument.pmid === '') ? `The claim for document <a href="#" data-download="true">FILE:${foundDocument.location}</a> has <strong>CONTRADICTION</strong>${ballHtml}` : '';
+                                      
                     if (label === "SUPPORT" || label === "CONTRADICT"){
                         let closest_sentence = result['closest_sentence']
                         tooltipText += `<br>Closest Sentence on the abstract: ${closest_sentence}`
                     }
                    
                     text += "<br>" + tooltipText;
+
                     
                 }
                 return { text: text, color: color };
@@ -631,27 +742,43 @@ class MainScreen extends Component {
 
 
             
-            function replacePubMedLinks(inputString) {
-                const replaceWithLink = (match) => {
-                    const pubMedId = match.match(/\d+/)[0]; // Extract the number from the match
+            
+            function replacePubMedAndFileLinks(inputString) {
+                const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+
+                const replaceWithPubMedLink = (match) => {
+                    const pubMedId = match.match(/\d+/)[0];
                     return `<a href="${baseUrl + pubMedId}" target="_blank">${match}</a>`;
                 };
-            
-                let result = inputString.replace(MainScreen.regex, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct, replaceWithLink);
-                result = result.replace(MainScreen.regex_square_brackets, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct_2, replaceWithLink);
-                result = result.replace(MainScreen.regex_punct_3, replaceWithLink);
-            
+
+                const replaceWithFileLink = (match) => {
+                    const filePath = match.match(/\[FILE:(.*?)\]/)[1];
+                    return `<a href="#" data-download="true" onClick="(e) => {  this.downloadDocument('${filePath}'); }">[FILE:${filePath}]</a>`;
+                };
+
+                // PubMed replacements
+                let result = inputString.replace(MainScreen.regex, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_square_brackets, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct_2, replaceWithPubMedLink);
+                result = result.replace(MainScreen.regex_punct_3, replaceWithPubMedLink);
+
+                // File replacement
+                const fileRegex = /\[FILE:.*?\]/g;
+                result = result.replace(fileRegex, replaceWithFileLink);
+
                 return result;
             }
             
 
             if (this.state.stream) {
 
-                
             const readerVerification = response.body.getReader();
             const decoderVerification = new TextDecoder('utf-8');
+            // Initialize an accumulator for processed claims
+            let processedClaims = [];
+            let originalOutput = this.state.questions[this.state.questions.length - 1].result;
+
               
             const processResultVerification = async (result) => {
                 
@@ -669,14 +796,47 @@ class MainScreen extends Component {
                 
                 // Any other operations if result.done is not true
                 
+               
                 let claim_string = await decoderVerification.decode(result.value, {stream: true});
-                
+                function sleep(ms) {
+                        return new Promise(resolve => setTimeout(resolve, ms));
+                    }
+               
                 //console.log("Arriva = ", claim_string)
-                var claim_dict = JSON.parse(claim_string); // receiving the result from backend
+                let claim_dict;
+                try {
+                    claim_dict = JSON.parse(claim_string);
+                } catch (error) {
+                    if (error instanceof SyntaxError) {
+                        console.error("JSON Parse Error:", error.message);
+                        // Handle the error - you might want to skip this iteration or take some other action
+                        return readerVerification.read().then(processResultVerification);
+                    } else {
+                        // If it's not a SyntaxError, rethrow the error
+                        throw error;
+                    }
+                }
+               // var claim_dict = JSON.parse(claim_string); // receiving the result from backend
+                if (claim_dict.message === "Verification is turned off") {
+                    // Verification is turned off, skip highlighting and tooltips
+                    const output = this.state.questions[this.state.questions.length - 1].result;
+                    const finalOutput = replacePubMedAndFileLinks(output);
+
+                    this.setState(prevState => ({
+                        questions: prevState.questions.map((q, i) => (
+                            i === prevState.questions.length - 1 ? { ...q, result: finalOutput, status: "finished", loading: false } : q
+                        )),
+                    }));
+
+                    return;
+                }
                 console.log("Result = ",claim_dict)
                 console.log(typeof claim_dict);
+              
                 
                 if (Object.keys(claim_dict).length === 0) {
+
+                 
                     const ballHtml = ' <span class="gray-ball"></span>';
                     var color =  `<span class="tooltip" style="color: gray;">$1<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
                     
@@ -684,7 +844,7 @@ class MainScreen extends Component {
                     const output = this.state.questions[this.state.questions.length - 1].result;
                     var final_output = `<span class="tooltip" style="color: gray;">${output}<span class="tooltiptext">The claim has <strong>NO REFERENCE</strong>${ballHtml}</span></span>`;
 
-                    
+                   
                     
                     this.setState(prevState => ({
                         questions: prevState.questions.map((q, i) => (
@@ -694,20 +854,37 @@ class MainScreen extends Component {
                     
                     return;
                 }
-                
-                
 
-                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
-
-                
-                var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>` 
-                            
-                
-                var output = this.state.questions[this.state.questions.length - 1].result
+                processedClaims.push(claim_dict);
+                // Start with the original output each time
+                let highlightedHTML = originalOutput;
                 const regex_output = /<a\s+href=.*?>/gi;
-                output = output.replace(regex_output, '');
+                highlightedHTML = highlightedHTML.replace(regex_output, '');
+
+                //var output = this.state.questions[this.state.questions.length - 1].result;
+//
+//
+//
+//
+//                const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
+//
+//
+//                var color =  `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_toolpit}</span></span>`
+//
+//
+//                var output = this.state.questions[this.state.questions.length - 1].result
+                //const regex_output = /<a\s+href=.*?>/gi;
+                //output = output.replace(regex_output, '');
+                //let highlightedHTML = output;
+                for (let claim of processedClaims) {
+                    const { text: text_tooltip, color: color_to_use } = tooltipToWrite(claim.result);
+                    var color = `<span class="tooltip" style="color: ${color_to_use};">$1<span class="tooltiptext">${text_tooltip}</span></span>`;
+
+                    highlightedHTML = highlightText(highlightedHTML, claim.claim, color);
+                    }
                 
 
+              
                 function escapeRegex(string) {
                     return string.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
                 }
@@ -723,8 +900,7 @@ class MainScreen extends Component {
                     const safeHTML = DOMPurify.sanitize(html);
                     
                     // Split the claim text into sentences
-                    const sentences = textToHighlight.match(/[^\.!\?]+[\.!\?]+/g) || [textToHighlight];
-    
+                    const sentences = textToHighlight.match(/[^.!?]+(?:(?:(?<=\b(?:etc|al|vs|Mr|Mrs|Ms|Dr|Prof|Sr|Jr|e\.g|i\.e))\.|[.!?]+)(?:\s*\[FILE:[^\]]+\])?(?=\s*(?:[A-Z]|\[|$)(?!\.))|\s*\[FILE:[^\]]+\]|$)(?:\s*,?\s*(?:\[FILE:[^\]]+\])?)*|[^.!?]+(?:\.[^.!?\s]+)+(?:\s*\[FILE:[^\]]+\])?/g) || [textToHighlight];
                     // Function to replace each sentence individually
                     function replaceSentence(html, sentence) {
                         // Escape special characters in the sentence
@@ -752,11 +928,9 @@ class MainScreen extends Component {
                     
                     return highlightedHTML;
                 }
-
-                var highlightedHTML = highlightText(output, claim_dict.claim, color);
                 
 
-                highlightedHTML = replacePubMedLinks(highlightedHTML)
+                highlightedHTML = replacePubMedAndFileLinks(highlightedHTML)
                     
                 
                 this.setState(prevState => ({
@@ -770,29 +944,49 @@ class MainScreen extends Component {
     
             // Start reading the stream
             await readerVerification.read().then(processResultVerification);
-        } else {
-            
-            const claim_dict_list_string = await response.json();
 
-            const claim_dict_list = JSON.parse(claim_dict_list_string);
+            var output = this.state.questions[this.state.questions.length - 1].result
 
-            const output = this.state.questions[this.state.questions.length - 1].result
-            
-            let html = DOMPurify.sanitize(output);
-
-            console.log("Arriva questa lista = ", claim_dict_list);
-
-            let i = 0
-            for (const claim_dict of claim_dict_list) {
+           
+            const fileregex = /\[FILE:([\w\s\-./\\]+?\.(pdf|docx|pptx|txt|md))\]/i;
                 
-                function cleanHTML(inputText) {
+            output = output.replace(fileregex, (match, filePath) => {
+                // Convert the file path to a clickable link (replace backslashes with forward slashes if necessary)
+                const formattedPath = filePath.replace(/\\/g, '/'); 
+                return `<a href="#" data-download="true" target="_blank">${filePath}</a>`;
+              });
+        } else {
+    const responseData = await response.json();
+
+    if (responseData.message === "Verification is turned off") {
+        // Verification is turned off, skip parsing and just replace PubMed links
+        const output = this.state.questions[this.state.questions.length - 1].result;
+        let html = DOMPurify.sanitize(output);
+        html = replacePubMedAndFileLinks(html);
+
+        this.setState(prevState => ({
+            questions: prevState.questions.map((q, i) => (
+                i === prevState.questions.length - 1 ? { ...q, result: html, status: "finished", loading: false } : q
+            ))
+        }));
+    } else {
+        // Proceed with verification parsing
+        const claim_dict_list = JSON.parse(responseData);
+        const output = this.state.questions[this.state.questions.length - 1].result;
+        let html = DOMPurify.sanitize(output);
+
+        console.log("Arriva questa lista = ", claim_dict_list);
+
+        let i = 0;
+        for (const claim_dict of claim_dict_list) {
+            function cleanHTML(inputText) {
                     // Regular expression to match tags that are not <span> or </span>
                     const regex = /<(?!\/?span\b)[^>]*>/gi;
-                    
+
                     // Replace the matched parts with an empty string
                     return inputText.replace(regex, '');
                   }
-                
+
                 function normalizeWhitespace2(string) {
                     string = string.replace(/\s/g, ' ').trim();
                     return string.replace(/\s*([.,;!?:])\s*/g, '$1');
@@ -800,35 +994,23 @@ class MainScreen extends Component {
                 html = cleanHTML(html)
                 html = normalizeWhitespace2(html)
                 const { text: text_toolpit, color: color_to_use } = tooltipToWrite(claim_dict.result);
-                console.log("text toolpit = ", text_toolpit)
-                const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>` 
-                
-                
-                
-                //const claimRegex = new RegExp(claim_dict.claim.split(/\s+/).join('\\s*'), 'g');
-               
-
+                console.log("text toolpit = ", text_toolpit);
+                const color =  `<span class="tooltip" style="color: ${color_to_use};">${claim_dict.claim}<span class="tooltiptext">${text_toolpit}</span></span>`;
                 html = html.replace(normalizeWhitespace2(claim_dict.claim), color);
-               
-                console.log("HTML dopo = ", html);
-                
-                i = i + 1;
-            }
-            
-            html = replacePubMedLinks(html)
-            this.setState(prevState => ({
-                questions: prevState.questions.map((q, i) => (
-                    i === prevState.questions.length - 1 ? { ...q, result: html } : q
-                ))
-            }));
 
-            this.setState(prevState => ({
-                questions: prevState.questions.map((q, i) => (
-                    i === prevState.questions.length - 1 ? { ...q, status: "finished", loading:false} : q
-                )),
-            }), 
-            );
-            }
+                console.log("HTML dopo = ", html);
+
+                i = i + 1;
+        }
+
+        html = replacePubMedAndFileLinks(html);
+        this.setState(prevState => ({
+            questions: prevState.questions.map((q, i) => (
+                i === prevState.questions.length - 1 ? { ...q, result: html, status: "finished", loading: false } : q
+            ))
+        }));
+    }
+}
         })
         .catch(error => {
             console.error('Error during verification:', error);
@@ -904,6 +1086,38 @@ class MainScreen extends Component {
         this.sharingModal = node;
     }
 
+    handleDownload = ({ file }) => {
+    console.log("Downloading file:", file);
+    fetch(`${BACKEND}download`, {
+        method: 'POST',
+        headers: {
+            'Authorization': "Bearer " + this.context.user.token,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ file: file })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.blob();
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', file.split('/').pop()); // Use the last part of the URL as the filename
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        window.URL.revokeObjectURL(url);
+    })
+    .catch(error => {
+        console.error('Error downloading file:', error);
+        alert('Error downloading file. Please try again.');
+    });
+};
+
   
         
       
@@ -927,14 +1141,28 @@ class MainScreen extends Component {
     }
     
     componentDidMount() {
+      
         document.addEventListener('mousedown', this.handleClickOutside);
+        document.addEventListener("click", this.handleDocumentClick);
        
       }
       
     componentWillUnmount() {
-    document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener('mousedown', this.handleClickOutside);
+        document.removeEventListener("click", this.handleDocumentClick);
     
     }
+
+    handleDocumentClick = (e) => {
+        const target = e.target;
+        // Check if the clicked element has `data-download="true"`
+        if (target.matches('[data-download="true"]')) {
+          e.preventDefault(); // Prevent default anchor behavior
+         // this.downloadDocument(foundDocument);
+         const filePath = target.textContent.replace("FILE:", "");
+         this.downloadDocument(filePath);
+        }
+      };
 
     handleTooltip(index) {
 
@@ -1277,8 +1505,9 @@ class MainScreen extends Component {
                                                    onChange={this.handleStreamChange}
                                                    title="Please select the stream option"
                                                >
-                                                   <option value="true">Stream</option>
-                                                   <option value="false">Not Stream</option>
+                                                   <option value="false">Do not stream verification</option>
+                                                   <option value="true">Stream verification</option>
+
                                                </select>
                                            </div>
                                            </div>
@@ -1300,37 +1529,48 @@ class MainScreen extends Component {
                                     <h2>Sources:</h2>
                                         <div className="document-section">
                                         {q.document_found && Object.keys(q.document_found)
-                                            .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 5)
-                                            .map((i) => {
-                                                const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
-                                                const doc = q.document_found[i];
-                                                
-                                                try {
-                                                const pmid = doc.pmid;
-                                             
+                                        .slice(0, q.showAllDocuments ? Object.keys(q.document_found).length : 5)
+                                        .map((i) => {
+                                            const baseUrl = "https://pubmed.ncbi.nlm.nih.gov/";
+                                            const doc = q.document_found[i];
 
+                                            try {
+                                                const pmid = doc.pmid;
+                                                const location = doc.location;
                                                 const title = doc.text.split('\n\n')[0];
                                                 const content = doc.text.replace(title, '').trim();
-                                                const truncatedContent = content.length > 100 ? content.substring(0, 28) + '...' : content;
+                                                const truncatedContent = content.length > 100 ? content.substring(0, 100) + '...' : content;
                                                 const truncatedTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
                                                 const docUrl = baseUrl + pmid;
                                                 
+                                                
                                                 return (
-                                                    <a href={docUrl} target="_blank" rel="noopener noreferrer" key={i} className="no-underline-link">
+                                                    <div>
+                                                        {doc.pmid === '' && (
+                                                    <a href="#"  onClick={() => this.downloadDocument(doc.location)} key={i} className="no-underline-link">
                                                         <div className="document-square">
                                                             <h3 className="document-title">{truncatedTitle}</h3>
                                                             <p className="document-content">{truncatedContent}</p>
                                                         </div>
                                                     </a>
+                                                    )}  {doc.pmid !== '' && (
+                                                        <a href="{docUrl}" key={i} target="_blank" rel="noopener noreferrer" className="no-underline-link">
+                                                        <div className="document-square">
+                                                            <h3 className="document-title">{truncatedTitle}</h3>
+                                                            <p className="document-content">{truncatedContent}</p>
+                                                        </div>
+                                                    </a>
+
+                                                    )}
+
+                                                    </div>
                                                 );
-                                            } catch(error)
-                                            {
-                                        
-                                                alert("An error occurred, please try again later.");
-                                                window.location.reload();
-                                              
+                                            } catch (error) {
+                                                console.error("Error processing document:", error);
+                                                return null;
                                             }
-                                            })}
+                                        })
+                                    }
                                         {!q.showAllDocuments && Object.keys(q.document_found).length > 5 && (
                                         <div className="document-square center" onClick={() => this.handleTooltip(this.state.questions.length - 1 - index)}>  
                                             <h3 className="document-title">
@@ -1348,15 +1588,21 @@ class MainScreen extends Component {
 
                                   
                                     {Object.keys(q.document_found).length > 0 && (
+                                        <>
                                     <h2 className="StatusMessage">
                                         {q.status === "fetching_query" && "Answering"}
                                         {q.status === "fetching_verification" && "Verification"}
                                         {q.status !== "fetching_verification" && q.status !== "fetching_query" && "Answer:"}
                                         {q.loading && <div className="spinner" />}
                                     </h2>
+                                    {q.status === "fetching_query" && (<button className='stopButton' onClick={this.handleStopGenerating}>Stop</button>)} 
+                                    { q.status === "fetching_verification" && (<button className='stopButton' onClick={this.handleStopGenerating}>Stop</button>)}
+                                    </>
                                     )}
                                   
                             
+                               
+                               
                                 <div className="output-section">
                                     <div className="output-tokens" dangerouslySetInnerHTML={{ __html: q.result }} />
                                 </div>

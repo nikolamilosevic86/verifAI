@@ -8,7 +8,8 @@ import numpy as np
 import re
 import nltk
 from nltk.tokenize import sent_tokenize
-from utils import calculate_similarity, clean_text, extract_pubmed_references
+from utils import calculate_similarity, clean_text, extract_pubmed_references,extract_file_references
+
 
 nltk.download('punkt')
 
@@ -114,6 +115,7 @@ def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) 
     text = clean_text(text)
     sentences = sent_tokenize(text)
     matches = extract_pubmed_references(text)
+    matches = matches + extract_file_references(text)
 
     if not matches:
         return []
@@ -122,6 +124,7 @@ def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) 
 
     for sentence in sentences:
         matches = extract_pubmed_references(sentence)
+        matches = matches + extract_file_references(sentence)
 
         if not matches:
             if results and results[-1][0] == NO_REFERENCE_NUMBER:
@@ -130,14 +133,17 @@ def split_text_by_pubmed_references(text: str, documents: dict, sentence_model) 
                 results.append([-1, sentence])
         else:
             for match in matches:
-                pubmed_number = re.sub(r'\D', '', match.group(0))
+                if "FILE:" in match.group(0):
+                    reference = match.group(0).replace("FILE:", "")
+                else:
+                    reference = re.sub(r'\D', '', match.group(0))
                 
                 # if len the result is less then a small value it means that there are edge case that leads to a wrong split so we merge with the last one
                 # the wrong splits are generate by the tokenizer of nltk for edge cases
                 if results and len(results[-1][1]) < 4 and results[-1][0] == NO_REFERENCE_NUMBER:
-                    results[-1] = [pubmed_number, results[-1][1] + sentence]
+                    results[-1] = [reference, results[-1][1] + sentence]
                 else:
-                    results.append([pubmed_number, sentence])
+                    results.append([reference, sentence])
 
     return correct_splits(results, documents, sentence_model)
 
@@ -184,8 +190,11 @@ def converting_document_for_verification(documents:list) -> dict:
         return {}
 
     documents_found = {}
-    for document in documents:   
-        documents_found[document["pmid"]] = {"text": document["text"]}
+    for document in documents:
+        if document["pmid"] != "":
+            documents_found[document["pmid"]] = {"text": document["text"]}
+        else:
+            documents_found[document["location"]] = {"text": document["text"]}
     
     return documents_found
 
@@ -211,12 +220,28 @@ def find_closest_sentence(claim: str, abstract: str, sentence_model) -> str:
             closest_sentence = sentence
     return closest_sentence
 
+def find_closest_sentences(claim: str, abstract: str, sentence_model,n:int) -> list[str]:
+    """
+    Finds to the top n similar sentences in the abstarct:
+    param:
+        claim: is the sentence to use
+        abstract: is the abstract where to find the closest sentence
+        sentence_model: the model used to encode the sentences
+        n: number of similar sentences to find
+    return:
+        the closest sentences in the abstract
+    """
+    abstract_sentence = sent_tokenize(abstract)
+    claim_vector = sentence_model.encode(claim)
+    dot_product = np.array([np.dot(claim_vector,sentence_model.encode(sentence)) for sentence in abstract_sentence])
+    top_n_indices = np.argsort(dot_product)[-n:]
+    return [abstract_sentence[i] for i in top_n_indices]
 
 
 
 def verification_claim(claims: list, abstracts: dict, verification_model, verification_tokenizer, sentence_model):
     if claims == []:
-        yield  {}
+        yield {}
     
     for element in claims:
         
@@ -229,11 +254,13 @@ def verification_claim(claims: list, abstracts: dict, verification_model, verifi
 
                 # Adding the title as information to sent, the title is divided for each document by \n\n
                 title = abstracts[pmid]["text"].split("\n\n")[0] 
-                abstract = ' '.join(abstracts[pmid]["text"].split("\n\n")[1:])
+                abstract = abstracts[pmid]["text"] # This will contain both title and abstract
                 results['result'][pmid]['title'] = title
+
+                relevant_sentences = ". ".join(find_closest_sentences(claim, abstracts[pmid]["text"], sentence_model, 10))
                 
                 # Inference
-                model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + abstracts[pmid]["text"] + verification_tokenizer.sep_token
+                model_instruction = verification_tokenizer.cls_token + claim + verification_tokenizer.sep_token + relevant_sentences + verification_tokenizer.sep_token
                 inputs = verification_tokenizer(model_instruction, return_tensors="pt")
                 with torch.no_grad(): 
                     outputs = verification_model(**inputs)
