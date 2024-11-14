@@ -1,0 +1,524 @@
+{
+   "questions": [
+      {
+         "body": "Is Hirschsprung disease a mendelian or a multifactorial disorder?", 
+         "documents": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/15858239", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/20598273", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/15829955", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/6650562", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/12239580", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/21995290", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/15617541", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23001136", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/8896569"
+         ], 
+         "ideal_answer": [
+            "Coding sequence mutations in RET, GDNF, EDNRB, EDN3, and SOX10 are involved in the development of Hirschsprung disease. The majority of these genes was shown to be related to Mendelian syndromic forms of Hirschsprung's disease, whereas the non-Mendelian inheritance of sporadic non-syndromic Hirschsprung disease proved to be complex; involvement of multiple loci was demonstrated in a multiplicative model."
+         ], 
+         "concepts": [
+            "http://www.disease-ontology.org/api/metadata/DOID:10487", 
+            "http://www.nlm.nih.gov/cgi/mesh/2015/MB_cgi?field=uid&exact=Find+Exact+Term&term=D006627", 
+            "http://www.nlm.nih.gov/cgi/mesh/2015/MB_cgi?field=uid&exact=Find+Exact+Term&term=D020412", 
+            "http://www.disease-ontology.org/api/metadata/DOID:11372"
+         ], 
+         "type": "summary", 
+         "id": "55031181e9bde69634000014", 
+         "snippets": [
+            {
+               "offsetInBeginSection": 131, 
+               "offsetInEndSection": 358, 
+               "text": "Hirschsprung disease (HSCR) is a multifactorial, non-mendelian disorder in which rare high-penetrance coding sequence mutations in the receptor tyrosine kinase RET contribute to risk in combination with mutations at other genes", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15829955", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 554, 
+               "offsetInEndSection": 992, 
+               "text": "In this study, we review the identification of genes and loci involved in the non-syndromic common form and syndromic Mendelian forms of Hirschsprung's disease. The majority of the identified genes are related to Mendelian syndromic forms of Hirschsprung's disease. The non-Mendelian inheritance of sporadic non-syndromic Hirschsprung's disease proved to be complex; involvement of multiple loci was demonstrated in a multiplicative model", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15617541", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 397, 
+               "offsetInEndSection": 939, 
+               "text": "Coding sequence mutations in e.g. RET, GDNF, EDNRB, EDN3, and SOX10 lead to long-segment (L-HSCR) as well as syndromic HSCR but fail to explain the transmission of the much more common short-segment form (S-HSCR). Furthermore, mutations in the RET gene are responsible for approximately half of the familial and some sporadic cases, strongly suggesting, on the one hand, the importance of non-coding variations and, on the other hand, that additional genes involved in the development of the enteric nervous system still await their discovery", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/12239580", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 941, 
+               "offsetInEndSection": 1279, 
+               "text": "For almost all of the identified HSCR genes incomplete penetrance of the HSCR phenotype has been reported, probably due to modifier loci. Therefore, HSCR has become a model for a complex oligo-/polygenic disorder in which the relationship between different genes creating a non-mendelian inheritance pattern still remains to be elucidated", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/12239580", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 129, 
+               "offsetInEndSection": 358, 
+               "text": " Hirschsprung disease (HSCR) is a multifactorial, non-mendelian disorder in which rare high-penetrance coding sequence mutations in the receptor tyrosine kinase RET contribute to risk in combination with mutations at other genes.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15829955", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 851, 
+               "offsetInEndSection": 1007, 
+               "text": " The inheritance of Hirschsprung disease is generally consistent with sex-modified multifactorial inheritance with a lower threshold of expression in males.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/6650562", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 131, 
+               "offsetInEndSection": 359, 
+               "text": "Hirschsprung disease (HSCR) is a multifactorial, non-mendelian disorder in which rare high-penetrance coding sequence mutations in the receptor tyrosine kinase RET contribute to risk in combination with mutations at other genes.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15829955", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 131, 
+               "text": "Differential contributions of rare and common, coding and noncoding Ret mutations to multifactorial Hirschsprung disease liability.", 
+               "beginSection": "title", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/20598273", 
+               "endSection": "title"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 210, 
+               "text": "BACKGROUND: RET is the major gene associated to Hirschsprung disease (HSCR) with differential contributions of its rare and common, coding and noncoding mutations to the multifactorial nature of this pathology.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/21995290", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 151, 
+               "offsetInEndSection": 376, 
+               "text": "In the etiology of Hirschsprung disease various genes play a role; these are: RET, EDNRB, GDNF, EDN3 and SOX10, NTN3, ECE1, Mutations in these genes may result in dominant, recessive or multifactorial patterns of inheritance.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15858239", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 83, 
+               "text": "Chromosomal and related Mendelian syndromes associated with Hirschsprung's disease.", 
+               "beginSection": "title", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23001136", 
+               "endSection": "title"
+            }, 
+            {
+               "offsetInBeginSection": 715, 
+               "offsetInEndSection": 818, 
+               "text": "The majority of the identified genes are related to Mendelian syndromic forms of Hirschsprung's disease", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15617541", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 151, 
+               "offsetInEndSection": 375, 
+               "text": "In the etiology of Hirschsprung disease various genes play a role; these are: RET, EDNRB, GDNF, EDN3 and SOX10, NTN3, ECE1, Mutations in these genes may result in dominant, recessive or multifactorial patterns of inheritance", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15858239", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 417, 
+               "offsetInEndSection": 615, 
+               "text": "On the basis of a skewed sex-ratio (M/F = 4/1) and a risk to relatives much higher than the incidence in the general population, HSCR has long been regarded as a sex-modified multifactorial disorder", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/8896569", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 858, 
+               "offsetInEndSection": 1012, 
+               "text": "The inheritance of Hirschsprung disease is generally consistent with sex-modified multifactorial inheritance with a lower threshold of expression in males", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/6650562", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 820, 
+               "offsetInEndSection": 992, 
+               "text": "The non-Mendelian inheritance of sporadic non-syndromic Hirschsprung's disease proved to be complex; involvement of multiple loci was demonstrated in a multiplicative model", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15617541", 
+               "endSection": "abstract"
+            }
+         ]
+      }, 
+      {
+         "body": "List signaling molecules (ligands) that interact with the receptor EGFR?", 
+         "documents": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/23959273", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/21514161", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23787814", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23888072", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23821377", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/24124521", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/22260327", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/24204699", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/24323361", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23089711", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23399900", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23382875", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23729230", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23212918", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/23099994", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/22247333"
+         ], 
+         "triples": [
+            {
+               "p": "http://purl.uniprot.org/core/encodedBy", 
+               "s": "http://purl.uniprot.org/uniprot/Q9QX70", 
+               "o": "http://linkedlifedata.com/resource/#_5139515837300022"
+            }, 
+            {
+               "p": "http://www.w3.org/2004/02/skos/core#prefLabel", 
+               "s": "http://linkedlifedata.com/resource/#_5139515837300022", 
+               "o": "Egfr"
+            }, 
+            {
+               "p": "http://www.w3.org/2004/02/skos/core#exactMatch", 
+               "s": "http://purl.uniprot.org/intact/EBI-1256812", 
+               "o": "http://purl.uniprot.org/uniprot/Q9QX70"
+            }, 
+            {
+               "p": "http://www.w3.org/2000/01/rdf-schema#label", 
+               "s": "http://purl.uniprot.org/intact/EBI-1256812", 
+               "o": "Egfr"
+            }
+         ], 
+         "ideal_answer": [
+            "The 7 known EGFR ligands  are: epidermal growth factor (EGF), betacellulin (BTC), epiregulin (EPR), heparin-binding EGF (HB-EGF), transforming growth factor-\u03b1 [TGF-\u03b1], amphiregulin (AREG) and epigen (EPG)."
+         ], 
+         "exact_answer": [
+            [
+               "epidermal growth factor"
+            ], 
+            [
+               "betacellulin"
+            ], 
+            [
+               "epiregulin"
+            ], 
+            [
+               "heparin-binding epidermal growth factor"
+            ], 
+            [
+               "transforming growth factor-\u03b1"
+            ], 
+            [
+               "amphiregulin"
+            ], 
+            [
+               "epigen"
+            ]
+         ], 
+         "concepts": [
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0005154", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0007176", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0005488", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0042058", 
+            "http://www.nlm.nih.gov/cgi/mesh/2015/MB_cgi?field=uid&exact=Find+Exact+Term&term=D018773", 
+            "http://www.nlm.nih.gov/cgi/mesh/2015/MB_cgi?field=uid&exact=Find+Exact+Term&term=D008024", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0045741", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0007173", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0005006", 
+            "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=GO:0007175", 
+            "http://www.uniprot.org/uniprot/EGFR_HUMAN", 
+            "http://www.uniprot.org/uniprot/EGFR_CHICK"
+         ], 
+         "type": "list", 
+         "id": "55046d5ff8aee20f27000007", 
+         "snippets": [
+            {
+               "offsetInBeginSection": 1085, 
+               "offsetInEndSection": 1199, 
+               "text": "the epidermal growth factor receptor (EGFR) ligands, such as epidermal growth factor (EGF) and amphiregulin (AREG)", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/24323361", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 1139, 
+               "offsetInEndSection": 1247, 
+               "text": " EGFR ligands epidermal growth factor (EGF), amphiregulin (AREG) and transforming growth factor alpha (TGF\u03b1)", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/24124521", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 72, 
+               "offsetInEndSection": 97, 
+               "text": " EGFR and its ligand EGF ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23959273", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 903, 
+               "offsetInEndSection": 1058, 
+               "text": "Among EGFR ligands, heparin-binding EGF-like growth factor, TGF-\u03b1 and Betacellulin (BTC) are produced in the tumor microenvironment of FDC-S at RNA level. ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23888072", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 322, 
+               "offsetInEndSection": 493, 
+               "text": ". Plasma amphiregulin (AR), epidermal growth factor (EGF), transforming growth factor-\u03b1, and heparin binding-EGF were assessed by ELISA in 45 chemorefractory mCRC patients", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23821377", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 346, 
+               "offsetInEndSection": 414, 
+               "text": "Among EGFR ligands, heparin-binding epidermal growth factor (HB-EGF)", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23787814", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 357, 
+               "offsetInEndSection": 521, 
+               "text": " Of the six known EGFR ligands, transforming growth factor alpha (TGF\u03b1) was expressed more highly in triple-negative breast tumors than in tumors of other subtypes.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23729230", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 781, 
+               "offsetInEndSection": 923, 
+               "text": "the 7 known EGFR ligands (EGF, betacellulin, epiregulin, heparin-binding EGF, transforming growth factor-\u03b1 [TGF-\u03b1], amphiregulin, and epigen) ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23399900", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 1393, 
+               "offsetInEndSection": 1472, 
+               "text": "EGFR ligands based on the two affinity classes: EGF>HB-EGF>TGF-\u03b1>BTC>EPR>EPG>AR", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23382875", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 197, 
+               "offsetInEndSection": 320, 
+               "text": "In this article, however, we demonstrate that PEPD directly binds to and activates epidermal growth factor receptor (EGFR),", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23212918", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 1559, 
+               "offsetInEndSection": 1607, 
+               "text": "four EGFR ligands (AR, HB-EGF, TGF-\u03b1, and EREG) ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/23099994", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 87, 
+               "text": "Epidermal growth factor (EGF) family peptides are ligands for the EGF receptor (EGFR). ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/22260327", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 240, 
+               "offsetInEndSection": 490, 
+               "text": "oluble amphiregulin (AR), transforming growth factor alpha (TGF\u03b1), neuregulin 2 beta, and epigen stimulate greater EGFR coupling to cell proliferation and DNA synthesis than do EGF, betacellulin, heparin-binding EGF-like growth factor, and epiregulin", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/22260327", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 387, 
+               "offsetInEndSection": 563, 
+               "text": "Here, we demonstrate that histamine releases 2 EGFR ligands, amphiregulin and heparin-binding epidermal growth factor-like growth factor (HB-EGF), from airway epithelial cells.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/22247333", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 72, 
+               "offsetInEndSection": 231, 
+               "text": "mammalian EGFR ligands including EGF, TGF-\u03b1 (TGF\u03b1), amphiregulin (AREG), heparin-binding EGF-like growth factor (HB-EGF), betacellulin, epiregulin, and epigen.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/21514161", 
+               "endSection": "abstract"
+            }
+         ]
+      }, 
+      {
+         "body": "Is the protein Papilin secreted?", 
+         "documents": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/3320045", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/7515725", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/20805556", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/19297413", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/19724244", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/15094122", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/12666201", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/21784067", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/11076767", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/15094110"
+         ], 
+         "ideal_answer": [
+            "Yes,  papilin is a secreted protein"
+         ], 
+         "exact_answer": "yes", 
+         "type": "yesno", 
+         "id": "54e25eaaae9738404b000017", 
+         "snippets": [
+            {
+               "offsetInBeginSection": 1085, 
+               "offsetInEndSection": 1307, 
+               "text": "Using expression analysis, we identify three genes that are transcriptionally regulated by HLH-2: the protocadherin cdh-3, and two genes encoding secreted extracellular matrix proteins, mig-6/papilin and him-4/hemicentin. ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/21784067", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 226, 
+               "offsetInEndSection": 458, 
+               "text": "We found that mig-6 encodes long (MIG-6L) and short (MIG-6S) isoforms of the extracellular matrix protein papilin, each required for distinct aspects of DTC migration. Both MIG-6 isoforms have a predicted N-terminal papilin cassette", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/19297413", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 1, 
+               "offsetInEndSection": 111, 
+               "text": "apilins are homologous, secreted extracellular matrix proteins which share a common order of protein domains. ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15094122", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 404, 
+               "text": "The TSR superfamily is a diverse family of extracellular matrix and transmembrane proteins, many of which have functions related to regulating matrix organization, cell-cell interactions and cell guidance. This review samples some of the contemporary literature regarding TSR superfamily members (e.g. F-spondin, UNC-5, ADAMTS, papilin, and TRAP) where specific functions are assigned to the TSR domains.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/15094110", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 43, 
+               "text": "Papilins are extracellular matrix proteins ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/12666201", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 48, 
+               "text": "Papilin is an extracellular matrix glycoprotein ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/11076767", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 731, 
+               "offsetInEndSection": 882, 
+               "text": " Collagen IV, laminin, glutactin, papilin, and other extracellular matrix proteins were made primarily by hemocytes and were secreted into the medium. ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/7515725", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 0, 
+               "offsetInEndSection": 101, 
+               "text": "A sulfated glycoprotein was isolated from the culture media of Drosophila Kc cells and named papilin.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/3320045", 
+               "endSection": "abstract"
+            }
+         ]
+      }, 
+      {
+         "body": "Are long non coding RNAs spliced?", 
+         "documents": [
+            "http://www.ncbi.nlm.nih.gov/pubmed/22955988", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/22955974", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/24285305", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/22707570", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/21622663", 
+            "http://www.ncbi.nlm.nih.gov/pubmed/24106460"
+         ], 
+         "ideal_answer": [
+            "Long non coding RNAs appear to be spliced through the same pathway as the mRNAs"
+         ], 
+         "exact_answer": "yes", 
+         "concepts": [
+            "http://www.nlm.nih.gov/cgi/mesh/2014/MB_cgi?field=uid&exact=Find+Exact+Term&term=D012326", 
+            "http://www.nlm.nih.gov/cgi/mesh/2014/MB_cgi?field=uid&exact=Find+Exact+Term&term=D062085"
+         ], 
+         "type": "yesno", 
+         "id": "535d292a9a4572de6f000003", 
+         "snippets": [
+            {
+               "offsetInBeginSection": 546, 
+               "offsetInEndSection": 739, 
+               "text": "Our analyses indicate that lncRNAs are generated through pathways similar to that of protein-coding genes, with similar histone-modification profiles, splicing signals, and exon/intron lengths.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/22955988", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 1602, 
+               "offsetInEndSection": 1732, 
+               "text": "For alternative exons and long noncoding RNAs, splicing tends to occur later, and the latter might remain unspliced in some cases.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/22955974", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 249, 
+               "offsetInEndSection": 557, 
+               "text": "bosome-mapping data to identify lncRNAs of Caenorhabditis elegans. We found 170 long intervening ncRNAs (lincRNAs), which had single- or multiexonic structures that did not overlap protein-coding transcripts, and about sixty antisense lncRNAs (ancRNAs), which were complementary to protein-coding transcripts", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/22707570", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 275, 
+               "offsetInEndSection": 401, 
+               "text": "We introduce an approach to predict spliced lncRNAs in vertebrate genomes combining comparative genomics and machine learning.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/21622663", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 711, 
+               "offsetInEndSection": 856, 
+               "text": "Owing to similar alternative splicing pattern to mRNAs, the concept of lncRNA genes was put forward to help systematic understanding of lncRNAs. ", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/24285305", 
+               "endSection": "abstract"
+            }, 
+            {
+               "offsetInBeginSection": 561, 
+               "offsetInEndSection": 746, 
+               "text": "Our synthesis of recent studies suggests that neither size, presence of a poly-A tail, splicing, direction of transcription, nor strand specificity are of importance to lncRNA function.", 
+               "beginSection": "abstract", 
+               "document": "http://www.ncbi.nlm.nih.gov/pubmed/24106460", 
+               "endSection": "abstract"
+            }
+         ]
+      }
+        ]
+}
