@@ -163,6 +163,7 @@ We welcome contribution to this project by anyone interested in participating. T
 * [Adela Ljajić, Miloš Košprdić, Bojana Bašaragin, Darija Medvecki, Lorenzo Cassano, Nikola Milošević, “Scientific QA System with Verifiable Answers”, The 6th International Open Search Symposium 2024](https://arxiv.org/pdf/2407.11485)
 * [Košprdić, M., Ljajić, A., Bašaragin, B., Medvecki, D., & Milošević, N. "Verif. ai: Towards an Open-Source Scientific Generative Question-Answering System with Referenced and Verifiable Answers." The Sixteenth International Conference on Evolving Internet INTERNET 2024 (2024).](https://arxiv.org/pdf/2402.18589.pdf)
 * [Bojana Bašaragin, Adela Ljajić, Darija Medvecki, Lorenzo Cassano, Miloš Košprdić, Nikola Milošević "How do you know that? Teaching Generative Language Models to Reference Answers to Biomedical Questions", Accepted at BioNLP 2024, Colocated with ACL 2024](https://arxiv.org/pdf/2407.05015)
+* [Adela Ljajić, Lorenzo Cassano, Miloš Košprdić, Bašaragin Bojana, Darija Medvecki, Nikola Milošević, "Enhancing Biomedical Information Retrieval with Semantic Search: A Comparative Analysis Using PubMed Data", Belgrade Bioinformatics Conference BelBi2024, 2024](https://archive.belbi.bg.ac.rs/2024/abstract/enhancing-biomedical-information-retrieval-with-semantic-search-a-comparative-analysis-using-pubmed-data/)
 
 ## Funding 
 
