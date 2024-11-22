@@ -13,6 +13,19 @@ The best part is, that we are making it open source, so anyone can use it!
 
 Check the [article about VerifAI project published on TowardsDataScience](https://towardsdatascience.com/verifai-project-open-source-biomedical-question-answering-with-verified-answers-5417cd9003e0)
 
+# Main features
+
+* Easy installation by running a single script
+* Easy indexing of local files in PDF, PPTX, DOCX, MD and TXT formats
+* Combination of lexical and semantic search to find the most relevant documents
+* Usage of any HuggingFace listed model for document embeddings
+* Usage of any LLM that follows OpenAI API standard (deployed using vLLM, Nvidia NIM, Ollama, or via commercial APIs, such as OpenAI, Azure)
+* Supports large amounts of indexed documents (tested with over 200GB of data and 30 million documents)
+* Shows the closest sentence in the document to the generated claim
+* User registration and log-in
+* Pleasent user interface developed in React.js
+* Verification that generated text does not contain hallucinations by a specially fine-tuned model
+
 
 # Installation and start-up
 
@@ -82,6 +95,9 @@ npm install
 npm start
 ```
 10. Go to `http://localhost:3000` to see the VerifAI in action.
+
+
+You can check a [tutorial on deploying VerifAI published on Towards Data Science](https://towardsdatascience.com/how-to-easily-deploy-a-local-generative-search-engine-using-verifai-cdf9dedf53c0)
 
 ## VerifAI BioMed
 
