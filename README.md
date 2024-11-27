@@ -36,12 +36,13 @@ Check the [article about VerifAI project published on TowardsDataScience](https:
 python -m venv verifai
 source verifai/bin/activate
 ```
-3. Run requirements.txt by running `pip install -r backend/requirements.txt`
-4. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
+3. Install postgres by running `sudo apt install postgresql-server-dev-all`
+4. Run requirements.txt by running `pip install -r backend/requirements.txt`
+5. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
 ```shell
 python install_datastore.py
 ```
-5. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
+6. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
 The configuration should look in the following manner:
 ```text
 SECRET_KEY=6183db7b3c4f67439ad61d1b798224a035fe35c4113bf870
@@ -74,7 +75,7 @@ INDEX_NAME_SEMANTIC = "myindex-semantic"
 
 USE_VERIFICATION=True
 ```
-6. Index your files, by running index_files.py and pointing it to the directory with files you would like to index. It will recuresevly index all files in the directory.
+7. Index your files, by running index_files.py and pointing it to the directory with files you would like to index. It will recuresevly index all files in the directory.
 ```shell
 python index_files.py <path-to-directory-with-files>
 ```
@@ -82,19 +83,19 @@ As an example, we have created a folder with some example files in the folder `t
 ```shell
 python index_files.py test_data
 ```
-7. Run the backend of VerifAI by running `main.py` in the backend folder.
+8. Run the backend of VerifAI by running `main.py` in the backend folder.
 ```shell
 python main.py
 ```
-8. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
-9. Install React requirements for the front-end in `client-gui/verifai-ui` folder and run front end:
+9. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
+10. Install React requirements for the front-end in `client-gui/verifai-ui` folder and run front end:
 ```shell
 cd ..
 cd client-gui/verifai-ui
 npm install
 npm start
 ```
-10. Go to `http://localhost:3000` to see the VerifAI in action.
+11. Go to `http://localhost:3000` to see the VerifAI in action.
 
 
 You can check a [tutorial on deploying VerifAI published on Towards Data Science](https://towardsdatascience.com/how-to-easily-deploy-a-local-generative-search-engine-using-verifai-cdf9dedf53c0)
