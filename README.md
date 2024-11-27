@@ -38,11 +38,7 @@ source verifai/bin/activate
 ```
 3. Install postgres by running `sudo apt install postgresql-server-dev-all`
 4. Run requirements.txt by running `pip install -r backend/requirements.txt`
-5. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
-```shell
-python install_datastore.py
-```
-6. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
+5. 6. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
 The configuration should look in the following manner:
 ```text
 SECRET_KEY=6183db7b3c4f67439ad61d1b798224a035fe35c4113bf870
@@ -75,6 +71,11 @@ INDEX_NAME_SEMANTIC = "myindex-semantic"
 
 USE_VERIFICATION=True
 ```
+6. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
+```shell
+python install_datastore.py
+```
+
 7. Index your files, by running index_files.py and pointing it to the directory with files you would like to index. It will recuresevly index all files in the directory.
 ```shell
 python index_files.py <path-to-directory-with-files>
