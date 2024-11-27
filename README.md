@@ -36,9 +36,9 @@ Check the [article about VerifAI project published on TowardsDataScience](https:
 python -m venv verifai
 source verifai/bin/activate
 ```
-3. Install postgres by running `sudo apt install postgresql-server-dev-all`
+3. In case you get errors with installing psycopg2, you may need to install postgres by running `sudo apt install postgresql-server-dev-all`
 4. Run requirements.txt by running `pip install -r backend/requirements.txt`
-5. 6. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
+5. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
 The configuration should look in the following manner:
 ```text
 SECRET_KEY=6183db7b3c4f67439ad61d1b798224a035fe35c4113bf870
