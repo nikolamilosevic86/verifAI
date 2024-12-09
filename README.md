@@ -1,3 +1,13 @@
+![GitHub Created At](https://img.shields.io/github/created-at/nikolamilosevic86/verifAI)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/nikolamilosevic86/verifAI)
+![GitHub contributors](https://img.shields.io/github/contributors/nikolamilosevic86/verifAI)
+![GitHub last commit](https://img.shields.io/github/last-commit/nikolamilosevic86/verifAI?display_timestamp=author)
+![GitHub License](https://img.shields.io/github/license/nikolamilosevic86/verifAI)
+
+
+
+
+
 # VerifAI project
 
 <img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/e95b4877-0847-4fa2-99e5-a6a7fc0003f8"  width="500"/>
