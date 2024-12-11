@@ -92,11 +92,14 @@ function UserCredential() {
 
     </div>
         <div className="login-container">
-            
-            <img src={logo} alt="Logo" className="login-logo" />
-            <div className='websiteLinkDiv'>  <a className='websiteLink' href="https://verifai-project.com/">Verif.ai Project Website</a>
+            <div className="credentials-subcontainer">
+            <div className='login-text'>
+            <img src={logo} alt="Logo" className="cred-logo" />
+            <div className='websiteLinkDivCredentials'>  <a className='websiteLinkCred' href="https://verifai-project.com/">Verif.ai Project Website</a>
+            </div>
             </div>
 
+            <div className='form-section-div'>
             <div className="login-form">
                 <h1>Change Password</h1>
                 <form className="formClass" onSubmit={handleChangePassword}>
@@ -105,6 +108,8 @@ function UserCredential() {
                     <button className="center-button" onClick={handleChangePassword}>Change Password</button>
                 </form>
             
+            </div>
+            </div>
             </div>
         </div>
         </div>
