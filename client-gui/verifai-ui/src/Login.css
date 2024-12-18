@@ -16,6 +16,17 @@
     
     width: 95%;
 }
+
+.credentials-subcontainer{
+    display: flex;
+    flex-direction: column;
+}
+
+
+
+.cred-logo{
+    height: 45vh;
+}
 .login-logo {
     width: auto; /* Adjust the width as necessary */
     height: 60vh;
@@ -260,10 +271,10 @@ button::after {
     padding-bottom: 1vh;
 }
 
-@media (max-width: 800px){
+@media (max-width: 1000px){
 
   .login-form{
-    width: 40%;
+    width: 80%;
     
   }
 
@@ -273,9 +284,79 @@ button::after {
 }
 
 
+.login-subcontainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    
 }
 
-@media (max-width: 400px){
+
+
+.login-text{
+   
+    display: flex;
+    flex-direction: column;
+ 
+    
+    
+}
+
+.login-text-div{
+  
+    display: flex;
+    flex-direction: column;
+    margin-left: 5%;
+    
+
+}
+.login-verifai{
+ 
+   text-align: center;
+    
+    font-family: 'Montserrat', sans-serif;
+    font-size: x-large;
+}
+
+.login-verifai-subtext{
+  
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+    text-align: center;
+
+}
+
+.login-logo {
+    width: auto; /* Adjust the width as necessary */
+    height: 50vh;
+    margin-left: 5%;
+   
+}
+
+.login-container {
+    display: flex;
+    flex-direction: row; /* Stack children vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    height: 100vh; /* Full viewport height to center everything in the middle of the page */
+    background-color: #f8f8f8; /* Background color, optional */
+    width: 100%;
+   
+    
+}
+
+.websiteLink {
+    font-family: 'Montserrat', sans-serif;
+    font-size: large;
+    text-decoration: none;
+}
+
+
+}
+
+@media (max-width: 500px){
 
     .login-form{
       width: 80%;     
@@ -291,5 +372,72 @@ button::after {
     .message{
         font-size: small;
     }
+
+    .login-subcontainer{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 80%;
+    }
+
   
+    
+    .login-text{
+       
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        
+        
+    }
+    
+    .login-text-div{
+      
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    
+    }
+    .login-verifai{
+     
+       text-align: center;
+        
+        font-family: 'Montserrat', sans-serif;
+        font-size: large;
+    }
+    
+    .login-verifai-subtext{
+      
+        font-family: 'Montserrat', sans-serif;
+        font-size: small;
+        text-align: center;
+    
+    }
+
+    .login-logo {
+        width: auto; /* Adjust the width as necessary */
+        height: 50vh;
+        margin-left: 5%;
+    }
+
+    .login-container {
+        display: flex;
+        flex-direction: row; /* Stack children vertically */
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        height: 100vh; /* Full viewport height to center everything in the middle of the page */
+        background-color: #f8f8f8; /* Background color, optional */
+        width: 100%;
+        
+    }
+
+    .websiteLink {
+        font-family: 'Montserrat', sans-serif;
+        font-size: small;
+        text-decoration: none;
+    }
+
+
   }
