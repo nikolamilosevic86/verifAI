@@ -97,7 +97,8 @@ def getTextAndMetadataFromPPTX(filename):
 
 def parse_pdf_date(date_string):
     if date_string == 'Unknown' or not date_string:
-        return None
+        print(f"Date string is empty or unknown: {date_string}")
+        return datetime.now().isoformat()
 
     # Remove the 'D:' prefix if it exists
     if date_string.startswith('D:'):
@@ -107,13 +108,17 @@ def parse_pdf_date(date_string):
     try:
         # Parse the main part of the date
         dt = datetime.strptime(date_string[:14], '%Y%m%d%H%M%S')
+    except ValueError as ve:
+        print(f"Error processing {date_string}: {str(ve)}")
+        return datetime.now().isoformat()
 
+    try:
         # Handle the timezone information
         if len(date_string) > 14:
             tz_string = date_string[14:]
             if tz_string[0] in ['+', '-']:
                 tz_hours = int(tz_string[1:3])
-                tz_minutes = int(tz_string[3:5])
+                tz_minutes = int(tz_string[4:6])
                 tz_offset = (tz_hours * 60 + tz_minutes) * 60
                 if tz_string[0] == '-':
                     tz_offset = -tz_offset
@@ -122,8 +127,11 @@ def parse_pdf_date(date_string):
                 dt = dt.replace(tzinfo=timezone.utc)
 
         return dt.isoformat()
-    except ValueError:
-        return None
+    except Exception as exc:
+        print(f"Error processing {date_string}: {str(exc)}")
+        pass
+
+    return dt.isoformat()
 
 def getTextAndMetadataFromPDF(filename):
     file_content = ""
