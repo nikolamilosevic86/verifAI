@@ -196,7 +196,7 @@ Currently, two institutions are the main drivers of this project, namely Bayer A
 
 We welcome contribution to this project by anyone interested in participating. This is an open source project under AGPL license. In order to prevent any legal issues, before sending the first pull request, we ask potential contributors to sign [Individual Contributor Agreement](https://github.com/nikolamilosevic86/verif.ai/blob/main/Legal/Individual%20Contributor%20Agreement%20Verifai_fillable.pdf) and send to us via email (verif.ai.project@gmail.com).
 
-## Citations
+## Papers and Citations
 
 * [Adela Ljajić, Miloš Košprdić, Bojana Bašaragin, Darija Medvecki, Lorenzo Cassano, Nikola Milošević, “Scientific QA System with Verifiable Answers”, The 6th International Open Search Symposium 2024](https://arxiv.org/pdf/2407.11485)
 * [Košprdić, M., Ljajić, A., Bašaragin, B., Medvecki, D., & Milošević, N. "Verif. ai: Towards an Open-Source Scientific Generative Question-Answering System with Referenced and Verifiable Answers." The Sixteenth International Conference on Evolving Internet INTERNET 2024 (2024).](https://arxiv.org/pdf/2402.18589.pdf)
