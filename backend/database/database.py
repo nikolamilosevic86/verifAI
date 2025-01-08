@@ -1,13 +1,13 @@
 import asyncpg
 import json
-
+import datetime
 
 class Database:
     """
     Singleton class to handle the database for user page Login and chat sessions.
     """
-    
-    def __init__(self, dbname:str, user:str, password:str, host:str):
+
+    def __init__(self, dbname: str, user: str, password: str, host: str):
         self.sql_database = None
         self.dbname = dbname
         self.user = user
@@ -16,12 +16,63 @@ class Database:
 
     async def open(self):
         if self.sql_database is None or self.sql_database.is_closed():
-            self.sql_database = await asyncpg.connect(user=self.user, password=self.password, 
+            self.sql_database = await asyncpg.connect(user=self.user, password=self.password,
                                                       database=self.dbname, host=self.host)
 
     async def close(self):
         if self.sql_database:
             await self.sql_database.close()
+
+    async def create_database(self):
+        # Connect to 'postgres' database to create a new database
+        conn = await asyncpg.connect(user=self.user, password=self.password,
+                                     database='postgres', host=self.host)
+        try:
+            await conn.execute(f'CREATE DATABASE {self.dbname}')
+            print(f"Database '{self.dbname}' created successfully")
+        except asyncpg.exceptions.DuplicateDatabaseError:
+            print(f"Database '{self.dbname}' already exists")
+        finally:
+            await conn.close()
+
+    async def create_tables(self):
+        await self.open()
+        try:
+            await self.sql_database.execute('''
+                CREATE TABLE IF NOT EXISTS users (
+                    name VARCHAR(255),
+                    surname VARCHAR(255),
+                    username VARCHAR(255) PRIMARY KEY,
+                    password VARCHAR(255),
+                    api_token VARCHAR(255),
+                    email VARCHAR(255)
+                );
+
+                CREATE TABLE IF NOT EXISTS user_questions (
+                    username VARCHAR(255),
+                    question TEXT,
+                    question_date TIMESTAMP
+                );
+
+                CREATE TABLE IF NOT EXISTS web_sessions (
+                    id SERIAL PRIMARY KEY,
+                    state JSONB NOT NULL
+                );
+            ''')
+            print("Tables created successfully")
+        except Exception as e:
+            print(f"An error occurred while creating tables: {e}")
+        finally:
+            await self.close()
+
+    @classmethod
+    async def initialize(cls, dbname: str, user: str, password: str, host: str):
+        db = cls(dbname, user, password, host)
+        print("Making database")
+        await db.create_database()
+        print("Making tables")
+        await db.create_tables()
+        return db
 
     async def get_user(self, username: str) -> dict:
         await self.open()
@@ -61,6 +112,16 @@ class Database:
         print("Result = ",result)
         await self.close()
         return result['id']
+    
+    async def insert_question(self, username: str, question: str, current_timestamp: datetime):
+        await self.open()
+        await self.sql_database.execute(
+            'INSERT INTO user_questions (username, question, question_date) VALUES ($1, $2, $3)', username, question, current_timestamp
+        )
+        await self.close()
+
+ 
+
 
     async def get_web_session(self, session_id):
         await self.open()
