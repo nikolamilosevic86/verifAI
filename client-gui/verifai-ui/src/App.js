@@ -15,7 +15,7 @@ import UserCredential from './UserCredential';
 //  return <MainScreen {...props} sessionId={sessionId} />;
 //}
 
-export const BACKEND = "https://api.verifai-project.com/";
+export const BACKEND = process.env.REACT_APP_BACKEND;
 
 function App() {
 
