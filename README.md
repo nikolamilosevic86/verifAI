@@ -8,14 +8,14 @@
 
 
 
-# VerifAI project
+# VerifAI
 
 <img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/e95b4877-0847-4fa2-99e5-a6a7fc0003f8"  width="500"/>
 
 No more searches, just verifiably accurate answers.
 
 ## Project Description
-VerifAI project aims to address problem of hallucinations in generative large language models and generative search engines. Initially, we started with biomedical domain, however, now we have expanded VerifAI to support indexing any documents in txt,md, docx, pptx, or pdf formats. 
+VerifAI is a document-based question-answering systems that aims to address problem of hallucinations in generative large language models and generative search engines. Initially, we started with biomedical domain, however, now we have expanded VerifAI to support indexing any documents in txt,md, docx, pptx, or pdf formats. 
 
 VerifAI is an AI system designed to answer users' questions by retrieving the most relevant documents, generate answer with references to the relevant documents and verify that the generated answer does not contain any hallucinations. In the core of the engine is generative search engine, powered by open technologies. However, generative models may hallucinate, and therefore VerifAI is developed a second model that would check the sources of generative model and flag any misinformation or misinterpretations of source documents. Therefore, make the answer created by generative search engine completly verifiable. 
 
