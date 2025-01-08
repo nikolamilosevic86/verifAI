@@ -10,8 +10,11 @@ function Login() {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
     
-    const { user, login } = useAuth();
-    
+     const { user, login, loginWithAzure, isSSOConfigured } = useAuth();
+
+    const handleAzureLogin = async () => {
+        await loginWithAzure(navigate);
+    };
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -51,7 +54,9 @@ function Login() {
                 <input className="formInput" type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
                 <button class="center-button" onClick={handleLogin}>Log In</button>
             </form>
-            
+            {isSSOConfigured && (
+                    <button className="center-button azure-button" onClick={handleAzureLogin}>Sign in with Azure AD</button>
+                )}
         </div>
         <br></br>
         <p className='message'>New to VerifAi app? <targe><span onClick={handleRegister} style={{ color: '#23a1ee', cursor: 'pointer' }}>Sign up</span></targe> to get instant access.</p>

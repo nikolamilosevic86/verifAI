@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useMsal } from "@azure/msal-react";
+import { loginRequest, isSSOConfigured } from './msalConfig';
 import { BACKEND } from './App.js';
 const AuthContext = createContext(null) ?? {};
 
@@ -18,6 +20,7 @@ function getRedirectionPath() {
 
 export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
+    const { instance } = useMsal();
     const [user, setUser] = useState(null);
     
 
@@ -63,6 +66,28 @@ export const AuthProvider = ({ children }) => {
         alert('Login failed due to an unexpected error');
     }
 };
+    const loginWithAzure = async (navigate) => {
+        if (!isSSOConfigured) {
+            console.error('Azure SSO is not configured');
+            return;
+        }
+        try {
+        console.log('loginRequest:', loginRequest);
+
+            const response = await instance.loginPopup(loginRequest);
+            if (response.account) {
+                const token = response.accessToken;
+                localStorage.setItem("token", token);
+                localStorage.setItem("username", response.account.username);
+                setUser({ token: token, username: response.account.username });
+                const redirectionPath = getRedirectionPath();
+                navigate(redirectionPath);
+            }
+        } catch (error) {
+            console.error('Azure login error:', error);
+            alert('Azure login failed');
+        }
+    };
   
 
   const logout = async () => {
@@ -72,7 +97,7 @@ export const AuthProvider = ({ children }) => {
 };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout,loginWithAzure, isSSOConfigured  }}>
       {children}
     </AuthContext.Provider>
   );
