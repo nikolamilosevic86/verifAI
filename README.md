@@ -76,8 +76,14 @@ python -m venv verifai
 source verifai/bin/activate
 ```
 3. In case you get errors with installing psycopg2, you may need to install postgres by running `sudo apt install postgresql-server-dev-all`
-4. Run requirements.txt by running `pip install -r backend/requirements.txt`
-5. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
+4. On a clean instance you may need to run:
+```
+sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+sudo apt update
+```
+5. Run requirements.txt by running `pip install -r backend/requirements.txt`
+6. Configure system, by replacing and modifying `.env.local.example` in backend folder and rename it into just `.env`:
 The configuration should look in the following manner:
 ```text
 SECRET_KEY=6183db7b3c4f67439ad61d1b798224a035fe35c4113bf870
@@ -110,12 +116,12 @@ INDEX_NAME_SEMANTIC = "myindex-semantic"
 
 USE_VERIFICATION=True
 ```
-6. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
+7. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
 ```shell
 python install_datastore.py
 ```
 
-7. Index your files, by running index_files.py and pointing it to the directory with files you would like to index. It will recuresevly index all files in the directory.
+8. Index your files, by running index_files.py and pointing it to the directory with files you would like to index. It will recuresevly index all files in the directory.
 ```shell
 python index_files.py <path-to-directory-with-files>
 ```
@@ -123,12 +129,12 @@ As an example, we have created a folder with some example files in the folder `t
 ```shell
 python index_files.py test_data
 ```
-8. Run the backend of VerifAI by running `main.py` in the backend folder.
+9. Run the backend of VerifAI by running `main.py` in the backend folder.
 ```shell
 python main.py
 ```
-9. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
-10. Install React requirements for the front-end in `client-gui/verifai-ui` folder and run front end:
+10. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
+11. Install React requirements for the front-end in `client-gui/verifai-ui` folder and run front end:
 ```shell
 cd ..
 cd client-gui/verifai-ui
@@ -145,7 +151,7 @@ Start the app by running:
 ```shell
 npm start
 ```
-11. Go to `http://localhost:3000` to see the VerifAI in action.
+12. Go to `http://localhost:3000` to see the VerifAI in action.
 
 
 You can check a [tutorial on deploying VerifAI published on Towards Data Science](https://towardsdatascience.com/how-to-easily-deploy-a-local-generative-search-engine-using-verifai-cdf9dedf53c0)
