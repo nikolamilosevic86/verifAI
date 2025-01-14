@@ -23,7 +23,7 @@ The best part is, that we are making it open source, so anyone can use it!
 
 Check the [article about VerifAI project published on TowardsDataScience](https://towardsdatascience.com/verifai-project-open-source-biomedical-question-answering-with-verified-answers-5417cd9003e0)
 
-[![GitHub stars](https://img.shields.io/github/stars/nikolamilosevic86/verifAI.svg?style=social&label=Star)](https://github.com/nikolamilosevic86/verifAI/star)
+[![GitHub stars](https://img.shields.io/github/stars/nikolamilosevic86/verifAI.svg?style=social&label=Star)](https://github.com/nikolamilosevic86/verifAI)
 [![GitHub forks](https://img.shields.io/github/forks/nikolamilosevic86/verifAI.svg?style=social&label=Fork)](https://github.com/nikolamilosevic86/verifAI/fork)
 
 # Main features
@@ -206,6 +206,17 @@ We welcome contribution to this project by anyone interested in participating. T
 * [Bojana Bašaragin, Adela Ljajić, Darija Medvecki, Lorenzo Cassano, Miloš Košprdić, Nikola Milošević "How do you know that? Teaching Generative Language Models to Reference Answers to Biomedical Questions", Accepted at BioNLP 2024, Colocated with ACL 2024](https://arxiv.org/pdf/2407.05015)
 * [Adela Ljajić, Lorenzo Cassano, Miloš Košprdić, Bašaragin Bojana, Darija Medvecki, Nikola Milošević, "Enhancing Biomedical Information Retrieval with Semantic Search: A Comparative Analysis Using PubMed Data", Belgrade Bioinformatics Conference BelBi2024, 2024](https://archive.belbi.bg.ac.rs/2024/abstract/enhancing-biomedical-information-retrieval-with-semantic-search-a-comparative-analysis-using-pubmed-data/)
 * [Košprdić, M.; Ljajić, A.; Medvecki, D.; Bašaragin, B. and Milošević, N. (2024). Scientific Claim Verification with Fine-Tuned NLI Models. In Proceedings of the 16th International Joint Conference on Knowledge Discovery, Knowledge Engineering and Knowledge Management - KMIS; ISBN 978-989-758-716-0; ISSN 2184-3228, SciTePress, pages 15-25. DOI: 10.5220/0012900000003838](https://www.scitepress.org/PublicationsDetail.aspx?ID=IzZ1ihNsQR8=&t=1)
+
+## ⭐️ Support This Project
+
+If you find this project helpful or interesting, please consider giving it a star on GitHub! Your support helps make this project more visible to others who might benefit from it.
+
+<a href="https://github.com/nikolamilosevic86/verifAI/stargazers">
+  <img src="https://img.shields.io/github/stars/nikolamilosevic86/verifAI?style=social" alt="Star on GitHub">
+</a>
+
+By starring this repository, you'll also stay updated on new features and improvements. Thank you for your support! 🙏
+
 
 ## Funding 
 
