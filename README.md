@@ -23,6 +23,9 @@ The best part is, that we are making it open source, so anyone can use it!
 
 Check the [article about VerifAI project published on TowardsDataScience](https://towardsdatascience.com/verifai-project-open-source-biomedical-question-answering-with-verified-answers-5417cd9003e0)
 
+[![GitHub stars](https://img.shields.io/github/stars/nikolamilosevic86/verifAI.svg?style=social&label=Star)](https://github.com/nikolamilosevic86/verifAI)
+[![GitHub forks](https://img.shields.io/github/forks/nikolamilosevic86/verifAI.svg?style=social&label=Fork)](https://github.com/nikolamilosevic86/verifAI/fork)
+
 # Main features
 
 * Easy installation by running a single script
