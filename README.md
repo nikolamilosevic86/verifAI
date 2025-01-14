@@ -10,6 +10,20 @@
 
 No more searches, just verifiably accurate answers.
 
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Main Features](#main-features)
+- [Support This Project](#️-support-this-project)
+- [Installation and Start-up](#installation-and-start-up)
+  - [VerifAI Core](#verifai-core)
+  - [VerifAI BioMed](#verifai-biomed)
+- [Developed Models and Datasets](#developed-models-and-datasets)
+- [Using our APP](#using-our-app)
+- [Collaborators and Contributions](#collaborators-and-contributions)
+- [Papers and Citations](#papers-and-citations)
+- [Funding](#funding)
+
 ## Project Description
 VerifAI is a document-based question-answering systems that aims to address problem of hallucinations in generative large language models and generative search engines. Initially, we started with biomedical domain, however, now we have expanded VerifAI to support indexing any documents in txt,md, docx, pptx, or pdf formats. 
 
