@@ -116,7 +116,7 @@ INDEX_NAME_SEMANTIC = "myindex-semantic"
 
 USE_VERIFICATION=True
 ```
-7. Run install_datastore.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
+7. Run install_datastores.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
 ```shell
 python install_datastore.py
 ```
