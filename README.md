@@ -133,7 +133,12 @@ python index_files.py test_data
 ```shell
 python main.py
 ```
-10. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/)
+10. Install React by following [this guide](https://www.freecodecamp.org/news/how-to-install-react-a-step-by-step-guide/), or by running following commands:
+```
+sudo apt update
+sudo apt install nodejs npm
+sudo npm install -g create-react-app
+```
 11. Install React requirements for the front-end in `client-gui/verifai-ui` folder and run front end:
 ```shell
 cd ..
