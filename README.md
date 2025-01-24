@@ -108,6 +108,8 @@ OPENAI_PATH=<path-to-openai/azure/vllm/nvidia_nim/ollama-interface>
 OPENAI_KEY=<key-in-interface>
 DEPLOYMENT_MODEL=GPT4o
 MAX_CONTEXT_LENGTH=128000
+SIMILARITY_METRIC=DOT
+VECTOR_SIZE=768
 
 EMBEDDING_MODEL="sentence-transformers/msmarco-bert-base-dot-v5"
 
@@ -116,6 +118,8 @@ INDEX_NAME_SEMANTIC = "myindex-semantic"
 
 USE_VERIFICATION=True
 ```
+Please note that value of SIMILARITY_METRIC can be either `DOT` (dot product) or `COSINE` (cosine similarity). If not stated, it will resolve to Cosine similarity. 
+
 7. Run install_datastores.py file. To run this file, it is necessary to install Docker (and run the daemon). This file is designed to install necessary components, such as OpenSearch, Qdrant and PostgreSQL, as well as to create database in PostgreSQL.
 ```shell
 python install_datastore.py
