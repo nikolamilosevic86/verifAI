@@ -189,7 +189,7 @@ def main_indexing(mypath):
     INDEX_NAME_SEMANTIC = os.getenv("INDEX_NAME_SEMANTIC")
     INDEX_NAME_LEXICAL = os.getenv("INDEX_NAME_LEXICAL")
     similarity_metric = os.getenv("SIMILARITY_METRIC")
-    vector_size = int(os.getenv("VECTOR_SIZE"))
+    vector_size = os.getenv("VECTOR_SIZE")
 
 
     model_name = embedding_model
@@ -216,11 +216,11 @@ def main_indexing(mypath):
 
 
     if similarity_metric=="DOT":
-        vec_config = models.VectorsConfig(size=vector_size,distance=models.Distance.DOT)
+        vec_config = models.VectorParams(size=vector_size,distance=models.Distance.DOT)
     elif similarity_metric =="COSINE":
-        vec_config = models.VectorsConfig(size=vector_size,distance=models.Distance.COSINE)
+        vec_config = models.VectorParams(size=vector_size,distance=models.Distance.COSINE)
     else:
-        vec_config = models.VectorsConfig(size=vector_size,distance=models.Distance.DOT)
+        vec_config = models.VectorParams(size=vector_size,distance=models.Distance.DOT)
 
 
     response = qdrant_client.create_collection(
