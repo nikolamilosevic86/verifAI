@@ -1,5 +1,6 @@
 import dateutil
 import torch
+import tiktoken
 from datetime import datetime
 from threading import Thread
 from sentence_transformers import SentenceTransformer
@@ -165,13 +166,13 @@ Answer:"""
 #         for document in documents:
 
 #    return output_string
-
+def count_tokens(text, model_name="gpt-4"):
+    encoding = tiktoken.encoding_for_model(model_name)
+    return len(encoding.encode(text))
 
 def convert_documents(documents: list, max_context_size: int, model, query: str) -> str:
     if len(documents) == 0:
         return ""
-
-    splitter = TokenTextSplitter(model_name="gpt-4")
     max_tokens = max_context_size - 1000  # Reserve 1000 tokens as requested
 
     # First, check if all documents fit within the token limit
@@ -182,7 +183,7 @@ def convert_documents(documents: list, max_context_size: int, model, query: str)
             doc_string = f"abstract_id: PUBMED:{document['pmid']}\n{document['text']}\n\n"
         else:
             doc_string = f"abstract_id: FILE:{document['location']}\n{document['text']}\n\n"
-        doc_tokens = len(splitter.split_text(doc_string))
+        doc_tokens = count_tokens(doc_string)
         total_tokens += doc_tokens
         all_docs_string += doc_string
 
@@ -204,7 +205,7 @@ def convert_documents(documents: list, max_context_size: int, model, query: str)
             chunks.append(doc_header + chunk)
 
     # Rerank chunks using SentenceTransformer
-    sentence_transformer = SentenceTransformer(model)
+    sentence_transformer = model
     chunk_embeddings = sentence_transformer.encode(chunks)
     query_embedding = sentence_transformer.encode([query])[0]
 
@@ -220,7 +221,7 @@ def convert_documents(documents: list, max_context_size: int, model, query: str)
     output_string = ""
     total_tokens = 0
     for idx in sorted_indices:
-        chunk_tokens = len(splitter.split_text(chunks[idx] + "\n\n"))
+        chunk_tokens = count_tokens(chunks[idx]) + 2
         if total_tokens + chunk_tokens <= max_tokens:
             output_string += chunks[idx] + "\n\n"
             total_tokens += chunk_tokens

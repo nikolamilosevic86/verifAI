@@ -188,6 +188,9 @@ def main_indexing(mypath):
     qdrant_key = os.getenv("QDRANT_API")
     INDEX_NAME_SEMANTIC = os.getenv("INDEX_NAME_SEMANTIC")
     INDEX_NAME_LEXICAL = os.getenv("INDEX_NAME_LEXICAL")
+    similarity_metric = os.getenv("SIMILARITY_METRIC")
+    vector_size = int(os.getenv("VECTOR_SIZE"))
+
 
     model_name = embedding_model
     if torch.cuda.is_available():
@@ -211,9 +214,18 @@ def main_indexing(mypath):
         qdrant_client.delete_collection(collection_name=INDEX_NAME_SEMANTIC)
         print(f"Collection '{INDEX_NAME_SEMANTIC}' deleted.")
 
+
+    if similarity_metric=="DOT":
+        vec_config = models.VectorsConfig(size=vector_size,distance=models.Distance.DOT)
+    elif similarity_metric =="COSINE":
+        vec_config = models.VectorsConfig(size=vector_size,distance=models.Distance.COSINE)
+    else:
+        vec_config = models.VectorsConfig(size=vector_size,distance=models.Distance.DOT)
+
+
     response = qdrant_client.create_collection(
         collection_name=INDEX_NAME_SEMANTIC,
-        vectors_config=models.VectorParams(size=768, distance=models.Distance.DOT),
+        vectors_config=vec_config,
         hnsw_config=models.HnswConfigDiff(max_indexing_threads=1),
         optimizers_config=models.OptimizersConfigDiff(memmap_threshold=20000, max_optimization_threads=4),
         quantization_config=models.ScalarQuantization(

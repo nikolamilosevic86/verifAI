@@ -411,9 +411,9 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
         
         mistral_input = f"{search_query}\nAbstracts:\n\n" + documents_string
         
-        print(mistral_input)
-        print("")
-        print("")
+        # print(mistral_input)
+        # print("")
+        # print("")
         if openai_client == None:
             return StreamingResponse(generate(mistral_input,temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
         else:
