@@ -154,8 +154,9 @@ Create `.env` file in the `client-gui/verifai-ui` folder with the following cont
 REACT_APP_BACKEND = http://127.0.0.1:5001/ # or your API url
 REACT_APP_AZURE_CLIENT_ID=<your_azure_client_id>
 REACT_APP_AZURE_TENANT_ID=<your_azure_tenant_id>
+REACT_APP_AZURE_REDIRECT_URL=http://localhost:3000
 ```
-If you do not configure `REACT_APP_AZURE_CLIENT_ID` and `REACT_APP_AZURE_TENANT_ID`, the app will not have the option to log in with AzureAD.
+If you do not configure `REACT_APP_AZURE_CLIENT_ID` and `REACT_APP_AZURE_TENANT_ID`, the app will not have the option to log in with AzureAD. Your AzureAD application needs to be registered as Single-Page Application in Azure. Change `REACT_APP_AZURE_REDIRECT_URL` to the redirect URL matching one in Azure. 
 Start the app by running:
 ```shell
 npm start

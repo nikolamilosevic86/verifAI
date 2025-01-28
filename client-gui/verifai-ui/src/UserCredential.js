@@ -10,6 +10,7 @@ function UserCredential() {
     const [newPassword, setNewPassword] = useState('');
     const navigate = useNavigate();
     const { user, logout } = useAuth();
+    const backend = process.env.REACT_APP_BACKEND;
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
@@ -18,7 +19,7 @@ function UserCredential() {
             return;
         }
         try {
-            const response = await fetch('http://18.198.26.251:5001/change_password', {
+            const response = await fetch(backend + 'change_password', {
                 method: 'POST',
                 headers: {
                     'Authorization': "Bearer " + user.token, 
