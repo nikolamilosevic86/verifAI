@@ -6,6 +6,8 @@
 
 # VerifAI
 
+VerifAI is a Generative Search/Productivity engine with Verifiable answers. Please check our website https://verifai-project.com/, or deployed app at https://app.verifai-project.com/
+
 <img src="https://github.com/nikolamilosevic86/verif.ai/assets/5192295/e95b4877-0847-4fa2-99e5-a6a7fc0003f8"  width="500"/>
 
 No more searches, just verifiably accurate answers.
