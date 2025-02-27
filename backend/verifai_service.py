@@ -115,7 +115,7 @@ if use_verification:
     verification_tokenizer = AutoTokenizer.from_pretrained(VERIFICATION_MODEL_CARD)
     print("Verification model set")
 
-model = SentenceTransformer(MODEL_CARD) #.to(device)
+model = SentenceTransformer(MODEL_CARD).half() #.to(device)
 
 # stopwords from nltk
 english_stopwords = set(stopwords.words('english'))
