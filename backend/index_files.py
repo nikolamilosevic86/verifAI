@@ -9,6 +9,9 @@ from langchain_text_splitters import TokenTextSplitter
 from opensearchpy import OpenSearch
 from pptx import Presentation
 from qdrant_client import QdrantClient
+from bs4 import BeautifulSoup
+import ebooklib
+from ebooklib import epub
 
 from qdrant_client.http import models
 import docx
@@ -93,6 +96,42 @@ def getTextAndMetadataFromPPTX(filename):
     }
 
     return text_content, metadata
+
+def getTextAndMetadataFromEPUB(filename, ebooklib=None):
+    book = epub.read_epub(filename)
+
+    # Extract text
+    chapters = []
+    for item in book.get_items():
+        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+            chapters.append(item.get_content())
+
+    # Extract text from HTML content
+    text_content = ""
+    for html_content in chapters:
+        soup = BeautifulSoup(html_content, 'html.parser')
+        text_content += soup.get_text() + "\n\n"
+
+    # Extract metadata
+    metadata = book.get_metadata('DC', {})
+
+    # Get file system metadata
+    file_stats = os.stat(filename)
+
+    metadata_dict = {
+        'Title': metadata.get('title', ['Unknown'])[0],
+        'Author': metadata.get('creator', ['Unknown'])[0],
+        'Language': metadata.get('language', ['Unknown'])[0],
+        'Publisher': metadata.get('publisher', ['Unknown'])[0],
+        'Rights': metadata.get('rights', ['Unknown'])[0],
+        'Identifier': metadata.get('identifier', ['Unknown'])[0],
+        'File_Size': f"{file_stats.st_size / (1024 * 1024):.2f} MB",
+        'Creation_Date': datetime.fromtimestamp(file_stats.st_ctime).isoformat(),
+        'File_Modified': datetime.fromtimestamp(file_stats.st_mtime).isoformat(),
+        'File_Accessed': datetime.fromtimestamp(file_stats.st_atime).isoformat(),
+    }
+
+    return text_content, metadata_dict
 
 
 def parse_pdf_date(date_string):
@@ -317,6 +356,13 @@ def main_indexing(mypath):
                 file_content,meta = getTextAndMetadataFromPDF(file)
             except Exception as exc:
                 file_content = "Empty due to extraction error."
+        elif file.endswith(".epub"):
+            try:
+                print("indexing " + file)
+                file_content,meta = getTextAndMetadataFromEPUB(file)
+            except Exception as exc:
+                file_content = "Empty due to extraction error."
+                print(f"Error processing {file}: {str(exc)}")
         elif file.endswith(".txt") or file.endswith(".md") or file.endswith(".markdown"):
             print("indexing " + file)
             f = open(file, 'r', encoding='utf-8', errors='ignore')

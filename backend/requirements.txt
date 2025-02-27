@@ -49,3 +49,5 @@ langchain_community
 langchain_qdrant
 langchain_text_splitters
 python-dateutil
+ebooklib
+beautifulsoup4
