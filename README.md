@@ -45,7 +45,7 @@ How does it work:
 # Main features
 
 * Easy installation by running a single script
-* Easy indexing of local files in PDF, PPTX, DOCX, MD and TXT formats
+* Easy indexing of local files in PDF,EPUB, PPTX, DOCX, MD and TXT formats
 * Combination of lexical and semantic search to find the most relevant documents
 * Usage of any HuggingFace listed model for document embeddings
 * Usage of any LLM that follows OpenAI API standard (deployed using vLLM, Nvidia NIM, Ollama, or via commercial APIs, such as OpenAI, Azure)
