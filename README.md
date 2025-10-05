@@ -3,7 +3,6 @@
 ![GitHub contributors](https://img.shields.io/github/contributors/nikolamilosevic86/verifAI)
 ![GitHub last commit](https://img.shields.io/github/last-commit/nikolamilosevic86/verifAI?display_timestamp=author)
 ![GitHub License](https://img.shields.io/github/license/nikolamilosevic86/verifAI)
-<iframe src="https://github.com/sponsors/nikolamilosevic86/button" title="Sponsor nikolamilosevic86" height="32" width="114" style="border: 0; border-radius: 6px;"></iframe>
 
 # VerifAI
 
