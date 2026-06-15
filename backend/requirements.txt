@@ -22,7 +22,6 @@ regex
 safetensors
 scipy
 sentencepiece
-spacy
 tiktoken
 tokenizers
 torch
@@ -51,3 +50,4 @@ langchain_text_splitters
 python-dateutil
 ebooklib
 beautifulsoup4
+modal

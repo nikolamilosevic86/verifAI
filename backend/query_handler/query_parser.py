@@ -97,7 +97,6 @@ class QueryProcessor:
         return retrieved_documents #adjust the return 
 
     def semantic_query(self, query: str, limit: int = 10) -> set:
-        #print("semantic = ",query)
         if self.semantic_client == None:
             raise ValueError("No Semantic client defined")
         if self.model == None:
@@ -112,17 +111,16 @@ class QueryProcessor:
         
         retrived_documents = {}
         max_score = None
-        for i,document in enumerate(results):
+        for i, document in enumerate(results):
             location = ""
             if 'pmid' not in document.payload.keys():
-                location = document.payload['metadata']['location']
+                location = document.payload.get('metadata', {}).get('location', '')
                 pmid = ""
             else:
                 pmid = document.payload['pmid']
                 location = ""
             score = document.score
             if i == 0:
-                # first score is the max
                 max_score = score
             retrived_documents[document.id] = { 'pmid': pmid,'location':location, 'score': round(score / max_score, 5) }
 
@@ -206,7 +204,7 @@ class QueryProcessor:
             pmid,_ = element
             if pmid == '':
                 continue
-            if isinstance(pmid, int):
+            if isinstance(pmid, int) or (isinstance(pmid, str) and pmid.isdigit()):
                 query = {
                         "query": {
                             "term": {
@@ -225,10 +223,12 @@ class QueryProcessor:
                         }
                     }
 
-            results = self.lexical_client.search(index=self.index_lexical_name, body=query) 
+            results = self.lexical_client.search(index=self.index_lexical_name, body=query)
+            if not results['hits']['hits']:
+                continue
             full_text = results['hits']['hits'][0]["_source"]['full_text']
             date_string = results['hits']['hits'][0]["_source"]['pubdate']
-            location = results['hits']['hits'][0]["_source"]['location']
+            location = results['hits']['hits'][0]["_source"].get('location', '')
             
             date = parse_date(date_string)
             date = date.replace(tzinfo=None)

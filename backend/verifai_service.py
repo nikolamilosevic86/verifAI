@@ -12,16 +12,16 @@ from starlette.responses import RedirectResponse, FileResponse
 from opensearchpy import OpenSearch
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
-from transformers import TextStreamer, TextIteratorStreamer, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForCausalLM, BitsAndBytesConfig
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from nltk.corpus import stopwords
-from peft import PeftModel
 
 import json
 import os, sys
 from dotenv import load_dotenv
 import datetime
 
-from utils import convert_documents, generate, hash_password, check_password
+from utils import convert_documents, hash_password, check_password
+from modal_client import modal_stream
 from query_handler.query_parser import QueryProcessor
 from database.database import Database
 from verification import *
@@ -56,40 +56,6 @@ if openai_path!= None and openai_key!=None:
 
 
 #-------------------------------------------------Models--------------------------------------------------------------
-# Check which device is available
-device = "cpu"
-if torch.cuda.is_available():
-    device = torch.device("cuda")
-elif torch.mps.is_available():
-    device = torch.device("mps")
-
-
-
-print("Device = ", device)
-
-if openai_client == None:
-    bnb_config = BitsAndBytesConfig(load_in_4bit=True,
-                                             bnb_4bit_use_double_quant=True,  # kod našeg fine-tuninga modela ovo je bilo False, što se može videti ovde: https://huggingface.co/BojanaBas/Mistral-7B-Instruct-v0.1-pqa/blob/main/README.md i zato je zakomentarisano
-                                             bnb_4bit_quant_type="fp4",
-                                             bnb_4bit_compute_dtype=torch.bfloat16
-                                             )
-
-    print("Getting MISTRAL model")
-    #MISTRAL
-    base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL_ID,
-                                                               torch_dtype=torch.float32,
-                                                               trust_remote_code=True,
-                                                               quantization_config=bnb_config,
-                                                               device_map='auto',
-                                                               low_cpu_mem_usage=True,
-                                                               )
-
-    tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_ID)
-
-    model_mistral = PeftModel.from_pretrained(base_model, PEFT_MODEL_ID).to(device)
-
-    model_mistral.eval() # setting the model in evaluation mode
-    print("MISTRAL Model set")
 
 #vllm_model = LLM(model=model_mistral, tensor_parallel_size=4)
 """
@@ -200,11 +166,11 @@ user_db = os.getenv("USER_DB")
 password_db = os.getenv("PASSWORD_DB")
 host_db = os.getenv("HOST_DB")
 
-opensearch_ip = os.getenv("OPENSEARCH_IP")
-opensearch_user =  os.getenv("OPENSEARCH_USER")
-opensearch_pass = os.getenv("OPENSEARCH_PASSWORD")
-opensearch_port = os.getenv("OPENSEARCH_PORT")
-qdrant_ip = os.getenv("QDRANT_IP")
+opensearch_ip = os.getenv("OPENSEARCH_IP") or os.getenv("VERIFAI_IP")
+opensearch_user = os.getenv("OPENSEARCH_USER") or os.getenv("VERIFAI_USER")
+opensearch_pass = os.getenv("OPENSEARCH_PASSWORD") or os.getenv("VERIFAI_PASSWORD")
+opensearch_port = os.getenv("OPENSEARCH_PORT") or os.getenv("VERIFAI_PORT")
+qdrant_ip = os.getenv("QDRANT_IP") or os.getenv("QDRANT_HOST")
 qdrant_port = os.getenv("QDRANT_PORT") 
 qdrant_api = os.getenv("QDRANT_API")
 INDEX_NAME_LEXICAL = os.getenv("INDEX_NAME_LEXICAL")
@@ -415,7 +381,7 @@ async def stream_tokens(request:Request, current_user: dict = Depends(get_curren
         # print("")
         # print("")
         if openai_client == None:
-            return StreamingResponse(generate(mistral_input,temperature,tokenizer, model_mistral, device),media_type='text/event-stream')
+            return StreamingResponse(modal_stream(mistral_input, temperature), media_type='text/event-stream')
         else:
             openai_input =  f"Question: {search_query}\nAbstracts:\n\n" + documents_string
             return StreamingResponse(openai_generate(openai_input,temperature),media_type='text/event-stream')
